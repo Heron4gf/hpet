@@ -31,4 +31,8 @@ Example code:
 >   }
 >   return true;
 > }
-
+>
+> @EventHandler
+> void onPetSelect(PetSelectEvent event) {
+>   event.getPlayer().sendMessage("Hello world!");
+> }
