@@ -9,6 +9,18 @@ You can change general settings from config.yml, also notice that /pet reload co
 You can configure plugin messages from the messages.yml file, you can translate every message in your language, or just make the messages look better, if you have troubles with YAML files I recommend using a YAML parser, here it is one https://codebeautify.org/yaml-parser-online
 You can setup your own pets or edit the existing ones in pets.yml file, everything about the pet is written there
 
+## Addons
+
+### How to install addons?
+You can simply drag & drop the addon jar file in the addons folder, inside the Pet folder
+
+### Official addons
+All official addons are free, avaiable on SpigotMc on my profile page, https://www.spigotmc.org/resources/authors/heron4gf.607598/
+
+- PetAbilitiesAddon
+- PetCombatAddon
+- PetItemAddon
+
 ## How to configure pet skins
 
 ### Default
@@ -25,6 +37,9 @@ Use MODELENGINE: followed by the model code into the skin value you want, exampl
 ### How do I use HeadDatabase?
 Use HDB: followed by the head code into the skin value you want, example:
 "HDB:12345"
+
+## Where I can get support?
+You can join my Discord server, there you can ask questions before buying the plugin and support if you bought it! Here's the invite: https://discord.gg/PX7nGZtshD
 
 ## How do I hook into HPET API?
 
