@@ -30,10 +30,6 @@ You can use Base64 codes for pet skins, you can find them on https://minecraft-h
 Use (material): followed by the CustomModelData code you want to use, example: "DIAMOND_HOE:3"
 You can find a list of valid materials on https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
 
-### How do I use ModelEngine?
-Use MODELENGINE: followed by the model code into the skin value you want, example:
-"MODELENGINE:exampleModel"
-
 ### How do I use HeadDatabase?
 Use HDB: followed by the head code into the skin value you want, example:
 "HDB:12345"
