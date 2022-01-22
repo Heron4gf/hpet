@@ -9,6 +9,8 @@ You can change general settings from config.yml, also notice that /pet reload co
 You can configure plugin messages from the messages.yml file, you can translate every message in your language, or just make the messages look better, if you have troubles with YAML files I recommend using a YAML parser, here it is one https://codebeautify.org/yaml-parser-online
 You can setup your own pets or edit the existing ones in pets.yml file, everything about the pet is written there
 
+DEFAULT CONFIGS ARE ON DISCORD!
+
 ## Addons
 
 ### How to install addons?
