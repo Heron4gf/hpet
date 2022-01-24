@@ -36,6 +36,11 @@ You can find a list of valid materials on https://hub.spigotmc.org/javadocs/spig
 Use HDB: followed by the head code into the skin value you want, example:
 "HDB:12345"
 
+###How to use Mobs:
+Use MOB: followed by the Mob type, example: "MOB:SHEEP"
+Valid Mob types are: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
+This feature works only in 1.12+
+
 ## Where I can get support?
 You can join my Discord server, there you can ask questions before buying the plugin and support if you bought it! Here's the invite: https://discord.gg/PX7nGZtshD
 
