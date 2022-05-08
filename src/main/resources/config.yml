@@ -1,0 +1,61 @@
+enabledPets: # you can disable pets, without deleting their configuration just by removing from here!
+  - sheep
+  - goat
+  - ghast
+  - pig
+  - world
+  - mariobros
+  - slime
+  - glitch
+  - group:mobs
+  - group:fantasy
+  - penguin
+  - puffle
+  - snail
+  - burger
+  - moreslimes
+  - enderman
+  - creeper
+  - group:materials
+
+useLevelEvents: true
+enableGui: true;
+nametags:
+  enable: true
+  format: "%player%'s %name% %level%"
+  defaultnametag: true # if false pet will not have nametag until you rename it
+  maxlength: 20 # anything longer than this will get cut
+  invalidnames: # you can put swear words here, so that players cannot use them in pet names
+    - ass
+    - bitch
+
+vanish: true # if true the pet will turn invisible when the owner is vanished!
+group:
+  materials:
+    pets:
+      - dirt
+      - netherite
+  fantasy:
+    pets:
+      - world
+      - mariobros
+      - glitch
+  mobs:
+    pets:
+      - ghast
+      - pig
+      - slime
+      - penguin
+
+disabledWorlds:
+  - nopetsworld
+
+yawCalibration: 200 # calibrate the yaw if you think the pet looks misplaced, useful for customModelData pets
+
+mysql:
+  enabled: false # if disabled it will use SQLite
+  name: hpet
+  address: localhost
+  port: 3306
+  user: root
+  password: password

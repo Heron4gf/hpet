@@ -1,0 +1,218 @@
+#abilities
+#Variables: (n) = number, (t) = text
+#You can add a chance by putting (percentage)% after :, example: TITLE:hey:10%
+#You can specify duration by putting (minutes)m(seconds)s after :, example TITLE:hey:10m3s, or TITLE:hey:10s, by default it is 10seconds
+#
+#ADD_HEALTH:(n), TITLE:(t), CONSOLE_LOG:(t), FAKE_LOCATION, ADD_FOOD:(n), SHOOT_ENDERPEARL, SUBTITLE:(t), SHOOT_ARROW, SHOOT_SNOWBALL, DAMAGE:(n), HEAL:(n), POISON_NEAR, PLAYER_PARTICLE:(particle):(count), LAUNCH, CURE:(n), NO_KNOCKBACK, DISARM_OPPONENT, PET_PARTICLE:(particle):(count), DISARM_SELF, INCREASE_DAMAGE, EXP:(n), EXPLOSION:(power):(destroyBlocks):(incendiary), EXTINGUISH, FIREBALL, SET_FIRE:(n), TEMP_FLY:(n), FLY, GOD, TEMP_GOD:(n), FREEZE:(n), INVISIBLE, LIGHNING_ON_PLAYER, LIGHTNING_LOOKING, MESSAGE:(t), PLAYER_COMMAND:(t), CONSOLE_COMMAND:(t), POTION:(potionEffectType):(duration):(amplify), PLAY_SOUND:(sound):(pitch):(volume), PLAY_SOUND_EVERYONE:(sound):(pitch):(volume), PUMPKIN, VELOCITY:(power), SWAP_ITEMS, INVISIBLE_ARMOR, FAKE_ARMOR:(EquipmentSlot):(Material), INVISIBLE_HAND, FAKE_HAND:(Material), NO_FALL_DAMAGE
+
+
+sheep:
+  displayname: "&f&lSHEEP"
+  description:
+    - ""
+    - "&fbeeh!"
+  skins:
+    - "MOB:SHEEP"
+  abilities:
+    - "PLAYER_PARTICLE:CRIT:3"
+goat:
+  displayname: "&f&lGOAT"
+  description:
+    - ""
+    - "&fI climb the mountains!"
+  skins:
+    - "MOB:GOAT"
+  abilities:
+    - "POTION:JUMP:11:2"
+dirt:
+  displayname: "&a&lDIRT"
+  description:
+    - "&7You are rich inside!"
+  skins:
+    - "DIRT:0"
+  abilities:
+    - "SWAP_ITEMS:2m"
+    - "INVISIBLE_ARMOR"
+    - "FAKE_HAND:DIRT"
+netherite:
+  displayname: "&c&lNETHERITE"
+  description:
+    - "&7Gonna give you fake netherite!"
+  skins:
+    - "NETHERITE_INGOT:0"
+  abilities:
+    - "TEMP_GOD:5:3m"
+    - "FAKE_ARMOR:HEAD:NETHERITE_HELMET"
+    - "FAKE_ARMOR:CHEST:NETHERITE_CHESTPLATE"
+    - "FAKE_ARMOR:LEGS:NETHERITE_LEGGINGS"
+    - "FAKE_ARMOR:FEET:NETHERITE_BOOTS"
+    - "FAKE_HAND:NETHERITE_SWORD"
+creeper:
+  displayname: "&a&lCREEPER"
+  description:
+    - ""
+    - "&7SSSSS"
+  skins:
+    - eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWJkYmJmMDhmMGY0OWU5NDQ2YWNiZjNlMDU5OWM2YmUyN2EzZmVjZTRhMjgxZjIxZDY1OTg4YTFiNGJlMjk1MiJ9fX0=
+  abilities:
+    - "MESSAGE:Creeper - SSSSSS"
+    - "EXPLOSION:2:false:false:50%:10s"
+
+burger:
+  displayname: "&a&lBURGER"
+  description:
+    - ""
+    - "&7Gnam"
+  skins:
+    - eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTllZDIyNTU1YzY1NDk0NWI4YmU1YTBjZDQzYzBiYmU0MTUwZDczNWVjNzE5YjQ1YzU4ZjlhZDFmMTllYTVlZiJ9fX0=
+  y: 1.2
+  distance: 0.9
+  abilities:
+    - "ADD_FOOD:3:90%:1m3s"
+    - "ADD_HEALTH:22:30%:1m10s"
+
+ghast:
+  price: 100
+  displayname: "&f&lLIL GHAST"
+  description:
+    - ""
+    - "&7A small ghast"
+  abilities:
+    - "CONSOLE_LOG:chance of shooting a fireball!"
+    - "FIREBALL:90%"
+  skins:
+    - eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGU4YTM4ZTlhZmJkM2RhMTBkMTliNTc3YzU1YzdiZmQ2YjRmMmU0MDdlNDRkNDAxN2IyM2JlOTE2N2FiZmYwMiJ9fX0=
+    - eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzhmNzdlZWVlZjZmZmIyZjY4MThlNTc2OTg3OTRhZTAzNTFhYjMyYmEyMzRkNjIxYzIyZmU0Y2U4ZTE1OTlkMiJ9fX0=
+pig:
+  onGround: true
+  y: 1.1
+  distance: 1.2
+  displayname: "&d&lPIGGY"
+  level:
+    type: WALK
+    value: 10000
+  description:
+    - ""
+    - "&7A small pig that will follow you!"
+  skins:
+    - blackgogy
+    - Technoblade
+    - connr_
+    - C4vell
+    - Entik_nt
+
+enderman:
+  displayname: "&5&lENDERMAN"
+  description:
+    - ""
+    - "&7What's Up?"
+  skins:
+    - "MOB:ENDERMAN"
+  abilities:
+    - "SHOOT_ENDERPEARL:1m"
+    - "PLAYER_PARTICLE:END_ROD:10"
+    - "PLAY_SOUND_EVERYONE:ENTITY_ENDERMAN_AMBIENT:1:100"
+    - "FAKE_LOCATION:1m:20%"
+world:
+  displayname: "&f&lASTRO WORLD"
+  description:
+    - ""
+    - "&7Your world but with glasses!"
+  skins:
+    - shadix_63
+    - mappamondo
+mariobros:
+  displayname: "&c&lMario Bros"
+  description:
+    - ""
+    - "&7Characters from Mario Bros"
+  skins:
+    - Zaile_
+    - ozygen
+    - Kapsel3003
+    - Itz_Halo_xd
+    - Gombah
+    - Mikeazoid
+    - Skilin_de_best
+    - Shikamarus
+
+snail:
+  displayname: "&a&lSnail"
+  abilities:
+    - "POTION:SLOW"
+  description:
+    - ""
+    - "&7A funny snail that will walk at your side!"
+  skins:
+    - eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDhkNjIyNzJmNTczZDkxMDE1ZDQ0MzM4NGEzODgwZGNlZTQ0OTYzYzczYjRmMGM5MDc3YzA4OTllYmQxMDE3YiJ9fX0=
+
+penguin:
+  displayname: "&f&lPENGUIN!"
+  description:
+    - ""
+    - "&7A little penguin!"
+  abilities:
+    - "FREEZE:10:10%:5s"
+  skins:
+    - eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWVhNzU5Zjk3OWI5YjhlYTgzMWNhN2UyZDY2ZGYxNDgyOTNmMWE1MTQ3OTgzYjUyYzQ4ZWZlMmMzMTVlIn19fQ==
+
+puffle:
+  displayname: "&c&lPUFFLE"
+  level:
+    type: JUMP
+    value: 100
+  description:
+    - ""
+    - "&7Changing color puffle!"
+  skins:
+    - eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGExNDBlMTEzZWI0M2Y0Y2RiYTEyMTBlYzUwMTBjMGQ0MzlkYjMxNTBkNTM5ZDhiMzU0MTVjNzdhNzMxNWFiOCJ9fX0=
+    - eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTM5MDYwODMxZWU0NjZlZDRjYjVmZjYwOWM3MDcyZmZlYmEyZDNjZDZjMmFiNTUxZWY5ODYyNGM1ZGQzNjAwMCJ9fX0=
+    #- eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTM5MDYwODMxZWU0NjZlZDRjYjVmZjYwOWM3MDcyZmZlYmEyZDNjZDZjMmFiNTUxZWY5ODYyNGM1ZGQzNjAwMCJ9fX0=
+    # this last one is rainbow color, sincerly I prefer red and green, but in case you like it, here it is
+
+disabledPet:
+  displayName: "&aI am an example!"
+  animation: SLOW_GLIDE
+  description:
+    - ""
+    - "&7This pet is not enabled in config.yml so it will not appear ingame!"
+    - "&7If you want to use customModelData here it is an example of how to use it!"
+  skins:
+    - "DIAMOND_HOE:2"
+    - "DIAMOND_HOE:3"
+
+slime:
+  displayname: "&a&lSlime"
+  level:
+    type: KILL
+    value: 10
+    entitytype: SLIME
+  animation: BOUNCE
+  description:
+    - ""
+    - "&7Bouncing slime"
+  abilities:
+    - "POTION:JUMP:30:3"
+  skins:
+    - eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTIwZTg0ZDMyZDFlOWM5MTlkM2ZkYmI1M2YyYjM3YmEyNzRjMTIxYzU3YjI4MTBlNWE0NzJmNDBkYWNmMDA0ZiJ9fX0=
+moreslimes:
+  inherit: slime
+  displayname: "&e&lSlimes"
+  skins:
+    - eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTVhYTc4OTU4MzBmNTY2NjE4YTcxYWY2OTExMjQ2NTRhYmMxY2RmYzE4YmJkNmE2NjMxZGZiZGM2YTY0OGIyIn19fQ==
+    - eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzZmMjg2MDM5YmRkNDBjZmM5NmE1YzU5N2Y5ZjRiZGVkNDMzOWVjOTU3MzJkYTY1NTE5NzJlMGYxZDU3MyJ9fX0=
+    - eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTVhYTc4OTU4MzBmNTY2NjE4YTcxYWY2OTExMjQ2NTRhYmMxY2RmYzE4YmJkNmE2NjMxZGZiZGM2YTY0OGIyIn19fQ==
+
+glitch:
+  displayname: "&4&lGl&ki&4&ltch"
+  level:
+    type: MINE
+    value: 100
+    material: STONE
+  animation: GLITCH
+  description:
+    - ""
+    - "&7Glitched"
+  skins:
+    - eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWI2NmI2NjkzYjJlOTRkZGVkNTc0MmU0MmFmNzA2MjUwNjlmOTM4NTRmODI1YjU5Y2E4N2EwOGY1ODIwZjliMyJ9fX0=
+    - eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmUzZGIyN2NiZDE3ODkzMTA0MDkwODFhZDhjNDJkNjkwYjA4OTYxYjU1Y2FkZDQ1YjQyZDQ2YmNhMjhiOCJ9fX0=
