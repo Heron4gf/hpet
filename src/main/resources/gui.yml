@@ -1,0 +1,83 @@
+gui:
+  panel:
+    material: MAGENTA_STAINED_GLASS_PANE
+    name: ""
+    desc:
+      - ""
+  border:
+    material: WHITE_STAINED_GLASS_PANE
+    name: ""
+    desc:
+      - ""
+  page:
+    next:
+      material: ARROW
+      name: "&a&lNext Page"
+      desc:
+        - ""
+        - "&7Turn to next page!"
+    back:
+      material: ARROW
+      name: "&c&lPrevius Page"
+      desc:
+        - ""
+        - "&7Go back!"
+  particle:
+    add:
+      material: LIME_DYE
+      name: "&a&lSPAWN PARTICLE "
+      desc:
+        - ""
+        - "&7We recommend this Particle!"
+    remove:
+      material: LIME_DYE
+      name: "&c&lREMOVE PARTICLE"
+      desc:
+        - ""
+        - "&7Remove the current particle"
+  enablePetItems: true # enable respawn, remove, rename, trail items
+  respawn:
+    material: GREEN_DYE
+    name: "&a&lRESPAWN YOUR PET"
+    desc:
+      - ""
+      - "&7Click to respawn your pet"
+  remove:
+    material: RED_DYE
+    name: "&c&lREMOVE YOUR PET"
+    desc:
+      - ""
+      - "&7Click to remove your pet!"
+  rename:
+    material: NAME_TAG
+    name: "&a&lRENAME YOUR PET"
+    desc:
+      - ""
+      - "&7Click to rename your pet!"
+  trail:
+    add:
+      material: GREEN_BANNER
+      name: "&a&lCREATE A TRAIL"
+      desc:
+        - ""
+        - "&7Create a nice looking pet trail!"
+    remove:
+      material: RED_BANNER
+      name: "&c&lREMOVE THE TRAIL"
+      desc:
+        - ""
+        - "&7Remove the current pet trail!"
+  glow:
+    material:
+    add:
+      material: GLOWSTONE
+      name: "&a&lGLOW THE PET"
+      desc:
+        - ""
+        - "&7Make your pet glow!"
+    remove:
+      material: GUNPOWDER
+      name: "&c&lREMOVE GLOWING EFFECT"
+      desc:
+        - ""
+        - "&7Your pet will no longer glow!"
