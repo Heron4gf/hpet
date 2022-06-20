@@ -170,16 +170,6 @@ public final class Pet extends JavaPlugin {
         }
         return file;
     }
-    private void createGUIFile() {
-        File file = new File(getDataFolder()+File.separator+"gui.yml");
-        if(!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     @Getter
     private String nameFormat;
@@ -256,12 +246,11 @@ public final class Pet extends JavaPlugin {
         }
 
         saveResource("config.yml", demo);
-        saveResource("gui.yml", demo);
         saveResource("pets.yml", demo);
         reloadConfig();
 
         this.petConfiguration = YamlConfiguration.loadConfiguration(getPetFile());
-        createGUIFile();
+        //createGUIFile();
 
         instance = this;
 
@@ -306,6 +295,9 @@ public final class Pet extends JavaPlugin {
         if(checkVersion("1.8")) {
             this.packetUtils = new Utils1_8();
             Utils1_12.initDestroyListener();
+            saveResource("legacy_gui.yml", demo);
+        } else {
+            saveResource("gui.yml", demo);
         }
 
         for(String s : getConfig().getStringList("disabledWorlds")) {

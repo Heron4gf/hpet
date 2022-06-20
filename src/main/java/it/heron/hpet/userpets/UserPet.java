@@ -23,6 +23,9 @@ import it.heron.hpet.animation.PetParticle;
 import it.heron.hpet.api.events.PetRemoveEvent;
 import it.heron.hpet.api.events.PetUpdateEvent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public @Data
 class UserPet {
     public boolean needRespawn() {return false;}
@@ -107,7 +110,10 @@ class UserPet {
     public void updateNameTag() {
         if(Pet.getInstance().getConfig().getBoolean("nametags.enable")) {
 
-            String name = Utils.color(Pet.getInstance().getNameFormat()).replace("%player%", owner.getName()).replace("%name%", this.name).replace("%level%", getLevel()+"");
+            String name = null;
+            try {
+                name = Utils.color(Pet.getInstance().getNameFormat()).replace("%player%", owner.getName()).replace("%name%", this.name).replace("%level%", getLevel()+"");
+            } catch(Exception ignored) {}
 
             PacketContainer[] packets = {Pet.getPackUtils().spawnArmorstand(this.nameId, this.location), Pet.getPackUtils().standardMetaData(this.nameId, owner, true, false), Pet.getPackUtils().setCustomName(this.nameId, name)};
             for(PacketContainer packet : packets) {
@@ -138,12 +144,11 @@ class UserPet {
         updateNameTag();
         //teleport(owner.getLocation());
 
-        if(!this.type.getAbilities().isEmpty()) {
-            for(AbilityExecutor a : this.type.getAbilities()) {
-                a.execute(this);
-            }
-        }
+        this.abilities = this.type.getAbilities();
+        for(AbilityExecutor a : abilities) a.execute(this);
     }
+
+    private List<AbilityExecutor> abilities = new ArrayList<>();
     public void updateLevel() {
         if(!Pet.getInstance().getConfig().getBoolean("useLevelEvents")) {
             update();
@@ -173,10 +178,8 @@ class UserPet {
     }
     public void despawn(World world) {
 
-        if(!this.type.getAbilities().isEmpty()) {
-            for(AbilityExecutor a : this.type.getAbilities()) {
-                a.disable(this);
-            }
+        for(AbilityExecutor a : abilities) {
+            a.disable(this);
         }
 
         int id = this.id;
@@ -224,8 +227,6 @@ class UserPet {
         this.location = location;
     }
 
-    //private Runnable tick = tpTick();
-
     protected void tick() {
         this.taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Pet.getInstance(), new Runnable() {
             @Override
@@ -243,15 +244,15 @@ class UserPet {
                 }
                 float[] steps = type.getAnimation().getAnimationValues();
 
+                if(!(owner.getLocation().getX() == location.getX() && owner.getLocation().getZ() == location.getZ())) {
+                    if(particle != null && !invisible) particle.tick(getTheoricalLocation());
+                }
+
                 if(slot == EnumWrappers.ItemSlot.MAINHAND) {
                     teleport(owner.getLocation().add(0, steps[(int) (step%steps.length)], 0));
                 } else {
                     teleport(coords.getLoc(owner.getLocation().add(0, steps[(int) (step%steps.length)], 0)));
                 }
-                if(!(owner.getLocation().getX() == location.getX() && owner.getLocation().getZ() == location.getZ())) {
-                    if(particle != null && !invisible) particle.tick(getTheoricalLocation());
-                }
-                //move(owner.getLocation().add(0, steps[(int) (step%steps.length)], 0));
 
                 step++;
                 animate();
