@@ -248,7 +248,12 @@ public class Utils {
     public static ItemStack getGUIStack(String path) {
         if(Pet.getInstance().getCachedItems().containsKey(path)) return Pet.getInstance().getCachedItems().get(path);
         path = "gui."+path+".";
-        YamlConfiguration data = YamlConfiguration.loadConfiguration(new File(Pet.getInstance().getDataFolder()+File.separator+"gui.yml"));
+        YamlConfiguration data;
+        if(Pet.getInstance().isUsingLegacyId()) {
+            data = YamlConfiguration.loadConfiguration(new File(Pet.getInstance().getDataFolder()+File.separator+"legacy_gui.yml"));
+        } else {
+            data = YamlConfiguration.loadConfiguration(new File(Pet.getInstance().getDataFolder()+File.separator+"gui.yml"));
+        }
         Pet.getInstance().addToCache(path, createStack(Material.valueOf(data.getString(path+"material")), color(data.getString(path+"name")), color(data.getStringList(path+"desc"))));
         return getGUIStack(path);
     }
