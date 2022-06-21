@@ -59,3 +59,5 @@ mysql:
   port: 3306
   user: root
   password: password
+
+teleport-delay: 2
