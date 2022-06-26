@@ -1,6 +1,7 @@
 package it.heron.hpet.database;
 
 import it.heron.hpet.Pet;
+import it.heron.hpet.Utils;
 import lombok.Getter;
 
 import java.sql.*;
@@ -79,9 +80,8 @@ public abstract class Database {
     public int getPetLevel(UUID uuid, String petType) {
         try {
             return Integer.parseInt(getAllPetLevels(uuid).split(petType)[1].split(";")[0]);
-        } catch(Exception e) {
-            return 0;
-        }
+        } catch(Exception ignored) {}
+        return 0;
     }
     public void setPetLevel(UUID uuid, String petType, int level) {
         String all = getAllPetLevels(uuid);
@@ -96,7 +96,7 @@ public abstract class Database {
         setLevel(uuid, all);
     }
     public void setLevel(UUID uuid, String all) {
-        //Utils.runAsync(() -> {
+        Utils.runAsync(() -> {
             Connection conn = null;
             PreparedStatement ps = null;
             try {
@@ -119,7 +119,7 @@ public abstract class Database {
                     ex.printStackTrace();
                 }
             }
-        //});
+        });
     }
 
     public String getStringData(UUID uuid, String pos, String t) {

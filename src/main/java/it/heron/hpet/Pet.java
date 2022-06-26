@@ -279,7 +279,7 @@ public final class Pet extends JavaPlugin {
         }
 
         String version = Bukkit.getServer().getVersion();
-        if(checkVersion("1.17") || checkVersion("1.18")) {
+        if(checkVersion("1.17") || checkVersion("1.18") || checkVersion("1.19")) {
             this.packetUtils = new Utils1_17();
         }
         if(checkVersion("1.16")) {

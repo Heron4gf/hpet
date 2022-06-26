@@ -53,7 +53,7 @@ public class Commands implements CommandExecutor {
                     p.sendMessage("§cInvalid number!");
                     return false;
                 }
-                Pet.getInstance().getDatabase().setPetLevel(p.getUniqueId(), type.getName(), amount);
+                Pet.getApi().setPetLevel(p, type.getName(), amount);
                 p.sendMessage("§eNow "+type.getName()+" is level "+amount+"!");
                 return true;
             }
@@ -184,7 +184,7 @@ public class Commands implements CommandExecutor {
                 return true;
             }
             if(parseCommand(p, argument, "level", true, "pet.level")) {
-                p.sendMessage(Messages.getMessage("level")+ Pet.getInstance().getDatabase().getPetLevel(p.getUniqueId(), Pet.getApi().getUserPet(p).getType().getName()));
+                p.sendMessage(Messages.getMessage("level")+ Pet.getApi().getPetLevel(p, Pet.getApi().getUserPet(p).getType().getName()));
                 return true;
             }
             if(parseCommand(p, argument, "update", true, "pet.update")) {
