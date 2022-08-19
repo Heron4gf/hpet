@@ -12,8 +12,12 @@ import it.heron.hpet.Pet;
 import it.heron.hpet.userpets.UserPet;
 import it.heron.hpet.packetutils.PacketUtils;
 import org.bukkit.Location;
+import org.bukkit.entity.Ageable;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Iterator;
@@ -25,38 +29,6 @@ public class Utils1_8 extends Utils1_12 {
     @Override
     public Vector3F getPose() { return new Vector3F(0, 0, 0);}
 
-    @Override
-    public PacketContainer spawnArmorstand(int entityID, Location location) {
-        ArmorStand as = (ArmorStand)location.getWorld().spawn(location, ArmorStand.class);
-        as.setGravity(false);
-        as.setVisible(false);
-        as.setMarker(true);
-        as.setArms(true);
-        Iterator var4 = Pet.getInstance().getPacketUtils().getPets().values().iterator();
-
-        while(var4.hasNext()) {
-            UserPet pet = (UserPet)var4.next();
-            if (pet.getId() == entityID) {
-                pet.setId(as.getEntityId());
-            }
-
-            if (pet.getChild() != null && pet.getChild().getId() == entityID) {
-                ChildPet child = pet.getChild();
-                child.setId(as.getEntityId());
-                pet.setChild(child);
-                as.setSmall(true);
-            }
-        }
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                as.remove();
-            }
-        }.runTaskLater(Pet.getInstance(), 20);
-        return null;
-    }
-
 
     @Override
     public PacketContainer teleportEntity(int entityID, Location loc, boolean precise) {
@@ -67,37 +39,54 @@ public class Utils1_8 extends Utils1_12 {
 
         teleportPacket.getIntegers().write(0, entityID);
 
-        //teleportPacket.getIntegers().write(1, (int)EntityType.ARMOR_STAND.getTypeId());
         teleportPacket.getIntegers().write(1, getFixedPoint(location.getX()));
         teleportPacket.getIntegers().write(2, getFixedPoint(location.getY()));
         teleportPacket.getIntegers().write(3, getFixedPoint(location.getZ()));
         if(precise) {
             teleportPacket.getBytes().write(0, (byte) (location.getYaw() * 256.0F / 360.0F));
-            //teleportPacket.getBytes().write(1, (byte) (location.getPitch() * 256.0F / 360.0F));
         }
         return teleportPacket;
     }
 
     @Override
-    public PacketContainer standardMetaData(PacketContainer entityMetadata, boolean small, boolean glow, PacketUtils protocol) {
-        WrappedDataWatcher dataWatcher = getDataWatcher(entityMetadata);
-        if (glow) {
-            dataWatcher.setObject(0, (byte)0xff);
-        } else {
-            dataWatcher.setObject(0, (byte)32);
+    public int spawnPetEntity(boolean glow, boolean small, ItemStack item, Location loc, EntityType entityType, EquipmentSlot slot, String name) {
+        Entity e = loc.getWorld().spawnEntity(loc, entityType);
+        if(e instanceof Ageable && small) {
+            ((Ageable)e).setBaby();
+        }
+        e.setCustomNameVisible(name != null);
+        e.setCustomName(name);
+
+        if(entityType == EntityType.ARMOR_STAND) {
+            ArmorStand a = (ArmorStand) e;
+            a.setSmall(small);
+            a.setArms(true);
+            a.setVisible(false);
+            executePacket(standardMetaData(e.getEntityId(), null), e.getWorld());
+            a.setItemInHand(item);
         }
 
-        if (small) {
-            dataWatcher.setObject(10, (byte)0xff);
-        } else {
-            dataWatcher.setObject(10, (byte)0x10);
-        }
+        int id = e.getEntityId();
+        destroyQueue.add(id);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                e.remove();
+            }
+        }.runTaskLater(Pet.getInstance(), 5);
+        return id;
+    }
+
+    @Override
+    public PacketContainer standardMetaData(PacketContainer entityMetadata, PacketUtils protocol) {
+        return null;
+        /*WrappedDataWatcher dataWatcher = getDataWatcher(entityMetadata);
 
         dataWatcher.setObject(14, protocol.getPose().getX());
         dataWatcher.setObject(14, protocol.getPose().getY());
         dataWatcher.setObject(14, protocol.getPose().getZ());
         entityMetadata.getWatchableCollectionModifier().write(0, dataWatcher.getWatchableObjects());
-        return entityMetadata;
+        return entityMetadata;*/
     }
 
     private int getFixedPoint(double d) {

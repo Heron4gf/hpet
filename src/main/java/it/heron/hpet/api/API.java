@@ -1,9 +1,21 @@
+/*
+ * This file is part of HPET - Packet Based Pet Plugin
+ *
+ * TOS (Terms of Service)
+ * You are not allowed to decompile, or redestribuite part of this code if not authorized by the original author.
+ * You are not allowed to claim this resource as yours.
+ */
 package it.heron.hpet.api;
 
+import it.heron.hpet.api.events.PetSelectEvent;
 import it.heron.hpet.levels.LType;
 import it.heron.hpet.levels.LevelEvents;
 import it.heron.hpet.messages.Messages;
+import it.heron.hpet.pettypes.PetType;
+import it.heron.hpet.userpets.MobUserPet;
+import it.heron.hpet.userpets.MythicUserPet;
 import lombok.Data;
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import it.heron.hpet.Pet;
@@ -25,6 +37,27 @@ public class API {
     }
     public Collection<UserPet> getEnabledPets() {return Pet.getInstance().getPacketUtils().getPets().values();}
 
+    public void selectPet(Player player, String petType) {
+        selectPet(player, Pet.getPetTypeByName(petType));
+    }
+    public void selectPet(Player player, PetType petType) {
+        if(Pet.getApi().hasUserPet(player)) {
+            Pet.getApi().getUserPet(player).remove();
+        }
+
+        UserPet pet;
+        if(petType.isMob()) {
+            pet = new MobUserPet(player, petType, null);
+        } else {
+            if(petType.isMythicMob()) {
+                pet = new MythicUserPet(player, petType, null);
+            } else {
+                pet = new UserPet(player, petType, null);
+            }
+        }
+        Bukkit.getPluginManager().callEvent(new PetSelectEvent(player, pet));
+        player.sendMessage(Messages.getMessage("pet.spawned").replace("[type]", petType.getName()));
+    }
 
     private Set<LevelData> levelCache = new HashSet<>();
     public int getPetLevel(Player p, String type) {
@@ -42,7 +75,6 @@ public class API {
                 levelCache.remove(d);
             }
         }
-
         Pet.getInstance().getDatabase().setPetLevel(p.getUniqueId(), type, amount);
     }
 

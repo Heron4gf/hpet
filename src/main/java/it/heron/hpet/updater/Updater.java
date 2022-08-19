@@ -34,12 +34,13 @@ public class Updater {
     private static long lastCheck = 0l;
 
     public static boolean isThereUpdate() {
-        if(System.currentTimeMillis()-lastCheck < 100000) return isUpdate;
+        return false;
+        /*if(System.currentTimeMillis()-lastCheck < 100000) return isUpdate;
         int current = versionId(Pet.getInstance().getDescription().getVersion());
         int latest = versionId(Utils.getResponse("http://heron4gf.space/versions.txt").split("L:")[1]);
         isUpdate = latest>current;
         lastCheck = System.currentTimeMillis();
-        return isThereUpdate();
+        return isThereUpdate();*/
     }
 
 }

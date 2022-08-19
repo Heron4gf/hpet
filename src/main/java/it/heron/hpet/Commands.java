@@ -108,32 +108,12 @@ public class Commands implements CommandExecutor {
                     p.sendMessage(Messages.getMessage("error.noperm.use"));
                     return false;
                 }
-                if(Pet.getApi().hasUserPet(p)) {
-                    Pet.getApi().getUserPet(p).remove();
-                }
-
-                UserPet pet;
-                if(type.isMob()) {
-                    pet = new MobUserPet(p, type, null);
-                } else {
-                    if(type.isMythicMob()) {
-                        pet = new MythicUserPet(p, type, null);
-                    } else {
-                        pet = new UserPet(p, type, null);
-                    }
-                }
-
-                //Pet.getInstance().getPacketUtils().spawnPet(p, pet);
-                pet.spawn();
-                Bukkit.getPluginManager().callEvent(new PetSelectEvent(p, pet));
-                //pet.teleport(p.getLocation().add(new Vector(1, 0, 0)));
-                //pet.updateLevel();
-                p.sendMessage(Messages.getMessage("pet.spawned")+" "+type.getName()+"!");
+                Pet.getApi().selectPet(p, type);
                 return true;
             }
             if(parseCommand(p, argument, "buy", false, null, Pet.getInstance().getEconomy(), type)) {
                 if(p.hasPermission("pet.use."+type.getName())) {
-                    p.chat("/pet select "+type.getName());
+                    p.sendMessage(Messages.getMessage("error.alreadybought"));
                     return false;
                 }
                 if(type.getPrice() == null) {
@@ -149,6 +129,8 @@ public class Commands implements CommandExecutor {
                 econ.withdrawPlayer(p, type.getPrice());
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Messages.getMessage("pet.buy.permissioncommand").replace("%player%", p.getName()).replace("%petname%", type.getName()));
                 p.sendMessage(Messages.getMessage("pet.buy.bought"));
+                Pet.getApi().selectPet(p, type);
+                p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
                 return true;
             }
             if(parseCommand(p, argument, "particle", true, null)) {
@@ -206,6 +188,7 @@ public class Commands implements CommandExecutor {
                     pet.destroyChild();
                     p.sendMessage(Messages.getMessage("pet.trail.remove"));
                 }
+                pet.despawn();
                 pet.update();
                 return true;
             }

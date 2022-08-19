@@ -18,23 +18,24 @@ import it.heron.hpet.operations.Coords;
 import it.heron.hpet.pettypes.PetType;
 import lombok.Data;
 import org.bukkit.*;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import it.heron.hpet.animation.PetParticle;
 import it.heron.hpet.api.events.PetRemoveEvent;
 import it.heron.hpet.api.events.PetUpdateEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public @Data
 class UserPet {
-    public boolean needRespawn() {return false;}
+    public boolean needRespawn() {return true;}
 
     private int id = 0;
     private Player owner;
 
     private long step;
-    //private long skin;
 
     private PetType type;
     private boolean glow;
@@ -62,10 +63,8 @@ class UserPet {
     }
 
     public UserPet(Player owner, PetType type, ChildPet child) {
-        //if(type.isFollow()) tick = followTick();
         this.owner = owner;
         this.step = 0l;
-        //this.skin = 0l;
         this.type = type;
         if(Pet.getInstance().getConfig().getBoolean("nametags.defaultnametag")) {
             this.name = type.getDisplayName();
@@ -74,9 +73,8 @@ class UserPet {
         if(this.owner == null) return;
         this.location = this.owner.getLocation();
 
-        if(this.type.isCustomModelData()) this.slot = EnumWrappers.ItemSlot.HEAD;
-
-
+        if(this.type.isCustomModelData()) this.slot = EquipmentSlot.HEAD;
+        spawn();
         tick();
     }
 
@@ -99,50 +97,46 @@ class UserPet {
             newLoc.setY(newLoc.getY()+this.type.getNamey()-1);
 
 
-            if(slot == EnumWrappers.ItemSlot.MAINHAND) Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(this.id, newLoc, true), owner.getWorld());
+            if(slot == EquipmentSlot.HAND) Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(this.id, newLoc, true), owner.getWorld());
             else Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(this.id, newLoc.add(0, -type.getNamey(), 0), true), owner.getWorld());
             this.location = newLoc;
 
-            if(slot == EnumWrappers.ItemSlot.MAINHAND) Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(this.nameId, this.coords.getLoc(newLoc), false), owner.getWorld());
+            if(slot == EquipmentSlot.HAND) Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(this.nameId, getTheoricalLocation(), false), owner.getWorld());
             else Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(getNameId(), newLoc.add(0, type.getNamey()+1, 0), false), getOwner().getWorld());
     }
 
     public void updateNameTag() {
         if(Pet.getInstance().getConfig().getBoolean("nametags.enable")) {
 
-            String name = null;
+            String name = getName();
             try {
-                name = Utils.color(Pet.getInstance().getNameFormat()).replace("%player%", owner.getName()).replace("%name%", this.name).replace("%level%", getLevel()+"");
+                if(name == null) name = Utils.color(Pet.getInstance().getNameFormat()).replace("%player%", owner.getName()).replace("%name%", type.getDisplayName()).replace("%level%", getLevel()+"");
             } catch(Exception ignored) {}
 
-            PacketContainer[] packets = {Pet.getPackUtils().spawnArmorstand(this.nameId, this.location), Pet.getPackUtils().standardMetaData(this.nameId, owner, true, false), Pet.getPackUtils().setCustomName(this.nameId, name)};
-            for(PacketContainer packet : packets) {
-                Pet.getPackUtils().executePacket(packet, owner.getWorld());
-            }
+            this.nameId = Pet.getPackUtils().spawnPetEntity(false, false, null, getTheoricalLocation(), EntityType.ARMOR_STAND, null, name);
         }
     }
 
-    private EnumWrappers.ItemSlot slot = EnumWrappers.ItemSlot.MAINHAND;
+    private EquipmentSlot slot = EquipmentSlot.HAND;
 
     public void animate() {
         String[] skins = type.getSkins();
 
         int skin = (int) ((this.step/7)%(skins.length));
-        if(slot == EnumWrappers.ItemSlot.HEAD) skin = 0;
+        if(slot == EquipmentSlot.HAND) skin = 0;
 
         if(this.step % 7 == 0) {
-            Pet.getPackUtils().executePacket(Pet.getPackUtils().equipItem(this.id, slot, Utils.getCustomItem(skins[skin])), owner.getWorld());
+            Pet.getPackUtils().executePacket(Pet.getPackUtils().equipItem(this.id, Utils.fromEquipSlot(slot), Utils.getCustomItem(skins[skin])), owner.getWorld());
         }
     }
     public void update() {
-        Bukkit.getPluginManager().callEvent(new PetUpdateEvent(owner, this));
         despawn();
+        Bukkit.getPluginManager().callEvent(new PetUpdateEvent(owner, this));
         if(this.invisible) {
             return;
         }
         Pet.getPackUtils().spawnPet(owner, this);
         updateNameTag();
-        //teleport(owner.getLocation());
 
         this.abilities = this.type.getAbilities();
         for(AbilityExecutor a : abilities) a.execute(this);
@@ -191,12 +185,13 @@ class UserPet {
             Pet.getPackUtils().executePacket(Pet.getPackUtils().destroyEntity(childid), world);
         }
         Pet.getPackUtils().executePacket(Pet.getPackUtils().destroyEntity(this.nameId), world);
+        Pet.getPackUtils().removeFromPets(owner.getUniqueId());
     }
 
     public void remove() {
         Bukkit.getPluginManager().callEvent(new PetRemoveEvent(owner, this));
         Bukkit.getScheduler().cancelTask(this.taskID);
-        Pet.getPackUtils().removeFromPets(owner.getUniqueId());
+
         despawn();
         if(Pet.getInstance().isUsingLegacySound()) {
             return;
@@ -214,26 +209,13 @@ class UserPet {
         this.child = null;
         Pet.getPackUtils().executePacket(Pet.getPackUtils().destroyEntity(id), owner.getWorld());
     }
-
-
-    public void move(Location location) {
-
-        short x = (short)(((location.getX()*32)-(this.location.getX()*32))*128);
-        short y = (short)(((location.getY()*32)-(this.location.getY()*32))*128);
-        short z = (short)(((location.getZ()*32)-(this.location.getZ()*32))*128);
-
-        Pet.getPackUtils().executePacket(Pet.getPackUtils().moveEntity(this.id, x,y,z,location.getYaw()), owner.getWorld());
-        Pet.getPackUtils().executePacket(Pet.getPackUtils().moveEntity(this.nameId, x,y,z,location.getYaw()), owner.getWorld());
-        this.location = location;
-    }
-
     protected void tick() {
         this.taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Pet.getInstance(), new Runnable() {
             @Override
             public void run() {
 
                 if(child != null) {
-                    if(slot == EnumWrappers.ItemSlot.MAINHAND) {
+                    if(slot == EquipmentSlot.HAND) {
                         child.teleport(owner.getLocation().clone(), type.getAnimation().getAnimationValues());
                     } else {
                         child.teleport(coords.getLoc(owner.getLocation().clone()), type.getAnimation().getAnimationValues());
@@ -248,7 +230,7 @@ class UserPet {
                     if(particle != null && !invisible) particle.tick(getTheoricalLocation());
                 }
 
-                if(slot == EnumWrappers.ItemSlot.MAINHAND) {
+                if(slot == EquipmentSlot.HAND) {
                     teleport(owner.getLocation().add(0, steps[(int) (step%steps.length)], 0));
                 } else {
                     teleport(coords.getLoc(owner.getLocation().add(0, steps[(int) (step%steps.length)], 0)));

@@ -30,6 +30,7 @@ nametags:
     - bitch
 
 vanish: true # if true the pet will turn invisible when the owner is vanished!
+deluxeCombatHook: true # will hook in deluxecombat and disable the pet when entering combat
 group:
   materials:
     pets:

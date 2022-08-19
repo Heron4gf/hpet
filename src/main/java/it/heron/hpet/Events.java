@@ -230,7 +230,7 @@ public class Events implements Listener {
         if(hslot instanceof PetType) {
             PetType type = (PetType)hslot;
             if(p.hasPermission("pet.use."+type.getName()) || type.getPrice() == null) {
-                p.chat("/pet select "+type.getName());
+                Pet.getApi().selectPet(p, type);
             } else {
                 p.chat("/pet buy "+type.getName());
             }

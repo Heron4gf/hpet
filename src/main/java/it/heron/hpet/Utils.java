@@ -2,6 +2,7 @@ package it.heron.hpet;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import it.heron.hpet.userpets.MobUserPet;
@@ -15,6 +16,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -175,24 +177,8 @@ public class Utils {
             public void run() {
                 for(UserPet opet : Pet.getInstance().getPacketUtils().getPets().values()) {
                     if(!opet.getOwner().equals(p)) {
-                        if(opet.needRespawn()) {
-                            if(opet.getOwner().getLocation().distance(p.getLocation()) < 50) {
-                                opet.update();
-                            }
-                        } else {
-                            if(!opet.isInvisible()) {
-                                PacketContainer[] packets = {Pet.getInstance().getPacketUtils().spawnArmorstand(opet.getId(), opet.getLocation()),
-                                        Pet.getInstance().getPacketUtils().standardMetaData(opet.getId(), p, false, opet.isGlow()), null, null};
-                                if(opet.getChild() != null) {
-                                    packets[2] = Pet.getInstance().getPacketUtils().spawnArmorstand(opet.getChild().getId(), opet.getLocation());
-                                    packets[3] = Pet.getInstance().getPacketUtils().standardMetaData(opet.getId(), p, true, opet.isGlow());
-                                }
-                                for(PacketContainer packet : packets) {
-                                    try {
-                                        ProtocolLibrary.getProtocolManager().sendServerPacket(p, packet);
-                                    } catch(Exception ignored) {}
-                                }
-                            }
+                        if(opet.getOwner().getLocation().distance(p.getLocation()) < 50) {
+                            opet.update();
                         }
                     }
                 }
@@ -288,6 +274,17 @@ public class Utils {
 
     public static ItemStack createStack(Material material, String name, List<String> lore) {
         return editStack(new ItemStack(material), name, lore);
+    }
+
+    public static EnumWrappers.ItemSlot fromEquipSlot(EquipmentSlot slot) {
+        switch(slot) {
+            case HAND:
+                return EnumWrappers.ItemSlot.MAINHAND;
+            case HEAD:
+                return EnumWrappers.ItemSlot.HEAD;
+            default:
+                return null;
+        }
     }
 
 

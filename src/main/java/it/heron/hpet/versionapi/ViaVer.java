@@ -16,7 +16,7 @@ public class ViaVer extends PlayerVersion {
         int protocol = getPlayerVersion(p);
         if(protocol > 754) return new Utils1_17();
         if(protocol > 578) return new Utils1_16();
-        if(protocol > 340) return new Utils1_15();
+        //if(protocol > 340) return new Utils1_15();
         if(protocol > 47) return new Utils1_12();
         return new Utils1_8();
     }

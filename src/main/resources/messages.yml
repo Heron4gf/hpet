@@ -49,6 +49,7 @@ messages:
       remove: "&cYour pet now doesn't have particles!"
       invalid: "&cThis particle is not a valid type!"
   error:
+    alreadybought: "&cYou have already bought this pet!";
     invalid: "&cInvalid argument!"
     nosel: "&cPet not selected"
     noperm: "&cYou do not have permission for this command!"

@@ -10,6 +10,7 @@
 package it.heron.hpet;
 
 import it.heron.hpet.animation.AnimationType;
+import it.heron.hpet.combat.Deluxe;
 import it.heron.hpet.database.Database;
 import it.heron.hpet.legacyevents.LegacyEvents;
 import it.heron.hpet.levels.LevelEvents;
@@ -277,24 +278,21 @@ public final class Pet extends JavaPlugin {
         if(hook("PlaceholderAPI")) {
             new Placeholders().register();
         }
+        if(hook("DeluxeCombat") && getConfig().getBoolean("deluxeCombatHook")) {
+            Bukkit.getPluginManager().registerEvents(new Deluxe(), this);
+        }
 
         String version = Bukkit.getServer().getVersion();
-        if(checkVersion("1.17") || checkVersion("1.18") || checkVersion("1.19")) {
-            this.packetUtils = new Utils1_17();
-        }
-        if(checkVersion("1.16")) {
-            this.packetUtils = new Utils1_16();
-        }
-        if(checkVersion("1.15")) {
-            this.packetUtils = new Utils1_15();
-        }
+
+        if(checkVersion("1.17") || checkVersion("1.18") || checkVersion("1.19")) this.packetUtils = new Utils1_17();
+        if(checkVersion("1.16")) this.packetUtils = new Utils1_16();
+        if(checkVersion("1.15")) this.packetUtils = new Utils1_15();
         if(checkVersion("1.12")) {
             this.packetUtils = new Utils1_12();
-            Utils1_12.initDestroyListener();
+            //Utils1_12.initDestroyListener();
         }
         if(checkVersion("1.8")) {
             this.packetUtils = new Utils1_8();
-            Utils1_12.initDestroyListener();
             saveResource("legacy_gui.yml", demo);
         } else {
             saveResource("gui.yml", demo);
@@ -340,28 +338,6 @@ public final class Pet extends JavaPlugin {
             }
         }
 
-        /*if(getConfig().getBoolean("usingVersionParser") && Bukkit.getPluginManager().getPlugin("ViaVersion") != null) {
-            Bukkit.getLogger().info("Using automatic version parser with ViaVersion!");
-            this.versionParser = new ViaVer();
-        }*/
-
-
-        /*File afolder = new File(getDataFolder()+File.separator+"addons");
-        if(!afolder.exists()) afolder.mkdir();
-        int i = 0;
-        for(File addon : afolder.listFiles()) {
-            this.addons = new Plugin[afolder.listFiles().length];
-            try {
-                Plugin plugin = Bukkit.getPluginManager().loadPlugin(addon);
-                Bukkit.getPluginManager().enablePlugin(plugin);
-                this.addons[i] = plugin;
-                Bukkit.getLogger().info("Loaded addon "+addon.getName());
-                i++;
-            } catch(Exception e) {
-                Bukkit.getLogger().info("Could not load addon "+addon.getName());
-            }
-        }*/
-
 
 
         AnimationType.setConst();
@@ -379,6 +355,7 @@ public final class Pet extends JavaPlugin {
         }
 
         parsePetTypes();
+        packetUtils.initDestroyListener();
 
     }
 

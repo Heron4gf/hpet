@@ -16,20 +16,12 @@ import java.util.List;
 public class Utils1_16 extends PacketUtils {
 
     @Override
-    public int slotGlow() {return 0;}
-    @Override
-    public int slotSmall() {return 14;}
-    @Override
     public WrappedDataWatcher getDataWatcher(PacketContainer entityMetadata) {return new WrappedDataWatcher((List)entityMetadata.getWatchableCollectionModifier().read(0));}
     @Override
     public Vector3F getPose() {return new Vector3F(-44.0F, 34.0F, 1.0F);}
-    @Override
-    public int slotHand() {return 18;}
 
     @Override
-    public int slotSmallMob() {
-        return 15;
-    }
+    public int slotHand() {return 18;}
 
 
     @Override
