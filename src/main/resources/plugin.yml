@@ -1,5 +1,5 @@
 name: HPET
-version: 3.7.1-SNAPSHOT
+version: 3.7.1
 main: it.heron.hpet.Pet
 depend: [ProtocolLib]
 api-version: 1.13
