@@ -51,6 +51,8 @@ public class Utils1_8 extends Utils1_12 {
     @Override
     public int spawnPetEntity(boolean glow, boolean small, ItemStack item, Location loc, EntityType entityType, EquipmentSlot slot, String name) {
         Entity e = loc.getWorld().spawnEntity(loc, entityType);
+        int id = e.getEntityId();
+        destroyQueue.add(id);
         if(e instanceof Ageable && small) {
             ((Ageable)e).setBaby();
         }
@@ -66,8 +68,6 @@ public class Utils1_8 extends Utils1_12 {
             a.setItemInHand(item);
         }
 
-        int id = e.getEntityId();
-        destroyQueue.add(id);
         new BukkitRunnable() {
             @Override
             public void run() {

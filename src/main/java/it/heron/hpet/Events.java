@@ -17,7 +17,9 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Trident;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -153,6 +155,12 @@ public class Events implements Listener {
                 }
             });
         }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    void onSpawn(EntitySpawnEvent event) {
+        if(!event.isCancelled()) return;
+        if(Pet.getPackUtils().getDestroyQueue().contains(event.getEntity().getEntityId())) event.setCancelled(false);
     }
 
     @EventHandler

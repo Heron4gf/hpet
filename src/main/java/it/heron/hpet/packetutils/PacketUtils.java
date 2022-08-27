@@ -66,6 +66,7 @@ public abstract class PacketUtils {
     }
 
 
+    @Getter
     protected Set<Integer> destroyQueue = new HashSet<>();
     public void initDestroyListener() {
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(Pet.getInstance(), new PacketType[]{PacketType.Play.Server.ENTITY_DESTROY}) {
@@ -81,6 +82,9 @@ public abstract class PacketUtils {
 
     public int spawnPetEntity(boolean glow, boolean small, ItemStack item, Location loc, EntityType entityType, EquipmentSlot slot, String name) {
         Entity e = loc.getWorld().spawnEntity(loc, entityType);
+        int id = e.getEntityId();
+        destroyQueue.add(id);
+
         e.setGravity(false);
         e.setGlowing(glow);
         if(e instanceof Ageable && small) {
@@ -100,8 +104,6 @@ public abstract class PacketUtils {
             if(slot != null) a.getEquipment().setItem(slot, item);
         }
 
-        int id = e.getEntityId();
-        destroyQueue.add(id);
         new BukkitRunnable() {
             @Override
             public void run() {
