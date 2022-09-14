@@ -74,7 +74,6 @@ public abstract class PacketUtils {
                 int id = ((int[])event.getPacket().getIntegerArrays().read(0))[0];
                 if(destroyQueue.contains(id)) {
                     event.setCancelled(true);
-                    destroyQueue.remove(id);
                 }
             }
         });
@@ -108,6 +107,12 @@ public abstract class PacketUtils {
             @Override
             public void run() {
                 e.remove();
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        destroyQueue.remove(id);
+                    }
+                }.runTaskLater(Pet.getInstance(), 6);
             }
         }.runTaskLater(Pet.getInstance(), 5);
         return id;

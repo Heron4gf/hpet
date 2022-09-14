@@ -1,8 +1,13 @@
 package it.heron.hpet.database;
 
+import it.heron.hpet.ChildPet;
 import it.heron.hpet.Pet;
 import it.heron.hpet.Utils;
+import it.heron.hpet.userpets.UserPet;
 import lombok.Getter;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import java.sql.*;
 import java.util.UUID;
@@ -68,12 +73,6 @@ public abstract class Database {
 
     public String getType(UUID uuid) {
         return getStringData(uuid, "type", table);
-    }
-    public boolean isGlow(UUID uuid) {
-        return getBooleanData(uuid, "glow");
-    }
-    public boolean hasChild(UUID uuid) {
-        return getBooleanData(uuid, "child");
     }
 
     public String getAllPetLevels(UUID uuid) { return getStringData(uuid, "data", "level");}
@@ -151,7 +150,11 @@ public abstract class Database {
         }
         return null;
     }
-    public Boolean getBooleanData(UUID uuid, String pos) {
+
+    public UserPet getOfflinePet(OfflinePlayer p) {
+        return getOfflinePet(p.getUniqueId(), false);
+    }
+    public UserPet getOfflinePet(UUID uuid, boolean setOwner) {
         String string = uuid+"";
         Connection conn = null;
         PreparedStatement ps = null;
@@ -162,8 +165,20 @@ public abstract class Database {
 
             rs = ps.executeQuery();
             while(rs.next()){
-                if(rs.getString("player").equalsIgnoreCase(string.toLowerCase())){ // Tell database to search for the player you sent into the method. e.g getTokens(sam) It will look for sam.
-                    return rs.getBoolean(pos); // Return the players ammount of kills. If you wanted to get total (just a random number for an example for you guys) You would change this to total!
+                if(rs.getString("player").equalsIgnoreCase(string.toLowerCase())){
+                    try {
+                        Player owner = null;
+                        if(setOwner) owner = Bukkit.getPlayer(uuid);
+
+                        Pet.getApi().selectPet(owner, rs.getString("type"));
+                        UserPet upet = Pet.getApi().getUserPet(owner);
+                        upet.setGlow(rs.getBoolean("glow"));
+                        upet.setName(rs.getString("name"));
+                        if(rs.getBoolean("trail")) upet.setChild(new ChildPet());
+                        return upet;
+                    } catch(Exception ignored) {}
+                    return null;
+
                 }
             }
         } catch (SQLException ex) {

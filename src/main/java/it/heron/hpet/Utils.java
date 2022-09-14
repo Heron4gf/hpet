@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.ResultSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -177,7 +178,7 @@ public class Utils {
             public void run() {
                 for(UserPet opet : Pet.getInstance().getPacketUtils().getPets().values()) {
                     if(!opet.getOwner().equals(p)) {
-                        if(opet.getOwner().getLocation().distance(p.getLocation()) < 50) {
+                        if(opet.getOwner().getWorld().getUID().equals(p.getWorld().getUID()) && opet.getOwner().getLocation().distance(p.getLocation()) < 50) {
                             opet.update();
                         }
                     }
@@ -186,47 +187,13 @@ public class Utils {
         }.runTaskLater(Pet.getInstance(), 20);
     }
 
-    public static UserPet getOfflinePet(OfflinePlayer p, boolean setOwner) {
-        Database lite = Pet.getInstance().getDatabase();
-        PetType ptype = Pet.getPetTypeByName(lite.getType(p.getUniqueId()));
-        if(ptype == null) return null;
-        ChildPet child = null;
-        if(lite.hasChild(p.getUniqueId())) child = new ChildPet();
-        UserPet pet;
-        Player owner = null;
-        if(setOwner) owner = p.getPlayer();
-        if(ptype.isMythicMob()) {
-            pet = new MythicUserPet(owner, ptype, null);
-        } else {
-            if (ptype.isMob()) {
-                pet = new MobUserPet(owner, ptype, null);
-            } else {
-                pet = new UserPet(p.getPlayer(), ptype, null);
-            }
-        }
-        pet.setName(lite.getStringData(p.getUniqueId(), "name", lite.getTable()));
-        pet.setGlow(lite.isGlow(p.getUniqueId()));
-        try {
-            if(!Pet.getInstance().isUsingLegacySound()) {
-                pet.setParticle(new PetParticle(Particle.valueOf(lite.getStringData(p.getUniqueId(), "particle", lite.getTable()))));
-            }
-        } catch(Exception ignored) {}
-        return pet;
-    }
-
     public static void runAsync(Runnable runnable) { new Thread(runnable).start(); }
 
     public static void loadDatabasePet(Player p) {
         new BukkitRunnable() {
             @Override
             public void run() {
-                UserPet pet = getOfflinePet(p, true);
-                if(pet == null) return;
-                if(!p.hasPermission("pet.use."+pet.getType().getName())) {
-                    pet = null;
-                    return;
-                }
-                pet.update();
+                Pet.getInstance().getDatabase().getOfflinePet(p.getUniqueId(), true);
             }
         }.runTaskLater(Pet.getInstance(), 20);
     }
@@ -255,7 +222,7 @@ public class Utils {
             particle = pet.getParticle().getParticle().name();
         }
         try {
-            lite.setData(p.getUniqueId(), pet.getType().getName(), pet.getChild() != null, pet.isGlow(), particle, pet.getName()); // last one is color, not used anymore
+            lite.setData(p.getUniqueId(), pet.getType().getName(), pet.getChild() != null, pet.isGlow(), particle, pet.getName());
         } catch(Exception ignored) {}
     }
 

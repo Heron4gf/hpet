@@ -40,7 +40,6 @@ public class Utils1_17 extends Utils1_16 {
                 int id = event.getPacket().getIntLists().readSafely(0).get(0);
                 if(destroyQueue.contains(id)) {
                     event.setCancelled(true);
-                    destroyQueue.remove(id);
                 }
             }
         });

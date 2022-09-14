@@ -189,8 +189,10 @@ public class AbilityExecutor implements Listener {
                     for(int i = 0; i < 7; i++) {
                         ItemStack c = p.getInventory().getItem(i).clone();
                         double d = Math.random()*9;
-                        p.getInventory().setItem(i, p.getInventory().getItem((int)d).clone());
-                        p.getInventory().setItem((int)d, c);
+                        try {
+                            p.getInventory().setItem(i, p.getInventory().getItem((int)d).clone());
+                            p.getInventory().setItem((int)d, c);
+                        } catch(Exception ignored) {}
                     }
                     break;
                 case LIGHNING_ON_PLAYER:

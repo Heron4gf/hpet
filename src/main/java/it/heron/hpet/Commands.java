@@ -7,8 +7,6 @@
  */
 package it.heron.hpet;
 
-import it.heron.hpet.userpets.MobUserPet;
-import it.heron.hpet.userpets.MythicUserPet;
 import it.heron.hpet.pettypes.PetType;
 import it.heron.hpet.userpets.UserPet;
 import net.milkbowl.vault.economy.Economy;
@@ -22,7 +20,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import it.heron.hpet.animation.PetParticle;
-import it.heron.hpet.api.events.PetSelectEvent;
 import it.heron.hpet.groups.Group;
 import it.heron.hpet.messages.Messages;
 
@@ -272,7 +269,7 @@ public class Commands implements CommandExecutor {
     public boolean parseCommand(Player p, String argument, String validArgument, boolean requirePet, String permission) {return parseCommand(p, argument, validArgument, requirePet, permission, true);}
     public boolean parseCommand(Player p, String argument, String validArgument, boolean requirePet, String permission, Object... activate) {
         if(argument != null && !argument.equals(validArgument)) return false;
-        if(p != null && permission != null && !p.hasPermission(permission)) {p.sendMessage(Messages.getMessage("error.noperm")); return false;}
+        if(p != null && permission != null && !p.hasPermission(permission)) {p.sendMessage(Messages.getMessage("error.noperm.command")); return false;}
         if(requirePet && !Pet.getApi().hasUserPet(p)) {p.sendMessage(Messages.getMessage("error.nosel")); return false;}
         for(Object o : activate) {
             if(o == null) {p.sendMessage(Messages.getMessage("error.invalid")); return false;}

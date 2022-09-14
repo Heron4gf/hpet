@@ -1,0 +1,54 @@
+messages:
+  gui:
+    name: "&a&lPETS"
+    select:
+      can: "&a&lCLICK PENTRU A-L SELECTA"
+      cannot: "&c&lPET-UL ESTE BLOCAT!"
+  level: "&eLevel: "
+  levelup:
+    - "&a&m------------------------------------"
+    - ""
+    - "&e&lPET-UL TĂU A AVANSAT UN NIVEL!"
+    - "&7Nivel nou: [level]"
+    - "[leveltype]"
+    - ""
+    - "&a&m------------------------------------"
+  leveltype:
+    JUMP: "SARI"
+    WALK: "MERGI"
+    KILL: "VICTIME"
+    MINE: "SPARGE BLOCK-URI"
+    DEATHS: "DECESE"
+    PLAYER_KILLS: "JUCĂTOR OMORAT"
+    CAKE_EATEN: "FELII DE TORT MÂNCATE"
+  group:
+    open: "&a&lDeschide acest grup!!"
+  pet:
+    rename:
+      help: "&ePentru a-ți redenumi pet-ul folosește /pet rename <new name>"
+    price: "&7Preț: &e&l€"
+    buy:
+      noprice: "&eNu are preț!"
+      notenough: "&cAi nevoie de mai mulți bani!"
+      permissioncommand: "lp user %player% permission set pet.use.%petname%"
+      bought: "&aAi cumpărat un Pet! Folosește /pet pentru a-l selecta!"
+    respawn: "&aPet-ul a reapărut!"
+    remove: "&cPet-ul a fost șters!"
+    spawned: "&aPet-ul a apărut!!"
+    glow:
+      add: "&aPet-ul are acum efectul Glowing!"
+      remove: "&cPet-ul nu mai are efectul Glowing!"
+    trail:
+      add: "&aPet-ul are acum Trail!"
+      remove: "&cPet-ul nu mai are Trail!"
+    particle:
+      add: "&aAi adăugat o particulă pe pet-ul tău!"
+      remove: "&cPet-ul tău nu are particule!"
+      invalid: "&cAceastă particulă nu este validă!"
+  error:
+    alreadybought: "&cAi cumpărat deja acest Pet!"
+    invalid: "&cArgument invalid!"
+    nosel: "&cNu ai selectat nici un Pet!"
+    noperm:
+      command: "&cNu ai permisiune pentru a folosi această comandă!"
+      use: "&cNu poți folosi acest Pet!"

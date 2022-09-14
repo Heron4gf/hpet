@@ -97,7 +97,7 @@ public class Events implements Listener {
         }.runTaskLater(Pet.getInstance(), 5);
         UserPet upet = Pet.getApi().getUserPet(p);
         if(upet == null) return;
-        if(Pet.getInstance().getDisabledWorlds().contains(p.getWorld())) {
+        if(Pet.getInstance().getDisabledWorlds().contains(p.getWorld().getUID())) {
             upet.remove();
             return;
         }
@@ -135,13 +135,14 @@ public class Events implements Listener {
     @EventHandler
     void onJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
+
         new BukkitRunnable() {
             @Override
             public void run() {
                 Utils.loadVisiblePets(p);
                 Utils.loadDatabasePet(p);
             }
-        }.runTaskLater(Pet.getInstance(), 2);
+        }.runTaskLater(Pet.getInstance(), 20);
 
         if(p.hasPermission("pet.admin.notifications")) {
             Utils.runAsync(() -> {
@@ -157,7 +158,7 @@ public class Events implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     void onSpawn(EntitySpawnEvent event) {
         if(!event.isCancelled()) return;
         if(Pet.getPackUtils().getDestroyQueue().contains(event.getEntity().getEntityId())) event.setCancelled(false);

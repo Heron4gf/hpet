@@ -110,10 +110,16 @@ class UserPet {
 
             String name = getName();
             try {
-                if(name == null) name = Utils.color(Pet.getInstance().getNameFormat()).replace("%player%", owner.getName()).replace("%name%", type.getDisplayName()).replace("%level%", getLevel()+"");
+                if(name == null) {
+                    if(Pet.getInstance().getConfig().getBoolean("nametags.defaultnametag")) {
+                        name = Utils.color(Pet.getInstance().getNameFormat()).replace("%player%", owner.getName()).replace("%name%", type.getDisplayName()).replace("%level%", getLevel() + "");
+                        this.nameId = Pet.getPackUtils().spawnPetEntity(false, false, null, getTheoricalLocation(), EntityType.ARMOR_STAND, null, name);
+                    }
+                } else {
+                    this.nameId = Pet.getPackUtils().spawnPetEntity(false, false, null, getTheoricalLocation(), EntityType.ARMOR_STAND, null, name);
+                }
             } catch(Exception ignored) {}
 
-            this.nameId = Pet.getPackUtils().spawnPetEntity(false, false, null, getTheoricalLocation(), EntityType.ARMOR_STAND, null, name);
         }
     }
 

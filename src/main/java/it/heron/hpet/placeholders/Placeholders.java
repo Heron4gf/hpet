@@ -45,7 +45,7 @@ public class Placeholders extends PlaceholderExpansion {
         if(p.isOnline()) {
             pet = Pet.getApi().getUserPet(p.getPlayer());
         } else {
-            pet = Utils.getOfflinePet(p, false);
+            pet = Pet.getInstance().getDatabase().getOfflinePet(p);
         }
         if(identifier.equalsIgnoreCase("isSelected")) return (pet != null)+"";
         if(pet == null) return "";

@@ -18,8 +18,8 @@ enabledPets: # you can disable pets, without deleting their configuration just b
   - creeper
   - group:materials
 
-useLevelEvents: true
-enableGui: true;
+useLevelEvents: false
+enableGui: true
 nametags:
   enable: true
   format: "%player%'s %name% %level%"
@@ -60,3 +60,5 @@ mysql:
   port: 3306
   user: root
   password: password
+
+enable: false

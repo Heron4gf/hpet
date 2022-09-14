@@ -59,22 +59,11 @@ public class API {
         player.sendMessage(Messages.getMessage("pet.spawned").replace("[type]", petType.getName()));
     }
 
-    private Set<LevelData> levelCache = new HashSet<>();
     public int getPetLevel(Player p, String type) {
-        for(LevelData d : levelCache) {
-            if(d.getUuid().equals(p.getUniqueId()) && d.getPetType().equals(type)) return d.getLevel();
-        }
         LevelData d = new LevelData(p.getUniqueId(), type, Pet.getInstance().getDatabase().getPetLevel(p.getUniqueId(), type));
-        levelCache.add(d);
         return d.getLevel();
     }
     public void setPetLevel(Player p, String type, int amount) {
-
-        for(LevelData d : levelCache) {
-            if(d.getUuid().equals(p.getUniqueId()) && d.getPetType().equals(type)) {
-                levelCache.remove(d);
-            }
-        }
         Pet.getInstance().getDatabase().setPetLevel(p.getUniqueId(), type, amount);
     }
 

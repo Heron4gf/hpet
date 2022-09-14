@@ -70,7 +70,7 @@ public final class Pet extends JavaPlugin {
     private int yawCalibration;
 
     @Getter
-    private List<World> disabledWorlds = new ArrayList<>();
+    private List<UUID> disabledWorlds = new ArrayList<>();
 
     @Getter
     private HashMap<String, ItemStack> cachedItems = new HashMap<>();
@@ -238,14 +238,6 @@ public final class Pet extends JavaPlugin {
     @Override
     public void onEnable() {
 
-        File oldFolder = getFolder("Pet");
-        if(oldFolder.exists()) {
-            File folder = getFolder("HPET");
-            if(!folder.exists()) {
-                if(oldFolder.renameTo(folder)) getFolder("Pet").delete();
-            }
-        }
-
         saveResource("config.yml", demo);
         saveResource("pets.yml", demo);
         reloadConfig();
@@ -299,7 +291,11 @@ public final class Pet extends JavaPlugin {
         }
 
         for(String s : getConfig().getStringList("disabledWorlds")) {
-            this.disabledWorlds.add(Bukkit.getWorld(s));
+            try {
+                this.disabledWorlds.add(Bukkit.getWorld(s).getUID());
+            } catch(Exception ignored) {
+                Bukkit.getLogger().warning(s+" world not found! Check disabledWorlds in config.yml!");
+            }
         }
         for(int i = 12; i > 7; i--) {
             if(version.contains("1."+i)) {

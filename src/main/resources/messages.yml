@@ -26,9 +26,6 @@ messages:
   pet:
     rename:
       help: "&eTo rename your pet digit /pet rename <new name>"
-    color:
-      set: "You set your pet Color!"
-      invalid: "&cInvalid color"
     price: "&7Price: &e&l€"
     buy:
       noprice: "&eThis Pet has no price!"
@@ -52,5 +49,6 @@ messages:
     alreadybought: "&cYou have already bought this pet!"
     invalid: "&cInvalid argument!"
     nosel: "&cPet not selected"
-    noperm: "&cYou do not have permission for this command!"
-    noperm.use: "&cYou cannot use this pet!"
+    noperm:
+      command: "&cYou do not have permission for this command!"
+      use: "&cYou cannot use this pet!"
