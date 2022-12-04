@@ -66,6 +66,28 @@ This feature works only in 1.12+
 ## Where I can get support?
 You can join my Discord server, there you can ask questions before buying the plugin and support if you bought it! Here's the invite: https://discord.gg/PX7nGZtshD
 
+##HeadDatabase Pets:
+You can use 100k+ heads directly from HeadDatabase! Use HDB: followed by the head code into the skin value you want, example:
+"HDB:12345"
+
+##Mob Pets:
+You can use Minecraft mobs as Pets!
+Use MOB: followed by the Mob type, example: "MOB:SHEEP"
+Valid Mob types are: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
+
+##CustomModelData Pets:
+You can create stunning models with texture packs using latest minecraft features with CustomModelData!
+Use (material): followed by the CustomModelData code you want to use, example: "DIAMOND_HOE:3"
+You can find a list of valid materials on https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+
+##Placeholders: (requires PlaceholderAPI)
+%pet_name% - get current pet name
+%pet_displayname% - get current pet displayname
+%pet_isSelected% - return whether you have a pet or not, true or false
+%pet_hasTrail% - return whether you have or not a trail, true or false
+%pet_isGlowing% - return whether the pet is glowing or not, true or false
+%pet_level% - return the pet level value
+
 ## Abilities
 Variables: (n) = number, (t) = text
 You can add a chance by putting (percentage)% after :, example: TITLE:hey:10%
