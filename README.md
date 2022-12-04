@@ -11,6 +11,28 @@ You can setup your own pets or edit the existing ones in pets.yml file, everythi
 
 DEFAULT CONFIGS ARE ON DISCORD!
 
+## Commands:
+/pet - main command, opens gui
+/pet select <petname> - select a pet
+/pet remove - remove the current pet
+/pet glow - change glowing status
+/pet trail - change trail status
+/pet update - respawn your pet
+/pet particle <particle> - change your pet particle
+/pet buy <petname> - buy a pet you don't have
+/pet addlevel <petname> <amount> - add pet level
+/pet removelevel <petname> <amount> - decrease pet level
+/pet setlevel <petname> <amount> - set a pet level
+/pet level - shows current pet level
+
+## Permissions:
+pet.command - use /pet
+pet.trail - use /pet trail
+pet.glow - use /pet glow
+pet.see.<petname> - see the specified pet in the gui
+pet.use.<petname> - select the specified pet in the gui
+pet.setlevel - set pet level
+
 ## Addons
 
 ### How to install addons?
