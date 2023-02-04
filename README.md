@@ -11,6 +11,9 @@ You can setup your own pets or edit the existing ones in pets.yml file, everythi
 
 DEFAULT CONFIGS ARE ON DISCORD!
 
+## Animation Types:
+GLIDE, SLOW GLIDE, SIDE, WALK, BOUNCE, NONE
+
 ## Commands:
 /pet - main command, opens gui
 /pet select <petname> - select a pet
