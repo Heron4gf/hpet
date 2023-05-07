@@ -1,0 +1,54 @@
+messages:
+  gui:
+    name: "&a&lMAZLÍČCI"
+    select:
+      can: "&a&lKLIKNI PRO VÝBĚR"
+      cannot: "&c&lMAZLÍČEK UZAMČEN!"
+  level: "&eÚroveň: "
+  levelup:
+    - "&a&m------------------------------------"
+    - ""
+    - "&e&lTvůj mazlíček dostal vyšší úroveň!"
+    - "&7Nová úroveň: [level]"
+    - "[leveltype]"
+    - ""
+    - "&a&m------------------------------------"
+  leveltype:
+    JUMP: "SKOK"
+    WALK: "CHŮZE"
+    KILL: "ZABITÍ"
+    MINE: "ZNIČENÍ BLOKŮ"
+    DEATHS: "ÚMRTÍ"
+    PLAYER_KILLS: "HRÁČ ZABIT"
+    CAKE_EATEN: "KOUSKY DORTU SNĚZENY"
+  group:
+    open: "&a&lOtevři tuto skupinu!"
+  pet:
+    rename:
+      help: "&ePro přejmenování mazlíčka napiš /pet rename <new name>"
+    price: "&7Cena: &e&l€"
+    buy:
+      noprice: "&eTento mazlíček nemá žádnou stanovenou cenu!"
+      notenough: "&cNa koupi tohoto mazlíčka potřebujete více peněz!"
+      permissioncommand: "lp user %player% permission set pet.use.%petname%"
+      bought: "&aKoupil jsi nového mazlíčka! Použij /pet pro výběr!"
+    respawn: "&aMazlíček se respawnoval!"
+    remove: "&cMazlíček odebrán!"
+    spawned: "&aMazlíček vyspawnován!"
+    glow:
+      add: "&aVáš mazlíček nyní září!"
+      remove: "&cVáš mazlíček přestal zářit!"
+    trail:
+      add: "&aVytvořil stezku pro domácí mazlíčky!"
+      remove: "&cStezka pro domácí mazlíčky odebrána!"
+    particle:
+      add: "&aPřidal jsi částice na svého mazlíčka!"
+      remove: "&cVáš mazlíček nyní nemá částice!"
+      invalid: "&cTato částice není platný typ!"
+  error:
+    alreadybought: "&cTohoto mazlíčka jste si již koupili!"
+    invalid: "&cNeplatná hodnota!"
+    nosel: "&cMazlíček není vybrán"
+    noperm:
+      command: "&cPro tento příkaz nemáte oprávnění!"
+      use: "&cTohoto mazlíčka nemůžete použít!"

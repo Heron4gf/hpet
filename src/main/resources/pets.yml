@@ -23,7 +23,7 @@ goat:
   skins:
     - "MOB:GOAT"
   abilities:
-    - "POTION:JUMP:11:2"
+    - "POTION:JUMP:11:2:2l"
 dirt:
   displayname: "&a&lDIRT"
   description:
@@ -61,15 +61,19 @@ creeper:
 burger:
   displayname: "&a&lBURGER"
   description:
+    - "&7A very yummy Pet!"
     - ""
-    - "&7Gnam"
+    - "&aAbilities:"
+    - "&2• &790% chance to restore food level!"
+    - "&2• &aLevel 2 &730% chance add health"
+    - ""
   skins:
     - eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTllZDIyNTU1YzY1NDk0NWI4YmU1YTBjZDQzYzBiYmU0MTUwZDczNWVjNzE5YjQ1YzU4ZjlhZDFmMTllYTVlZiJ9fX0=
   y: 1.2
   distance: 0.9
   abilities:
     - "ADD_FOOD:3:90%:1m3s"
-    - "ADD_HEALTH:22:30%:1m10s"
+    - "ADD_HEALTH:22:30%:1m10s:2l"
 
 ghast:
   price: 100

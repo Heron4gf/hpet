@@ -21,7 +21,6 @@ import it.heron.hpet.vanish.EssentialsVanish;
 import it.heron.hpet.vanish.SuperVanish;
 import it.heron.hpet.vanish.Vanish;
 import it.heron.hpet.versionapi.PlayerVersion;
-import it.heron.hpet.versionapi.ViaVer;
 import lombok.Getter;
 import lombok.Setter;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
@@ -73,7 +72,7 @@ public final class Pet extends JavaPlugin {
     private List<UUID> disabledWorlds = new ArrayList<>();
 
     @Getter
-    private HashMap<String, ItemStack> cachedItems = new HashMap<>();
+    private final HashMap<String, ItemStack> cachedItems = new HashMap<>();
     public void addToCache(String name, ItemStack item) {
         this.cachedItems.put(name, item);
     }
@@ -196,6 +195,9 @@ public final class Pet extends JavaPlugin {
     @Getter
     private PlayerVersion versionParser = new PlayerVersion();
 
+    @Getter
+    private int maxPetLevel;
+
     private boolean hook(String pluginName) {
         if(Bukkit.getPluginManager().getPlugin(pluginName) != null) {
             Bukkit.getLogger().info("Hooked with "+pluginName+" successfully!");
@@ -237,15 +239,14 @@ public final class Pet extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
+        instance = this;
         saveResource("config.yml", demo);
         saveResource("pets.yml", demo);
         reloadConfig();
+        convertConfig();
 
         this.petConfiguration = YamlConfiguration.loadConfiguration(getPetFile());
         //createGUIFile();
-
-        instance = this;
 
         String[] commands = {"pet", "hpet", "pets"};
         for(String s : commands) {
@@ -275,14 +276,11 @@ public final class Pet extends JavaPlugin {
         }
 
         String version = Bukkit.getServer().getVersion();
-
-        if(checkVersion("1.17") || checkVersion("1.18") || checkVersion("1.19")) this.packetUtils = new Utils1_17();
+        if(checkVersion("1.19.3") || checkVersion("1.19.4")) this.packetUtils = new Utils1_19_3();
+        else if(checkVersion("1.17") || checkVersion("1.18") || checkVersion("1.19")) this.packetUtils = new Utils1_17();
         if(checkVersion("1.16")) this.packetUtils = new Utils1_16();
         if(checkVersion("1.15")) this.packetUtils = new Utils1_15();
-        if(checkVersion("1.12")) {
-            this.packetUtils = new Utils1_12();
-            //Utils1_12.initDestroyListener();
-        }
+        if(checkVersion("1.12")) this.packetUtils = new Utils1_12();
         if(checkVersion("1.8")) {
             this.packetUtils = new Utils1_8();
             saveResource("legacy_gui.yml", demo);
@@ -311,14 +309,12 @@ public final class Pet extends JavaPlugin {
         if(hook("HeadDatabase")) {
             this.headAPI = new HeadDatabaseAPI();
         }
-        if(hook("MythicMobs")) {
-            //MythicUserPet.initDestroyListener();
-        }
+        hook("MythicMobs");
         if(hook("Vault")) {
             try {
                 this.economy = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class).getProvider();
             } catch(Exception ignored) {
-                System.out.printf("Pet: You are not using an Economy plugin, Vault is not hooked");
+                Bukkit.getLogger().warning("You are not using an Economy plugin, Vault is not hooked");
             }
         }
 
@@ -338,7 +334,8 @@ public final class Pet extends JavaPlugin {
 
         AnimationType.setConst();
 
-        if(getConfig().getBoolean("useLevelEvents")) {
+
+        if(getConfig().getBoolean("level.enable")) {
             Bukkit.getPluginManager().registerEvents(new LevelEvents(), this);
         }
         for(Player p : Bukkit.getOnlinePlayers()) {
@@ -353,7 +350,33 @@ public final class Pet extends JavaPlugin {
         parsePetTypes();
         packetUtils.initDestroyListener();
 
+        this.maxPetLevel = getConfig().getInt("level.max");
+
     }
+
+    private void convertConfig() {
+        if(getConfig().contains("useLevelEvents")) {
+            if(!getConfig().contains("level.enable")) {
+                getConfig().set("level.enable", getConfig().getBoolean("useLevelEvents"));
+                getConfig().set("useLevelEvents", null);
+                getConfig().set("level.max", 100);
+            }
+        }
+        if(!getConfig().contains("delay.join")) {
+            getConfig().set("delay.join", 20);
+            getConfig().set("delay.teleport", 10);
+            getConfig().set("delay.joinDatabaseUpdate", 10);
+        }
+        try {
+            getConfig().save(new File(getDataFolder()+File.separator+"config.yml"));
+        } catch (IOException exception) {
+            Bukkit.getLogger().warning("There was an error converting Config!");
+            exception.printStackTrace();
+        }
+        reloadConfig();
+        Bukkit.getLogger().warning("Config was converted to a newer version");
+    }
+
 
     private File getFolder(String name) {
         return new File(getDataFolder().getParent()+File.separator+name);
@@ -370,13 +393,5 @@ public final class Pet extends JavaPlugin {
                 Utils.savePet(pet.getOwner(), pet);
                 if(pet != null) pet.despawn();
         }
-        /*if(getConfig().getBoolean("filenameversion")) {
-            this.getFile().renameTo(new File(this.getFile().getPath().replace("Pet.jar", "HPET-"+getDescription().getVersion()+".jar")));
-        }*/
-        /*for(Plugin plugin : addons) {
-            try {
-                plugin.getPluginLoader().disablePlugin(plugin);
-            } catch(Exception ignored) {}
-        }*/
     }
 }

@@ -14,6 +14,7 @@ import it.heron.hpet.ChildPet;
 import it.heron.hpet.Pet;
 import it.heron.hpet.Utils;
 import it.heron.hpet.abilities.AbilityExecutor;
+import it.heron.hpet.animation.AnimationType;
 import it.heron.hpet.operations.Coords;
 import it.heron.hpet.pettypes.PetType;
 import lombok.Data;
@@ -59,7 +60,11 @@ class UserPet {
     }
 
     public void spawn() {
-        updateLevel();
+        try {
+            updateLevel();
+        } catch(Exception ignored) {
+            Bukkit.getLogger().warning("There was an error spawning a Pet");
+        }
     }
 
     public UserPet(Player owner, PetType type, ChildPet child) {
@@ -96,7 +101,6 @@ class UserPet {
         }
             newLoc.setY(newLoc.getY()+this.type.getNamey()-1);
 
-
             if(slot == EquipmentSlot.HAND) Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(this.id, newLoc, true), owner.getWorld());
             else Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(this.id, newLoc.add(0, -type.getNamey(), 0), true), owner.getWorld());
             this.location = newLoc;
@@ -129,7 +133,6 @@ class UserPet {
         String[] skins = type.getSkins();
 
         int skin = (int) ((this.step/7)%(skins.length));
-        if(slot == EquipmentSlot.HAND) skin = 0;
 
         if(this.step % 7 == 0) {
             Pet.getPackUtils().executePacket(Pet.getPackUtils().equipItem(this.id, Utils.fromEquipSlot(slot), Utils.getCustomItem(skins[skin])), owner.getWorld());
@@ -185,12 +188,15 @@ class UserPet {
         int id = this.id;
         this.id = 0;
         Pet.getPackUtils().executePacket(Pet.getPackUtils().destroyEntity(id), world);
+        Utils.makeSureThisArmorstandIsNotRealPlease(id, world);
         if(this.child != null) {
             int childid = this.child.getId();
             this.child.setId(0);
             Pet.getPackUtils().executePacket(Pet.getPackUtils().destroyEntity(childid), world);
+            Utils.makeSureThisArmorstandIsNotRealPlease(childid, world);
         }
         Pet.getPackUtils().executePacket(Pet.getPackUtils().destroyEntity(this.nameId), world);
+        Utils.makeSureThisArmorstandIsNotRealPlease(nameId, world);
         Pet.getPackUtils().removeFromPets(owner.getUniqueId());
     }
 
@@ -228,18 +234,31 @@ class UserPet {
                     }
                 }
                 if(step%20 == 0) {
-                    setInvisible(Pet.getInstance().getVanish().isInvisible(owner) || Pet.getInstance().getVanish().isVanished(owner));
+                    setInvisible(Pet.getInstance().getVanish().isInvisible(owner));
                 }
-                float[] steps = type.getAnimation().getAnimationValues();
+                float[] steps;
+                steps = type.getAnimation().getAnimationValues();
+                if(steps[0] == -123f) {
+
+
+                    Location theorical = getTheoricalLocation();
+                    int y = owner.getWorld().getHighestBlockYAt(theorical.getBlockX(), theorical.getBlockZ())+1;
+                    if(owner.getLocation().getBlockY()+5 < y) y = owner.getLocation().getBlockY();
+                    if(slot == EquipmentSlot.HAND) {
+                        teleport(owner.getLocation().add(0, y-owner.getLocation().getBlockY(), 0));
+                    } else {
+                        teleport(coords.getLoc(owner.getLocation().add(0, y-owner.getLocation().getBlockY(), 0)));
+                    }
+                } else {
+                    if(slot == EquipmentSlot.HAND) {
+                        teleport(owner.getLocation().add(0, steps[(int) (step%steps.length)], 0));
+                    } else {
+                        teleport(coords.getLoc(owner.getLocation().add(0, steps[(int) (step%steps.length)], 0)));
+                    }
+                }
 
                 if(!(owner.getLocation().getX() == location.getX() && owner.getLocation().getZ() == location.getZ())) {
                     if(particle != null && !invisible) particle.tick(getTheoricalLocation());
-                }
-
-                if(slot == EquipmentSlot.HAND) {
-                    teleport(owner.getLocation().add(0, steps[(int) (step%steps.length)], 0));
-                } else {
-                    teleport(coords.getLoc(owner.getLocation().add(0, steps[(int) (step%steps.length)], 0)));
                 }
 
                 step++;

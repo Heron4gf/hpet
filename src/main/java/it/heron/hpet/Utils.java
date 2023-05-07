@@ -1,20 +1,16 @@
 package it.heron.hpet;
 
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
-import it.heron.hpet.userpets.MobUserPet;
-import it.heron.hpet.userpets.MythicUserPet;
-import it.heron.hpet.animation.PetParticle;
 import it.heron.hpet.database.Database;
-import it.heron.hpet.pettypes.PetType;
 import it.heron.hpet.userpets.UserPet;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -27,7 +23,6 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.sql.ResultSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -190,12 +185,31 @@ public class Utils {
     public static void runAsync(Runnable runnable) { new Thread(runnable).start(); }
 
     public static void loadDatabasePet(Player p) {
+        UserPet pet = Pet.getInstance().getDatabase().getOfflinePet(p);
         new BukkitRunnable() {
             @Override
             public void run() {
-                Pet.getInstance().getDatabase().getOfflinePet(p.getUniqueId(), true);
+                try {
+                    pet.spawn();
+                } catch(NullPointerException ignored) {}
             }
-        }.runTaskLater(Pet.getInstance(), 20);
+        }.runTaskLater(Pet.getInstance(), Pet.getInstance().getConfig().getInt("delay.joinDatabaseUpdate"));
+    }
+
+    public static void makeSureThisArmorstandIsNotRealPlease(int id, World world) {
+        for(Entity e : world.getEntities()) {
+            if(e.getEntityId() == id) {
+                e.remove();
+                Pet.getPackUtils().executePacket(Pet.getPackUtils().destroyEntity(id), world);
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        Pet.getPackUtils().executePacket(Pet.getPackUtils().destroyEntity(id), world);
+                    }
+                }.runTaskLater(Pet.getInstance(), 5);
+                return;
+            }
+        }
     }
 
     public static ItemStack getGUIStack(String path) {
@@ -223,7 +237,10 @@ public class Utils {
         }
         try {
             lite.setData(p.getUniqueId(), pet.getType().getName(), pet.getChild() != null, pet.isGlow(), particle, pet.getName());
-        } catch(Exception ignored) {}
+        } catch(Exception exception) {
+            Bukkit.getLogger().warning("There was an error while trying to save a Pet in Database");
+            exception.printStackTrace();
+        }
     }
 
     public static List<String> color(List<String> strings) {
