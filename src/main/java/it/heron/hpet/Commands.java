@@ -33,7 +33,11 @@ public class Commands implements CommandExecutor {
         if(sender instanceof Player) {
             p = (Player)sender;
         } else {
-            p = Bukkit.getPlayer(args[args.length-1]);
+            try {
+                p = Bukkit.getPlayer(args[args.length-1]);
+            } catch(Exception ignored) {
+                p = null;
+            }
         }
         String argument = null;
         if(args.length > 0) {
@@ -42,8 +46,9 @@ public class Commands implements CommandExecutor {
 
         if(args.length >= 2) {
             PetType type = Pet.getPetTypeByName(args[1]);
+            if(type == null && Pet.getApi().hasUserPet(p)) type = Pet.getApi().getUserPet(p).getType();
             if(parseCommand(p, argument, "setlevel", false, "pet.setlevel", type)) {
-                int amount;
+                int amount = 1;
                 try {
                     amount = Integer.parseInt(args[2]);
                 } catch(Exception e) {
@@ -69,7 +74,7 @@ public class Commands implements CommandExecutor {
                 return true;
             }
             if(parseCommand(p, argument, "addlevel", false, "pet.addlevel", type)) {
-                int amount;
+                int amount = 1;
                 try {
                     amount = Integer.parseInt(args[2]);
                 } catch(Exception e) {
@@ -85,7 +90,7 @@ public class Commands implements CommandExecutor {
                 return true;
             }
             if(parseCommand(p, argument, "removelevel", false, "pet.addlevel", type)) {
-                int amount;
+                int amount = 1;
                 try {
                     amount = Integer.parseInt(args[2]);
                 } catch(Exception e) {
@@ -209,7 +214,7 @@ public class Commands implements CommandExecutor {
             }
             if(parseCommand(p, argument, "reload", false, "pet.reload")) {
                 if(Pet.getInstance().isDemo()) {
-                    p.sendMessage("§eReload is not supported in DEMO edition, buy HPET on SpigotMC!");
+                    sender.sendMessage("§eReload is not supported in DEMO edition, buy HPET on SpigotMC!");
                     return false;
                 }
                 
@@ -225,30 +230,30 @@ public class Commands implements CommandExecutor {
                             if(plugin != null) {
                                 Pet.getInstance().getPluginLoader().disablePlugin(plugin);
                                 Pet.getInstance().getPluginLoader().enablePlugin(plugin);
-                                p.sendMessage("§aReloaded addon: "+plugin.getName());
+                                sender.sendMessage("§aReloaded addon: "+plugin.getName());
                             }
                         } catch(Exception ignored) {
-                            p.sendMessage("§cCould not reload addon: "+plugin.getName());
+                            sender.sendMessage("§cCould not reload addon: "+plugin.getName());
                         }
                     }
                 } catch(Exception ignored) {}
-                p.sendMessage("§aConfig reloaded!");
+                sender.sendMessage("§aConfig reloaded!");
                 return true;
             }
         }
 
-        if(!Pet.getInstance().getConfig().getBoolean("enableGui", true)) {
-            p.sendMessage("§cGui is disabled");
-            return false;
-        }
 
         int page = 0;
         if(args.length == 1) {
             try {
                 page = Integer.parseInt(argument);
             } catch(Exception e) {
-                p.sendMessage("§cInserted page number is not valid!");
+                return true;
             }
+        }
+        if(!Pet.getInstance().getConfig().getBoolean("enableGui", true)) {
+            p.sendMessage("§cGui is disabled");
+            return false;
         }
         Inventory inv = GUI.getGUI(p);
 
@@ -266,13 +271,13 @@ public class Commands implements CommandExecutor {
         return true;
     }
 
-    public boolean parseCommand(Player p, String argument, String validArgument, boolean requirePet, String permission) {return parseCommand(p, argument, validArgument, requirePet, permission, true);}
-    public boolean parseCommand(Player p, String argument, String validArgument, boolean requirePet, String permission, Object... activate) {
+    public boolean parseCommand(CommandSender sender, String argument, String validArgument, boolean requirePet, String permission) {return parseCommand(sender, argument, validArgument, requirePet, permission, true);}
+    public boolean parseCommand(CommandSender sender, String argument, String validArgument, boolean requirePet, String permission, Object... activate) {
         if(argument != null && !argument.equals(validArgument)) return false;
-        if(p != null && permission != null && !p.hasPermission(permission)) {p.sendMessage(Messages.getMessage("error.noperm.command")); return false;}
-        if(requirePet && !Pet.getApi().hasUserPet(p)) {p.sendMessage(Messages.getMessage("error.nosel")); return false;}
+        if(sender != null && permission != null && !sender.hasPermission(permission)) {sender.sendMessage(Messages.getMessage("error.noperm.command")); return false;}
+        if(requirePet && !Pet.getApi().hasUserPet((Player)sender)) {sender.sendMessage(Messages.getMessage("error.nosel")); return false;}
         for(Object o : activate) {
-            if(o == null) {p.sendMessage(Messages.getMessage("error.invalid")); return false;}
+            if(o == null) {sender.sendMessage(Messages.getMessage("error.invalid")); return false;}
         }
         return true;
     }

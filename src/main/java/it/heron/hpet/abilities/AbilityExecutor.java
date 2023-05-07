@@ -29,6 +29,7 @@ public class AbilityExecutor implements Listener {
 
     private int chance;
     private int repeat;
+    private int minlevel;
 
     public AbilityExecutor(String value) {
         if(value.contains(":")) {
@@ -59,6 +60,9 @@ public class AbilityExecutor implements Listener {
                         repeat = repeat+Integer.parseInt(s.substring(m+1, s.indexOf("s")));
                     }
                 }
+                if(s.contains("l")) {
+                    minlevel = Integer.parseInt(s.replaceFirst("l", ""));
+                }
             } catch(Exception ignored) {
 
             }
@@ -82,6 +86,7 @@ public class AbilityExecutor implements Listener {
 
     public void execute(UserPet upet) {
         task = Bukkit.getScheduler().scheduleSyncRepeatingTask(Pet.getInstance(), () -> {
+            if(upet.getLevel() < minlevel) return;
             if(Math.random()*100 > chance) return;
             step++;
 
@@ -249,7 +254,7 @@ public class AbilityExecutor implements Listener {
                     p.launchProjectile(EnderPearl.class);
                     break;
                 case ADD_HEALTH:
-                    p.setMaxHealth(getArg(1));
+                    p.setMaxHealth(p.getMaxHealth()+getArg(1));
                     break;
                 case DAMAGE:
                     p.damage(getArg(1));

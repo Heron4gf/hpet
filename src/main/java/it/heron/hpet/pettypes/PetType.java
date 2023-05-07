@@ -106,15 +106,15 @@ class PetType extends HSlot {
         if(data.contains(name+".yaw")) {
             this.yaw = data.getInt(name+".yaw");
         }
-        if(this.skins[0].startsWith("MOB:")) {
+        if(this.skins[0].startsWith("MOB:") && !Pet.getInstance().isUsingLegacySound()) {
             this.entityType = EntityType.valueOf(this.skins[0].replace("MOB:", ""));
             if(this.distance == 1) this.distance = 1.3;
         } else {
-            if(this.skins[0].startsWith("MYTHICMOB:")) {
+            if(this.skins[0].startsWith("MYTHICMOB:") && !Pet.getInstance().isUsingLegacySound()) {
                 this.mythicMob = this.skins[0].replace("MYTHICMOB:", "");
                 if(this.distance == 1) this.distance = 1.3;
             } else {
-                if(this.skins[0].contains(":")) this.customModelData = true;
+                if(this.skins[0].contains(":") && !this.skins[0].contains("HDB:") && !Pet.getInstance().isUsingLegacySound()) this.customModelData = true;
                 Material mat;
                 if(Pet.getInstance().isUsingLegacyId()) {
                     mat = Material.valueOf("SKULL_ITEM");
@@ -123,9 +123,6 @@ class PetType extends HSlot {
                 }
                 if(getIcon(null).getType() == mat) this.yaw = -Pet.getInstance().getYawCalibration();
             }
-        }
-        if(data.contains(name+".onGround")) {
-            this.follow = data.getBoolean(name+".onGround");
         }
         if(data.contains(name+".abilities")) {
             for(String s : data.getStringList(name+".abilities")) {

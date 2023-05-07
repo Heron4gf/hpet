@@ -19,9 +19,7 @@ import org.bukkit.entity.Trident;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntitySpawnEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.InventoryView;
@@ -72,7 +70,7 @@ public class Events implements Listener {
         if(upet != null) upet.despawn();
     }
 
-    /*@EventHandler
+    @EventHandler
     void onTP(PlayerTeleportEvent event) {
         UserPet pet = Pet.getApi().getUserPet(event.getPlayer());
         if(pet == null) return;
@@ -82,8 +80,8 @@ public class Events implements Listener {
             public void run() {
                 pet.update();
             }
-        }.runTaskLater(Pet.getInstance(), 10);
-    }*/
+        }.runTaskLater(Pet.getInstance(), Pet.getInstance().getConfig().getInt("delay.teleport"));
+    }
 
 
     @EventHandler
@@ -107,7 +105,7 @@ public class Events implements Listener {
             public void run() {
                 upet.update();
             }
-        }.runTaskLater(Pet.getInstance(), 5);
+        }.runTaskLater(Pet.getInstance(), Pet.getInstance().getConfig().getInt("delay.teleport"));
     }
 
     @EventHandler
@@ -128,7 +126,7 @@ public class Events implements Listener {
                 public void run() {
                     Pet.getApi().getUserPet(p).update();
                 }
-            }.runTaskLater(Pet.getInstance(),5);
+            }.runTaskLater(Pet.getInstance(),Pet.getInstance().getConfig().getInt("delay.teleport"));
         }
     }
 
@@ -142,7 +140,7 @@ public class Events implements Listener {
                 Utils.loadVisiblePets(p);
                 Utils.loadDatabasePet(p);
             }
-        }.runTaskLater(Pet.getInstance(), 20);
+        }.runTaskLater(Pet.getInstance(), Pet.getInstance().getConfig().getInt("delay.join"));
 
         if(p.hasPermission("pet.admin.notifications")) {
             Utils.runAsync(() -> {
@@ -158,10 +156,16 @@ public class Events implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    void onSpawn(EntitySpawnEvent event) {
-        if(!event.isCancelled()) return;
-        if(Pet.getPackUtils().getDestroyQueue().contains(event.getEntity().getEntityId())) event.setCancelled(false);
+    @EventHandler
+    void onCommandPreProcess(PlayerCommandPreprocessEvent event) {
+        if(event.isCancelled()) return;
+        if(!Pet.getInstance().getConfig().getBoolean("useAliases")) return;
+        for(String s : Pet.getInstance().getConfig().getStringList("alias")) {
+            if(event.getMessage().startsWith("/"+s) || event.getMessage().startsWith(s)) {
+                event.setMessage(event.getMessage().replace(s, "hpet"));
+                return;
+            }
+        }
     }
 
     @EventHandler
@@ -228,7 +232,7 @@ public class Events implements Listener {
                 canSee = Arrays.asList(((Group) Pet.getInstance().getPetTypes().get(page - 10)).getType());
                 page = 0;
             } catch(Exception ignored) {
-                System.out.println("Pet: Error parsing player pet!");
+                Bukkit.getLogger().info("Pet: Error parsing player pet!");
             }
         } else {
             canSee = GUI.canSee(p);
@@ -238,10 +242,10 @@ public class Events implements Listener {
         HSlot hslot = canSee.get(27*page+slot);
         if(hslot instanceof PetType) {
             PetType type = (PetType)hslot;
-            if(p.hasPermission("pet.use."+type.getName()) || type.getPrice() == null) {
+            if(p.hasPermission("pet.use."+type.getName())) {
                 Pet.getApi().selectPet(p, type);
             } else {
-                p.chat("/pet buy "+type.getName());
+                if(type.getPrice() != null) p.chat("/pet buy "+type.getName());
             }
         } else {
             p.chat("/pet "+(slot+10));

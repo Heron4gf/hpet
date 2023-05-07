@@ -152,10 +152,7 @@ public abstract class Database {
     }
 
     public UserPet getOfflinePet(OfflinePlayer p) {
-        return getOfflinePet(p.getUniqueId(), false);
-    }
-    public UserPet getOfflinePet(UUID uuid, boolean setOwner) {
-        String string = uuid+"";
+        String string = p.getUniqueId()+"";
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -168,7 +165,7 @@ public abstract class Database {
                 if(rs.getString("player").equalsIgnoreCase(string.toLowerCase())){
                     try {
                         Player owner = null;
-                        if(setOwner) owner = Bukkit.getPlayer(uuid);
+                        if(p.isOnline()) owner = p.getPlayer();
 
                         Pet.getApi().selectPet(owner, rs.getString("type"));
                         UserPet upet = Pet.getApi().getUserPet(owner);

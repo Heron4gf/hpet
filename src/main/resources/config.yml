@@ -18,7 +18,19 @@ enabledPets: # you can disable pets, without deleting their configuration just b
   - creeper
   - group:materials
 
-useLevelEvents: false
+level:
+  max: 100
+  enable: false
+
+delay:
+  teleport: 10 # ticks waited for pet spawn on join
+  join: 20 # ticks waited for pet spawn on join
+  joinDatabaseUpdate: 20 # ticks waited from Pet spawn to do a Pet update when joining in order to get all the database data
+
+useAliases: false # enable aliases for /hpet command
+alias:
+  - mpets
+
 enableGui: true
 nametags:
   enable: true
@@ -60,5 +72,3 @@ mysql:
   port: 3306
   user: root
   password: password
-
-enable: false

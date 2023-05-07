@@ -29,7 +29,7 @@ public class NewEvents implements Listener {
             event.setCompletions(Arrays.asList("select", "level", "setlevel", "addlevel", "reload", "update", "trail", "remove", "particle", "buy", "rename"));
             return;
         }
-        if(args[1].equalsIgnoreCase("select") || args[1].equalsIgnoreCase("buy")) {
+        if(args[1].equalsIgnoreCase("select") || args[1].equalsIgnoreCase("buy") || args[1].equalsIgnoreCase("addlevel") || args[1].equalsIgnoreCase("setlevel") || args[1].equalsIgnoreCase("removelevel")) {
             List<String> ptypes = new ArrayList<>();
             for(HSlot slot : Pet.getApi().getEnabledPetTypes()) {
                 if(slot instanceof PetType) {

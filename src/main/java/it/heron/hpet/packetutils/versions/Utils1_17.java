@@ -5,12 +5,10 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import it.heron.hpet.Pet;
 
 import java.util.List;
-import java.util.Optional;
 
 public class Utils1_17 extends Utils1_16 {
 

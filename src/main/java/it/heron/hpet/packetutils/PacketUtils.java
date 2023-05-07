@@ -130,7 +130,7 @@ public abstract class PacketUtils {
             if(g.getWorld().equals(world)) {
                 try {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(g, packet);
-                } catch (InvocationTargetException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
