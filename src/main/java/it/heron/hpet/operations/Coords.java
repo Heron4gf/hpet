@@ -21,6 +21,6 @@ class Coords {
     }
 
     public Location getLoc(Location loc) {
-        return new Location(loc.getWorld(), loc.getX()+(cos.getValue()*distance), loc.getY()+this.y, loc.getZ()+(sin.getValue()*distance));
+        return new Location(loc.getWorld(), loc.getX()+(cos.getValue()*distance), loc.getY()+this.y, loc.getZ()+(sin.getValue()*distance),loc.getYaw(),loc.getPitch());
     }
 }

@@ -172,7 +172,7 @@ public abstract class PacketUtils {
     }
 
 
-    public PacketContainer moveEntity(int entityID, short x, short y, short z, float yaw) {
+    /*public PacketContainer moveEntity(int entityID, short x, short y, short z, float yaw) {
         if(y == 0) return null;
         PacketContainer entityMove = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.REL_ENTITY_MOVE_LOOK);
         entityMove.getModifier().writeDefaults();
@@ -185,7 +185,7 @@ public abstract class PacketUtils {
 
 
         return entityMove;
-    }
+    }*/
 
     public abstract boolean isLegacy();
 

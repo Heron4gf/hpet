@@ -71,9 +71,6 @@ class UserPet {
         this.owner = owner;
         this.step = 0l;
         this.type = type;
-        if(Pet.getInstance().getConfig().getBoolean("nametags.defaultnametag")) {
-            this.name = type.getDisplayName();
-        }
         this.child = child;
         if(this.owner == null) return;
         this.location = this.owner.getLocation();
@@ -94,7 +91,7 @@ class UserPet {
 
     public void teleport(Location newLoc) {
 
-            newLoc.setYaw(newLoc.getYaw()+200+Pet.getInstance().getYawCalibration()+this.type.getYaw());
+            newLoc.setYaw((newLoc.getYaw()+200+Pet.getInstance().getYawCalibration()+this.type.getYaw())%360);
 
         if(this.coords.getCos().getN() != (int)newLoc.getYaw()) {
             this.coords = Coords.calculate((int)newLoc.getYaw(), type.getDistance(), type.getNamey());
@@ -116,7 +113,10 @@ class UserPet {
             try {
                 if(name == null) {
                     if(Pet.getInstance().getConfig().getBoolean("nametags.defaultnametag")) {
-                        name = Utils.color(Pet.getInstance().getNameFormat()).replace("%player%", owner.getName()).replace("%name%", type.getDisplayName()).replace("%level%", getLevel() + "");
+
+                        String displayname = type.getDisplayName();
+                        displayname = displayname.replace("%player%", owner.getName()).replace("%level%",getLevel()+"");
+                        name = Utils.color(Pet.getInstance().getNameFormat()).replace("%player%", owner.getName()).replace("%name%", displayname).replace("%level%", getLevel() + "");
                         this.nameId = Pet.getPackUtils().spawnPetEntity(false, false, null, getTheoricalLocation(), EntityType.ARMOR_STAND, null, name);
                     }
                 } else {
@@ -140,6 +140,12 @@ class UserPet {
     }
     public void update() {
         despawn();
+
+        if(Pet.getInstance().getDisabledWorlds().contains(owner.getWorld().getName())) {
+            remove();
+            return;
+        }
+
         Bukkit.getPluginManager().callEvent(new PetUpdateEvent(owner, this));
         if(this.invisible) {
             return;
