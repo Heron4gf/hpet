@@ -41,7 +41,7 @@ public class MythicUserPet extends MobUserPet {
     public void teleport(Location newLoc) {
         if(entity == null) return;
         Location loc = getCoords().getLoc(newLoc);
-        Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(getNameId(), loc, false), getOwner().getWorld());
+        Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(getNameId(), loc, true), getOwner().getWorld());
         entity.teleport(loc.add(0, -getType().getNamey(), 0));
     }
 

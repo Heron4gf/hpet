@@ -22,7 +22,7 @@ public class MobUserPet extends UserPet {
 
     @Override
     public void teleport(Location newLoc) {
-        newLoc.setYaw(newLoc.getYaw()+200+Pet.getInstance().getYawCalibration()+getType().getYaw());
+        newLoc.setYaw((newLoc.getYaw()+160+Pet.getInstance().getYawCalibration()+getType().getYaw())%360);
 
         if(getCoords().getCos().getN() != (int)newLoc.getYaw()) {
             setCoords(Coords.calculate((int)newLoc.getYaw(), getType().getDistance(), getType().getNamey()));

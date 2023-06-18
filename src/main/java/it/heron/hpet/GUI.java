@@ -9,11 +9,13 @@ package it.heron.hpet;
 
 import it.heron.hpet.pettypes.PetType;
 import it.heron.hpet.userpets.UserPet;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import it.heron.hpet.groups.HSlot;
 import it.heron.hpet.messages.Messages;
@@ -46,7 +48,22 @@ public class GUI {
                         return;
                     }
                     if(slot != null) {
-                        inv.setItem(getSlot(i), slot.getIcon(p));
+                        ItemStack itemStack = slot.getIcon(p).clone();
+                        if(itemStack.hasItemMeta()){
+                            ItemMeta itemMeta = itemStack.getItemMeta();
+                            if(itemMeta.hasDisplayName()) {
+                                String displayName = itemMeta.getDisplayName();
+                                displayName = displayName.replace("%player%",p.getDisplayName()).replace("%level%", Pet.getApi().getPetLevel(p,slot.getName())+"");
+
+                                if(Pet.getInstance().isPAPIhooked()) {
+                                    displayName = PlaceholderAPI.setPlaceholders(p,displayName);
+                                }
+
+                                itemMeta.setDisplayName(displayName);
+                                itemStack.setItemMeta(itemMeta);
+                            }
+                        }
+                        inv.setItem(getSlot(i), itemStack);
                     }
                 }
             }
@@ -106,7 +123,9 @@ public class GUI {
         inv.setItem(26, border);
         inv.setItem(27, border);
         inv.setItem(35, border);
-        if(enableItems == null) enableItems = YamlConfiguration.loadConfiguration(new File(Pet.getInstance().getDataFolder()+File.separator+"gui.yml")).getBoolean("gui.enablePetItems", true);
+        if(enableItems == null) {
+            enableItems = YamlConfiguration.loadConfiguration(new File(Pet.getInstance().getDataFolder()+File.separator+"gui.yml")).getBoolean("gui.enablePetItems", true);
+        }
         if(Pet.getInstance().getPacketUtils().getPets().containsKey(u) && enableItems) {
             inv.setItem(51, Utils.getGUIStack("remove"));
             inv.setItem(49, Utils.getGUIStack("rename"));
@@ -147,8 +166,14 @@ public class GUI {
 
     public static List<String> petLore(List<String> list, PetType petType, Player p) {
         ArrayList<String> lore = new ArrayList<>();
-        for(String s : list) {
-            lore.add(s);
+        if(Pet.getInstance().isPAPIhooked()) {
+            for(String s : list) {
+                lore.add(PlaceholderAPI.setPlaceholders(p,s));
+            }
+        } else {
+            for(String s : list) {
+                lore.add(s);
+            }
         }
         lore.add("");
         if(p == null) return lore;

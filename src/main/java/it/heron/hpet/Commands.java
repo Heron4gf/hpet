@@ -106,7 +106,7 @@ public class Commands implements CommandExecutor {
                 return true;
             }
             if(parseCommand(p, argument, "select", false, null, type)) {
-                if(!sender.hasPermission("pet.use."+type.getName()) || Pet.getInstance().getDisabledWorlds().contains(p.getWorld())) {
+                if(!sender.hasPermission("pet.use."+type.getName())) {
                     p.sendMessage(Messages.getMessage("error.noperm.use"));
                     return false;
                 }

@@ -1,4 +1,5 @@
 enabledPets: # you can disable pets, without deleting their configuration just by removing from here!
+  #- * # putting * instead of pet names will automaticcaly enable all pets in pets.yml. Notice that it will not put groups if you don't add them manually
   - sheep
   - goat
   - ghast
@@ -34,7 +35,7 @@ alias:
 enableGui: true
 nametags:
   enable: true
-  format: "%player%'s %name% %level%"
+  format: "%player%'s %name% %level%" # possible placeholders: %player% (owner of the pet), %name% (pet's name), %level% (pet level)
   defaultnametag: true # if false pet will not have nametag until you rename it
   maxlength: 20 # anything longer than this will get cut
   invalidnames: # you can put swear words here, so that players cannot use them in pet names

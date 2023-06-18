@@ -69,7 +69,7 @@ public final class Pet extends JavaPlugin {
     private int yawCalibration;
 
     @Getter
-    private List<UUID> disabledWorlds = new ArrayList<>();
+    private List<String> disabledWorlds = new ArrayList<>();
 
     @Getter
     private final HashMap<String, ItemStack> cachedItems = new HashMap<>();
@@ -231,6 +231,10 @@ public final class Pet extends JavaPlugin {
     @Getter
     private final boolean demo = false;
 
+
+    @Getter
+    private boolean PAPIhooked = false;
+
     @Override
     public void saveResource(String resource, boolean overwrite) {
         if(new File(getDataFolder()+File.separator+resource).exists()) return;
@@ -270,13 +274,14 @@ public final class Pet extends JavaPlugin {
 
         if(hook("PlaceholderAPI")) {
             new Placeholders().register();
+            PAPIhooked = true;
         }
         if(hook("DeluxeCombat") && getConfig().getBoolean("deluxeCombatHook")) {
             Bukkit.getPluginManager().registerEvents(new Deluxe(), this);
         }
 
         String version = Bukkit.getServer().getVersion();
-        if(checkVersion("1.19.3") || checkVersion("1.19.4")) this.packetUtils = new Utils1_19_3();
+        if(checkVersion("1.19.3") || checkVersion("1.19.4") || checkVersion("1.20") || checkVersion("1.21")) this.packetUtils = new Utils1_19_3();
         else if(checkVersion("1.17") || checkVersion("1.18") || checkVersion("1.19")) this.packetUtils = new Utils1_17();
         if(checkVersion("1.16")) this.packetUtils = new Utils1_16();
         if(checkVersion("1.15")) this.packetUtils = new Utils1_15();
@@ -290,7 +295,7 @@ public final class Pet extends JavaPlugin {
 
         for(String s : getConfig().getStringList("disabledWorlds")) {
             try {
-                this.disabledWorlds.add(Bukkit.getWorld(s).getUID());
+                this.disabledWorlds.add(s);
             } catch(Exception ignored) {
                 Bukkit.getLogger().warning(s+" world not found! Check disabledWorlds in config.yml!");
             }
