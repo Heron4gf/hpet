@@ -76,7 +76,7 @@ gui:
         - ""
         - "&7Make your pet glow!"
     remove:
-      material: GUNPOWDER
+      material: GLOWSTONE
       name: "&c&lREMOVE GLOWING EFFECT"
       desc:
         - ""

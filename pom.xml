@@ -70,14 +70,18 @@
             <id>minebench-repo</id>
             <url>https://repo.minebench.de/</url>
         </repository>
+        <!-- ProtocolLib -->
         <repository>
             <id>dmulloy2-repo</id>
             <url>https://repo.dmulloy2.net/repository/public/</url>
         </repository>
+        <!-- ProtocolLib -->
+        <!-- PAPI -->
         <repository>
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
+        <!-- PAPI -->
         <repository>
             <id>HeadDatabase-API</id>
             <url>https://mvn.intellectualsites.com/content/repositories/thirdparty/</url>
@@ -99,10 +103,10 @@
             <id>viaversion-repo</id>
             <url>https://repo.viaversion.com</url>
         </repository>
-        <repository>
+        <!--<repository>
             <id>everything</id>
             <url>http://repo.citizensnpcs.co/</url>
-        </repository>
+        </repository>-->
 
     </repositories>
 
@@ -130,11 +134,14 @@
             <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <!-- ProtocolLib -->
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
-            <version>4.7.0</version>
+            <version>5.0.0</version>
+            <scope>provided</scope>
         </dependency>
+        <!-- ProtocolLib -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -181,12 +188,12 @@
             <version>1.7</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>net.citizensnpcs</groupId>
             <artifactId>citizensapi</artifactId>
             <version>2.0.24-SNAPSHOT</version>
             <type>jar</type>
             <scope>compile</scope>
-        </dependency>
+        </dependency>-->
     </dependencies>
 </project>

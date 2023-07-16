@@ -1,5 +1,5 @@
 name: HPET
-version: 4.2
+version: 4.3.3
 main: it.heron.hpet.Pet
 depend: [ProtocolLib]
 api-version: 1.13
@@ -7,7 +7,6 @@ softdepend: [PlaceholderAPI, HeadDatabase, Vault, SuperVanish, PremiumVanish, CM
 commands:
   pet:
   hpet:
-  pets:
 permissions:
   pet.version:
     default: true

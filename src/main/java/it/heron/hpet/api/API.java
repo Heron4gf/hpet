@@ -73,6 +73,7 @@ public class API {
         int l = upet.getLevel()+1;
         setPetLevel(p, upet.getType().getName(), l);
         getUserPet(p).updateLevel();
+        if(l <= 1) return;
         p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
         for(String s : Messages.getList("levelup")) {
             p.sendMessage(s.replace("[level]", l+"").replace("[leveltype]", Messages.getMessage("leveltype."+upet.getType().getLtype().name())+" §7"+ LevelEvents.currentStat(upet)+"/"+LevelEvents.getMaxStat(upet)));

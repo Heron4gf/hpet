@@ -208,6 +208,9 @@ class UserPet {
 
     public void remove() {
         Bukkit.getPluginManager().callEvent(new PetRemoveEvent(owner, this));
+        for(AbilityExecutor a : abilities) {
+            a.disable(this);
+        }
         Bukkit.getScheduler().cancelTask(this.taskID);
 
         despawn();

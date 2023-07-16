@@ -252,7 +252,7 @@ public final class Pet extends JavaPlugin {
         this.petConfiguration = YamlConfiguration.loadConfiguration(getPetFile());
         //createGUIFile();
 
-        String[] commands = {"pet", "hpet", "pets"};
+        String[] commands = {"pet", "hpet"};
         for(String s : commands) {
             getCommand(s).setExecutor(new Commands());
             Bukkit.getLogger().info("Registered /"+s+" command!");

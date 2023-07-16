@@ -30,7 +30,7 @@ public class MobUserPet extends UserPet {
         newLoc.setY(newLoc.getY()+getType().getNamey()-1);
         newLoc = getCoords().getLoc(newLoc);
 
-
+        newLoc.setYaw((newLoc.getYaw()-60)%360);
         Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(getId(), newLoc.add(0, -getType().getNamey(), 0), true), getOwner().getWorld());
         setLocation(newLoc);
     }
