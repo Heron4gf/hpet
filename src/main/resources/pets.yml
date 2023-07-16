@@ -2,8 +2,14 @@
 #Variables: (n) = number, (t) = text
 #You can add a chance by putting (percentage)% after :, example: TITLE:hey:10%
 #You can specify duration by putting (minutes)m(seconds)s after :, example TITLE:hey:10m3s, or TITLE:hey:10s, by default it is 10seconds
+#You can specify the required level by putting (level)l after :, example TITLE:hey:2l, by default this is 0
+#You can specify an event on which the ability checks by putting (event)e after :, example TITLE:hey:SHIFTe, by default it is TIME
 #
-#ADD_HEALTH:(n), TITLE:(t), CONSOLE_LOG:(t), FAKE_LOCATION, ADD_FOOD:(n), SHOOT_ENDERPEARL, SUBTITLE:(t), SHOOT_ARROW, SHOOT_SNOWBALL, DAMAGE:(n), HEAL:(n), POISON_NEAR, PLAYER_PARTICLE:(particle):(count), LAUNCH, CURE:(n), NO_KNOCKBACK, DISARM_OPPONENT, PET_PARTICLE:(particle):(count), DISARM_SELF, INCREASE_DAMAGE, EXP:(n), EXPLOSION:(power):(destroyBlocks):(incendiary), EXTINGUISH, FIREBALL, SET_FIRE:(n), TEMP_FLY:(n), FLY, GOD, TEMP_GOD:(n), FREEZE:(n), INVISIBLE, LIGHNING_ON_PLAYER, LIGHTNING_LOOKING, MESSAGE:(t), PLAYER_COMMAND:(t), CONSOLE_COMMAND:(t), POTION:(potionEffectType):(duration):(amplify), PLAY_SOUND:(sound):(pitch):(volume), PLAY_SOUND_EVERYONE:(sound):(pitch):(volume), PUMPKIN, VELOCITY:(power), SWAP_ITEMS, INVISIBLE_ARMOR, FAKE_ARMOR:(EquipmentSlot):(Material), INVISIBLE_HAND, FAKE_HAND:(Material), NO_FALL_DAMAGE
+#Valid event types are:
+#WALK, SHIFT, BLOCK_BREAK, BLOCK_PLACE, TIME
+#è
+#Valid abilities
+#ADD_HEALTH:(n), GLOW, TITLE:(t), CONSOLE_LOG:(t), FAKE_LOCATION, ADD_FOOD:(n), SHOOT_ENDERPEARL, SUBTITLE:(t), SHOOT_ARROW, SHOOT_SNOWBALL, DAMAGE:(n), HEAL:(n), POISON_NEAR, PLAYER_PARTICLE:(particle):(count), LAUNCH, CURE:(n), NO_KNOCKBACK, DISARM_OPPONENT, PET_PARTICLE:(particle):(count), DISARM_SELF, INCREASE_DAMAGE, EXP:(n), EXPLOSION:(power):(destroyBlocks):(incendiary), EXTINGUISH, FIREBALL, SET_FIRE:(n), TEMP_FLY:(n), FLY, GOD, TEMP_GOD:(n), FREEZE:(n), INVISIBLE, LIGHNING_ON_PLAYER, LIGHTNING_LOOKING, MESSAGE:(t), PLAYER_COMMAND:(t), CONSOLE_COMMAND:(t), POTION:(potionEffectType):(duration):(amplify), PLAY_SOUND:(sound):(pitch):(volume), PLAY_SOUND_EVERYONE:(sound):(pitch):(volume), PUMPKIN, VELOCITY:(power), SWAP_ITEMS, INVISIBLE_ARMOR, FAKE_ARMOR:(EquipmentSlot):(Material), INVISIBLE_HAND, FAKE_HAND:(Material), NO_FALL_DAMAGE
 
 
 sheep:
@@ -14,7 +20,7 @@ sheep:
   skins:
     - "MOB:SHEEP"
   abilities:
-    - "PLAYER_PARTICLE:CRIT:3"
+    - "PLAYER_PARTICLE:CRIT:3:WALKe"
 goat:
   displayname: "&f&lGOAT"
   description:
@@ -23,7 +29,7 @@ goat:
   skins:
     - "MOB:GOAT"
   abilities:
-    - "POTION:JUMP:11:2:2l"
+    - "POTION:JUMP:11:2:2l:SHIFTe"
 dirt:
   displayname: "&a&lDIRT"
   description:

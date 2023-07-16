@@ -41,7 +41,7 @@ public class LevelEvents implements Listener {
 
     public static int getMaxStat(UserPet upet) {
         if(upet.getType().getLtype() == LType.NONE) return Integer.MAX_VALUE;
-        double d = upet.getType().getLtype().getValue()*1.2*upet.getLevel();
+        double d = upet.getType().getLtype().getValue()*upet.getLevel();
         return (int)d;
     }
     public static int currentStat(UserPet upet) {
