@@ -44,7 +44,7 @@ public class Events implements Listener {
             return;
         }
         Player p = (Player) event.getEntity().getShooter();
-        UserPet pet = Pet.getInstance().getPacketUtils().getPets().get(p.getUniqueId());
+        UserPet pet = Pet.getApi().getUserPet(p);
         if(pet == null) {
             return;
         }
@@ -72,13 +72,16 @@ public class Events implements Listener {
 
     @EventHandler
     void onTP(PlayerTeleportEvent event) {
-        UserPet pet = Pet.getApi().getUserPet(event.getPlayer());
-        if(pet == null) return;
-        pet.despawn(event.getFrom().getWorld());
+        Player player = event.getPlayer();
         new BukkitRunnable() {
             @Override
             public void run() {
-                pet.update();
+                List<UserPet> userPets = Pet.getApi().getUserPets(player);
+                if(userPets != null && !userPets.isEmpty()) {
+                    for(UserPet userPet : userPets) {
+                        userPet.update();
+                    }
+                }
             }
         }.runTaskLater(Pet.getInstance(), Pet.getInstance().getConfig().getInt("delay.teleport"));
     }
@@ -86,35 +89,46 @@ public class Events implements Listener {
 
     @EventHandler
     void onWorldChange(PlayerChangedWorldEvent event) {
-        Player p = event.getPlayer();
+        Player player = event.getPlayer();
         new BukkitRunnable() {
             @Override
             public void run() {
-                Utils.loadVisiblePets(p);
+                Utils.loadVisiblePets(player);
             }
         }.runTaskLater(Pet.getInstance(), 5);
-        UserPet upet = Pet.getApi().getUserPet(p);
-        if(upet == null) return;
-        if(Pet.getInstance().getDisabledWorlds().contains(p.getWorld().getUID())) {
-            upet.remove();
-            return;
+        List<UserPet> userPets = Pet.getApi().getUserPets(player);
+        if(userPets != null && !userPets.isEmpty()) {
+            for(UserPet userPet : userPets) {
+                userPet.despawn(event.getFrom());
+            }
         }
-        upet.despawn(event.getFrom());
         new BukkitRunnable() {
             @Override
             public void run() {
-                upet.update();
+                List<UserPet> userPets = Pet.getApi().getUserPets(player);
+                if(userPets != null && !userPets.isEmpty()) {
+                    for(UserPet userPet : userPets) {
+                        userPet.update();
+                    }
+                }
             }
         }.runTaskLater(Pet.getInstance(), Pet.getInstance().getConfig().getInt("delay.teleport"));
     }
 
     @EventHandler
     void onLeave(PlayerQuitEvent event) {
-        Player p = event.getPlayer();
-        UserPet pet = Pet.getApi().getUserPet(p);
-        Pet.getInstance().removeFromOpenedPage(p);
-        Utils.savePet(p, pet);
-        if(pet != null) pet.remove();
+        Player player = event.getPlayer();
+        Pet.getInstance().removeFromOpenedPage(player);
+        List<UserPet> userPets = Pet.getApi().getUserPets(player);
+        if(userPets != null && !userPets.isEmpty()) {
+            try {
+                Utils.savePets(player,userPets);
+            } finally {
+                for(UserPet userPet : userPets) {
+                    userPet.remove();
+                }
+            }
+        }
     }
 
     @EventHandler
@@ -124,7 +138,12 @@ public class Events implements Listener {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    Pet.getApi().getUserPet(p).update();
+                    List<UserPet> userPets = Pet.getApi().getUserPets(p);
+                    if(userPets != null && !userPets.isEmpty()) {
+                        for(UserPet userPet : userPets) {
+                            userPet.update();
+                        }
+                    }
                 }
             }.runTaskLater(Pet.getInstance(),Pet.getInstance().getConfig().getInt("delay.teleport"));
         }

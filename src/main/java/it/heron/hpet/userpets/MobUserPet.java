@@ -3,13 +3,14 @@ package it.heron.hpet.userpets;
 import it.heron.hpet.*;
 import it.heron.hpet.operations.Coords;
 import it.heron.hpet.pettypes.PetType;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class MobUserPet extends UserPet {
 
     public MobUserPet(Player owner, PetType type, ChildPet child) {
-        super(owner, type, child);
+        super(owner.getUniqueId(), type, child);
     }
 
     @Override
@@ -31,7 +32,7 @@ public class MobUserPet extends UserPet {
         newLoc = getCoords().getLoc(newLoc);
 
         newLoc.setYaw((newLoc.getYaw()-60)%360);
-        Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(getId(), newLoc.add(0, -getType().getNamey(), 0), true), getOwner().getWorld());
+        Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(getId(), newLoc.add(0, -getType().getNamey(), 0), true), Bukkit.getPlayer(getOwner()).getWorld());
         setLocation(newLoc);
     }
 

@@ -24,6 +24,7 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -103,6 +104,7 @@ public class AbilityExecutor implements Listener {
     void onShift(PlayerToggleSneakEvent event) {
         if(abilityEvent != AbilityEvent.SHIFT) return;
         if(time > System.currentTimeMillis()) return;
+        if(!isPlayer(event.getPlayer())) return;
         check();
         time = System.currentTimeMillis()+(repeat*1000);
     }
@@ -111,6 +113,7 @@ public class AbilityExecutor implements Listener {
     void onWalk(PlayerMoveEvent event) {
         if(abilityEvent != AbilityEvent.WALK) return;
         if(time > System.currentTimeMillis()) return;
+        if(!isPlayer(event.getPlayer())) return;
         check();
         time = System.currentTimeMillis()+(repeat*1000);
     }
@@ -119,6 +122,7 @@ public class AbilityExecutor implements Listener {
     void onBlockPlace(BlockPlaceEvent event) {
         if(abilityEvent != AbilityEvent.BLOCK_PLACE) return;
         if(time > System.currentTimeMillis()) return;
+        if(!isPlayer(event.getPlayer())) return;
         check();
         time = System.currentTimeMillis()+(repeat*1000);
     }
@@ -127,8 +131,13 @@ public class AbilityExecutor implements Listener {
     void onBlockBreak(BlockBreakEvent event) {
         if(abilityEvent != AbilityEvent.BLOCK_BREAK) return;
         if(time > System.currentTimeMillis()) return;
+        if(!isPlayer(event.getPlayer())) return;
         check();
         time = System.currentTimeMillis()+(repeat*1000);
+    }
+
+    private boolean isPlayer(Player player) {
+        return userPet.getOwner().equals(player.getUniqueId());
     }
 
     private UserPet userPet = null;
@@ -145,7 +154,7 @@ public class AbilityExecutor implements Listener {
                 return;
             }
         }
-        p = upet.getOwner();
+        p = Bukkit.getPlayer(upet.getOwner());
 
         //Player p = upet.getOwner();
         switch(a) {
@@ -227,7 +236,13 @@ public class AbilityExecutor implements Listener {
                 setFakeSlot(p, EquipmentSlot.HAND, null);
                 break;
             case FAKE_ARMOR:
-                setFakeSlot(p, EquipmentSlot.valueOf(args[1]), new ItemStack(Material.valueOf(args[2])));
+                ItemStack stack = new ItemStack(Material.valueOf(args[2]));
+                ItemMeta meta = stack.getItemMeta();
+                try {
+                    meta.setCustomModelData(Integer.parseInt(args[3]));
+                } catch(Exception ignored) {}
+                stack.setItemMeta(meta);
+                setFakeSlot(p, EquipmentSlot.valueOf(args[1]), stack);
                 break;
             case ADD_FOOD:
                 p.setFoodLevel(p.getFoodLevel()+getArg(1));
@@ -320,7 +335,11 @@ public class AbilityExecutor implements Listener {
                 setFakeSlot(p, EquipmentSlot.HAND, new ItemStack(Material.valueOf(args[1])));
                 break;
             case EXPLOSION:
-                p.getWorld().createExplosion(p.getLocation(), Float.parseFloat(args[1]), Boolean.parseBoolean(args[2]), Boolean.parseBoolean(args[2]));
+                try {
+                    p.getWorld().createExplosion(p.getLocation(), Float.parseFloat(args[1]), Boolean.parseBoolean(args[2]), Boolean.parseBoolean(args[2]));
+                } catch (Exception e) {
+                    p.launchProjectile(Fireball.class);
+                }
                 break;
         }
     }
@@ -351,7 +370,7 @@ public class AbilityExecutor implements Listener {
     }
 
     public void desecute(UserPet upet) {
-        Player p = upet.getOwner();
+        Player p = Bukkit.getPlayer(upet.getOwner());
         switch(a) {
             case FAKE_LOCATION:
                 for(Player g : p.getWorld().getPlayers()) {
@@ -420,7 +439,7 @@ public class AbilityExecutor implements Listener {
     }
 
     private String parsePs(String s, UserPet upet) {
-        return s.replace("%player%", upet.getOwner().getName()).replace("%pet%", upet.getType().getName());
+        return s.replace("%player%", Bukkit.getPlayer(upet.getOwner()).getName()).replace("%pet%", upet.getType().getName());
     }
 
     private void setFakeSlot(Player p, EquipmentSlot slot, ItemStack stack) {

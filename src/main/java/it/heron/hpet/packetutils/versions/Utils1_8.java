@@ -6,7 +6,9 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.Vector3F;
+import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.google.common.collect.Lists;
 import it.heron.hpet.ChildPet;
 import it.heron.hpet.Pet;
 import it.heron.hpet.userpets.UserPet;
@@ -19,15 +21,14 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.EulerAngle;
 
 import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Utils1_8 extends Utils1_12 {
-
-
-    @Override
-    public Vector3F getPose() { return new Vector3F(0, 0, 0);}
 
 
     @Override
@@ -49,6 +50,11 @@ public class Utils1_8 extends Utils1_12 {
     }
 
     @Override
+    public PacketContainer standardMetaData(PacketContainer entityMetadata, PacketUtils protocol) {
+        return null;
+    }
+
+    @Override
     public int spawnPetEntity(boolean glow, boolean small, ItemStack item, Location loc, EntityType entityType, EquipmentSlot slot, String name) {
         Entity e = loc.getWorld().spawnEntity(loc, entityType);
         int id = e.getEntityId();
@@ -64,7 +70,8 @@ public class Utils1_8 extends Utils1_12 {
             a.setSmall(small);
             a.setArms(true);
             a.setVisible(false);
-            executePacket(standardMetaData(e.getEntityId(), null), e.getWorld());
+            a.setMarker(true);
+            a.setRightArmPose(new EulerAngle(0,1,0));
             a.setItemInHand(item);
         }
 
@@ -75,18 +82,6 @@ public class Utils1_8 extends Utils1_12 {
             }
         }.runTaskLater(Pet.getInstance(), 5);
         return id;
-    }
-
-    @Override
-    public PacketContainer standardMetaData(PacketContainer entityMetadata, PacketUtils protocol) {
-        return null;
-        /*WrappedDataWatcher dataWatcher = getDataWatcher(entityMetadata);
-
-        dataWatcher.setObject(14, protocol.getPose().getX());
-        dataWatcher.setObject(14, protocol.getPose().getY());
-        dataWatcher.setObject(14, protocol.getPose().getZ());
-        entityMetadata.getWatchableCollectionModifier().write(0, dataWatcher.getWatchableObjects());
-        return entityMetadata;*/
     }
 
     private int getFixedPoint(double d) {

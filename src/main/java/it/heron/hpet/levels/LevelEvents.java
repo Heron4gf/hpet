@@ -9,6 +9,7 @@ package it.heron.hpet.levels;
 
 import it.heron.hpet.Pet;
 import it.heron.hpet.userpets.UserPet;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.entity.EntityType;
@@ -36,7 +37,7 @@ public class LevelEvents implements Listener {
     private void check(UserPet upet) {
         if(upet == null) return;
         if(currentStat(upet) < getMaxStat(upet)) return;
-        Pet.getApi().incrementLevel(upet.getOwner());
+        Pet.getApi().incrementLevel(Bukkit.getPlayer(upet.getOwner()));
     }
 
     public static int getMaxStat(UserPet upet) {
@@ -45,7 +46,7 @@ public class LevelEvents implements Listener {
         return (int)d;
     }
     public static int currentStat(UserPet upet) {
-        Player p = upet.getOwner();
+        Player p = Bukkit.getPlayer(upet.getOwner());
         switch(upet.getType().getLtype()) {
             case JUMP:
                 return p.getStatistic(Statistic.JUMP);

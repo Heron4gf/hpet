@@ -126,7 +126,7 @@ public class GUI {
         if(enableItems == null) {
             enableItems = YamlConfiguration.loadConfiguration(new File(Pet.getInstance().getDataFolder()+File.separator+"gui.yml")).getBoolean("gui.enablePetItems", true);
         }
-        if(Pet.getInstance().getPacketUtils().getPets().containsKey(u) && enableItems) {
+        if(!Pet.getInstance().getPacketUtils().playerPets(u).isEmpty() && enableItems) {
             inv.setItem(51, Utils.getGUIStack("remove"));
             inv.setItem(49, Utils.getGUIStack("rename"));
             inv.setItem(47, Utils.getGUIStack("respawn"));
