@@ -30,8 +30,10 @@ class PetType extends HSlot {
     private List<String> description = null;
     //private Particle recommended;
     private LType ltype = LType.NONE;
+    private String group = "default";
 
     private double distance = 1;
+    private boolean visible = true;
     private double namey = 1;
 
     private Double price = null;
@@ -42,11 +44,16 @@ class PetType extends HSlot {
 
     private List<AbilityExecutor> abilities = new ArrayList<>();
 
+    public PetType() {
+    }
+
     public boolean isMythicMob() {return mythicMob != null;}
     public boolean isMob() {return entityType != EntityType.ARMOR_STAND;}
 
     public PetType(String name) {
         YamlConfiguration data = Pet.getInstance().getPetConfiguration();
+
+        if(!data.contains(name)) throw new RuntimeException();
 
         if(data.contains(name+".inherit")) {
             String o = data.getString(name+".inherit");
@@ -66,7 +73,7 @@ class PetType extends HSlot {
                 this.namey = type.namey;
 
             } catch(Exception ignored) {
-                System.out.println("Couldn't inherit from "+o);
+                Bukkit.getLogger().warning(name+" couldn't inherit from "+o);
             }
         }
 
@@ -81,6 +88,9 @@ class PetType extends HSlot {
         }
         if(data.contains(name+".price")) {
             this.price = data.getDouble(name+".price");
+        }
+        if(data.contains(name+".visible")) {
+            this.visible = data.getBoolean(name+".visible");
         }
         if(data.contains(name+".level.type")) {
             try {
@@ -97,6 +107,9 @@ class PetType extends HSlot {
             }
         }
 
+        if(data.contains(name+".group")) {
+            this.group = data.getString(name+".group");
+        }
         if(data.contains(name+".distance")) {
             this.distance = data.getDouble(name+".distance");
         }

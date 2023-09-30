@@ -177,7 +177,9 @@ public class Commands implements CommandExecutor {
                 return true;
             }
             if(parseCommand(p, argument, "remove", true, "pet.remove")) {
-                Pet.getApi().getUserPet(p).remove();
+                for(UserPet userPet : Pet.getApi().getUserPets(p)) {
+                    userPet.remove();
+                }
                 p.sendMessage(Messages.getMessage("pet.remove"));
                 return true;
             }
@@ -271,7 +273,9 @@ public class Commands implements CommandExecutor {
         return true;
     }
 
-    public boolean parseCommand(CommandSender sender, String argument, String validArgument, boolean requirePet, String permission) {return parseCommand(sender, argument, validArgument, requirePet, permission, true);}
+    public boolean parseCommand(CommandSender sender, String argument, String validArgument, boolean requirePet, String permission) {
+        return parseCommand(sender, argument, validArgument, requirePet, permission, true);
+    }
     public boolean parseCommand(CommandSender sender, String argument, String validArgument, boolean requirePet, String permission, Object... activate) {
         if(argument != null && !argument.equals(validArgument)) return false;
         if(sender != null && permission != null && !sender.hasPermission(permission)) {sender.sendMessage(Messages.getMessage("error.noperm.command")); return false;}

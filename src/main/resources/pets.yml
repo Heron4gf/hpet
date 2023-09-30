@@ -7,13 +7,17 @@
 #
 #Valid event types are:
 #WALK, SHIFT, BLOCK_BREAK, BLOCK_PLACE, TIME
-#è
+#
 #Valid abilities
-#ADD_HEALTH:(n), GLOW, TITLE:(t), CONSOLE_LOG:(t), FAKE_LOCATION, ADD_FOOD:(n), SHOOT_ENDERPEARL, SUBTITLE:(t), SHOOT_ARROW, SHOOT_SNOWBALL, DAMAGE:(n), HEAL:(n), POISON_NEAR, PLAYER_PARTICLE:(particle):(count), LAUNCH, CURE:(n), NO_KNOCKBACK, DISARM_OPPONENT, PET_PARTICLE:(particle):(count), DISARM_SELF, INCREASE_DAMAGE, EXP:(n), EXPLOSION:(power):(destroyBlocks):(incendiary), EXTINGUISH, FIREBALL, SET_FIRE:(n), TEMP_FLY:(n), FLY, GOD, TEMP_GOD:(n), FREEZE:(n), INVISIBLE, LIGHNING_ON_PLAYER, LIGHTNING_LOOKING, MESSAGE:(t), PLAYER_COMMAND:(t), CONSOLE_COMMAND:(t), POTION:(potionEffectType):(duration):(amplify), PLAY_SOUND:(sound):(pitch):(volume), PLAY_SOUND_EVERYONE:(sound):(pitch):(volume), PUMPKIN, VELOCITY:(power), SWAP_ITEMS, INVISIBLE_ARMOR, FAKE_ARMOR:(EquipmentSlot):(Material), INVISIBLE_HAND, FAKE_HAND:(Material), NO_FALL_DAMAGE
-
+#ADD_HEALTH:(n), GLOW, TITLE:(t), CONSOLE_LOG:(t), FAKE_LOCATION, ADD_FOOD:(n), SHOOT_ENDERPEARL, SUBTITLE:(t), SHOOT_ARROW, SHOOT_SNOWBALL, DAMAGE:(n), HEAL:(n), POISON_NEAR, PLAYER_PARTICLE:(particle):(count), LAUNCH, CURE:(n), NO_KNOCKBACK, DISARM_OPPONENT, PET_PARTICLE:(particle):(count), DISARM_SELF, INCREASE_DAMAGE, EXP:(n), EXPLOSION:(power):(destroyBlocks):(incendiary), EXTINGUISH, FIREBALL, SET_FIRE:(n), TEMP_FLY:(n), FLY, GOD, TEMP_GOD:(n), FREEZE:(n), INVISIBLE, LIGHNING_ON_PLAYER, LIGHTNING_LOOKING, MESSAGE:(t), PLAYER_COMMAND:(t), CONSOLE_COMMAND:(t), POTION:(potionEffectType):(duration):(amplify), PLAY_SOUND:(sound):(pitch):(volume), PLAY_SOUND_EVERYONE:(sound):(pitch):(volume), PUMPKIN, VELOCITY:(power), SWAP_ITEMS, INVISIBLE_ARMOR, FAKE_ARMOR:(EquipmentSlot):(Material):(customModelData), INVISIBLE_HAND, FAKE_HAND:(Material), NO_FALL_DAMAGE
+#
+#Valid animations are
+# GLIDE, BOUNCE, GLITCH, NONE, SLOW_GLIDE, WALK, SIDE
 
 sheep:
   displayname: "&f&lSHEEP"
+  animation: SIDE
+  y: 2
   description:
     - ""
     - "&fbeeh!"
@@ -23,6 +27,7 @@ sheep:
     - "PLAYER_PARTICLE:CRIT:3:WALKe"
 goat:
   displayname: "&f&lGOAT"
+  animation: WALK
   description:
     - ""
     - "&fI climb the mountains!"
@@ -32,6 +37,7 @@ goat:
     - "POTION:JUMP:11:2:2l:SHIFTe"
 dirt:
   displayname: "&a&lDIRT"
+  animation: GLIDE
   description:
     - "&7You are rich inside!"
   skins:
@@ -42,6 +48,7 @@ dirt:
     - "FAKE_HAND:DIRT"
 netherite:
   displayname: "&c&lNETHERITE"
+  animation: SLOW_GLIDE
   description:
     - "&7Gonna give you fake netherite!"
   skins:
@@ -55,6 +62,7 @@ netherite:
     - "FAKE_HAND:NETHERITE_SWORD"
 creeper:
   displayname: "&a&lCREEPER"
+  animation: GLIDE
   description:
     - ""
     - "&7SSSSS"
@@ -66,6 +74,7 @@ creeper:
 
 burger:
   displayname: "&a&lBURGER"
+  animation: GLIDE
   description:
     - "&7A very yummy Pet!"
     - ""
@@ -84,6 +93,7 @@ burger:
 ghast:
   price: 100
   displayname: "&f&lLIL GHAST"
+  animation: GLIDE
   description:
     - ""
     - "&7A small ghast"
@@ -94,10 +104,10 @@ ghast:
     - eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGU4YTM4ZTlhZmJkM2RhMTBkMTliNTc3YzU1YzdiZmQ2YjRmMmU0MDdlNDRkNDAxN2IyM2JlOTE2N2FiZmYwMiJ9fX0=
     - eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzhmNzdlZWVlZjZmZmIyZjY4MThlNTc2OTg3OTRhZTAzNTFhYjMyYmEyMzRkNjIxYzIyZmU0Y2U4ZTE1OTlkMiJ9fX0=
 pig:
-  onGround: true
   y: 1.1
   distance: 1.2
   displayname: "&d&lPIGGY"
+  animation: GLIDE
   level:
     type: WALK
     value: 10000
@@ -113,18 +123,18 @@ pig:
 
 enderman:
   displayname: "&5&lENDERMAN"
+  animation: SLOW_GLIDE
   description:
     - ""
     - "&7What's Up?"
   skins:
     - "MOB:ENDERMAN"
   abilities:
-    - "SHOOT_ENDERPEARL:1m"
-    - "PLAYER_PARTICLE:END_ROD:10"
-    - "PLAY_SOUND_EVERYONE:ENTITY_ENDERMAN_AMBIENT:1:100"
+    - "SHOOT_ENDERPEARL:1m:30%"
     - "FAKE_LOCATION:1m:20%"
 world:
   displayname: "&f&lASTRO WORLD"
+  animation: SLOW_GLIDE
   description:
     - ""
     - "&7Your world but with glasses!"
@@ -133,6 +143,7 @@ world:
     - mappamondo
 mariobros:
   displayname: "&c&lMario Bros"
+  animation: GLIDE
   description:
     - ""
     - "&7Characters from Mario Bros"
@@ -148,6 +159,7 @@ mariobros:
 
 snail:
   displayname: "&a&lSnail"
+  animation: GLIDE
   abilities:
     - "POTION:SLOW"
   description:

@@ -5,9 +5,10 @@ import it.heron.hpet.Pet;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.UUID;
 import java.util.logging.Level;
 
-public class MySQL extends Database {
+public class MySQL extends PetDatabase {
     public MySQL(Pet instance) {
         super(instance);
     }

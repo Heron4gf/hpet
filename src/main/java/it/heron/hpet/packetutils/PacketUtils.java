@@ -13,6 +13,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.*;
+import com.earth2me.essentials.User;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import it.heron.hpet.Pet;
 import it.heron.hpet.userpets.MythicUserPet;
@@ -25,44 +26,71 @@ import it.heron.hpet.userpets.UserPet;
 import it.heron.hpet.Utils;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public abstract class PacketUtils {
     @Getter
-    private HashMap<UUID, UserPet> pets = new HashMap<>();
-    public void removeFromPets(UUID owner) {
-        this.pets.remove(owner);
+    private Set<UserPet> pets = new HashSet<>();
+
+    public List<UserPet> playerPets(UUID player) {
+        List<UserPet> pts = new LinkedList<>();
+        for(UserPet p : pets) {
+            if(p != null && p.getOwner() != null) {
+                if(p.getOwner().equals(player)) {
+                    pts.add(p);
+                }
+            }
+        }
+        return pts;
     }
 
     public void spawnPet(Player p, UserPet pet) {
-        if(Pet.getInstance().isDemo() && pets.size() > 9) {
+        /*if(Pet.getInstance().isDemo() && pets.size() > 9) {
             p.sendMessage("§eThis server is using a demo version of HPET, you cannot spawn more than 10 pets at the same time!");
             if(p.hasPermission("pet.admin")) {
                 p.sendMessage("§eYou don't want limitations and customize your configs? Buy HPET! §bhttps://www.spigotmc.org/resources/%E2%AD%95%EF%B8%8F1-8-1-18-1%E2%AD%95%EF%B8%8Fhpet%E2%9C%8F%EF%B8%8Fcreate-unique-pets%E2%9D%97%EF%B8%8F20-off.93891/");
             }
             return;
-        }
+        }*/
 
-        if(pet.getType().isMythicMob()) {
-            try {
-                Entity e = MythicBukkit.inst().getAPIHelper().spawnMythicMob(pet.getType().getMythicMob(), pet.getOwner().getLocation());
-                ((MythicUserPet)pet).setEntity(e);
-            } catch(Exception ignored) {
-                Bukkit.getLogger().info("ERROR SPAWNING "+pet.getType().getName());
-            }
-        } else {
-            if(pet.getType().isMob()) {
-                pet.setId(spawnPetEntity(pet.isGlow(), false, Utils.getCustomItem(pet.getType().getSkins()[0]), p.getLocation(), pet.getType().getEntityType(), pet.getSlot(), pet.getName()));
+        if(!pet.isInvisible()) {
+            if(pet.getType().isMythicMob()) {
+                try {
+                    Entity e = MythicBukkit.inst().getAPIHelper().spawnMythicMob(pet.getType().getMythicMob(), Bukkit.getPlayer(pet.getOwner()).getLocation());
+                    ((MythicUserPet)pet).setEntity(e);
+                } catch(Exception ignored) {
+                    Bukkit.getLogger().info("ERROR SPAWNING "+pet.getType().getName());
+                }
             } else {
-                pet.setId(spawnPetEntity(pet.isGlow(), false, Utils.getCustomItem(pet.getType().getSkins()[0]), p.getLocation(), pet.getType().getEntityType(), pet.getSlot(), null));
-            }
-            if(pet.getChild() != null) {
-                pet.getChild().setId(spawnPetEntity(pet.isGlow(), true, Utils.getCustomItem(pet.getType().getSkins()[0]), p.getLocation(), EntityType.ARMOR_STAND, pet.getSlot(), null));
+                if(pet.getType().isMob()) {
+                    pet.setId(spawnPetEntity(pet.isGlow(), false, Utils.getCustomItem(pet.getType().getSkins()[0]), p.getLocation(), pet.getType().getEntityType(), pet.getSlot(), pet.getName()));
+                } else {
+                    pet.setId(spawnPetEntity(pet.isGlow(), false, Utils.getCustomItem(pet.getType().getSkins()[0]), p.getLocation(), pet.getType().getEntityType(), pet.getSlot(), null));
+                }
+                if(pet.getChild() != null) {
+                    pet.getChild().setId(spawnPetEntity(pet.isGlow(), true, Utils.getCustomItem(pet.getType().getSkins()[0]), p.getLocation(), EntityType.ARMOR_STAND, pet.getSlot(), null));
+                }
             }
         }
-        pets.put(p.getUniqueId(), pet);
 
+        if(!pet.isEnabled()) {
+            if(!playerPets(p.getUniqueId()).isEmpty()) {
+                List<UserPet> ps = playerPets(p.getUniqueId());
+                for(UserPet userPet : ps) {
+                    try {
+                        if(pet.getType().getGroup().equals(userPet.getType().getGroup())) {
+                            userPet.remove();
+                        }
+                    } catch (Exception ignored) {}
+                }
+            }
+            pets.add(pet);
+        }
+
+    }
+
+    public void removeFromPets(UserPet userPet) {
+        pets.remove(userPet);
     }
 
 
@@ -170,22 +198,6 @@ public abstract class PacketUtils {
         return teleportPacket;
 
     }
-
-
-    /*public PacketContainer moveEntity(int entityID, short x, short y, short z, float yaw) {
-        if(y == 0) return null;
-        PacketContainer entityMove = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.REL_ENTITY_MOVE_LOOK);
-        entityMove.getModifier().writeDefaults();
-        entityMove.getIntegers().write(0, entityID);
-        entityMove.getShorts().write(0, x);
-        entityMove.getShorts().write(1, y);
-        entityMove.getShorts().write(2, z);
-
-        entityMove.getBytes().write(0, (byte)(((yaw+180)*256)/360));
-
-
-        return entityMove;
-    }*/
 
     public abstract boolean isLegacy();
 

@@ -17,11 +17,11 @@ enabledPets: # you can disable pets, without deleting their configuration just b
   - moreslimes
   - enderman
   - creeper
-  - group:materials
+  - #group:materials
 
 level:
   max: 100
-  enable: false
+  enable: false # enable level based features
 
 delay:
   teleport: 10 # ticks waited for pet spawn on join
@@ -30,7 +30,7 @@ delay:
 
 useAliases: false # enable aliases for /hpet command
 alias:
-  - mpets
+  - mpets # you can insert multiple aliases
 
 enableGui: true
 nametags:
@@ -60,7 +60,6 @@ group:
       - pig
       - slime
       - penguin
-
 disabledWorlds:
   - nopetsworld
 

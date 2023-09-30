@@ -5,6 +5,7 @@ import it.heron.hpet.Pet;
 import it.heron.hpet.pettypes.PetType;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -41,7 +42,7 @@ public class MythicUserPet extends MobUserPet {
     public void teleport(Location newLoc) {
         if(entity == null) return;
         Location loc = getCoords().getLoc(newLoc);
-        Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(getNameId(), loc, true), getOwner().getWorld());
+        Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(getNameId(), loc, true), Bukkit.getPlayer(getOwner()).getWorld());
         entity.teleport(loc.add(0, -getType().getNamey(), 0));
     }
 

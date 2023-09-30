@@ -12,8 +12,10 @@ package it.heron.hpet;
 import it.heron.hpet.animation.AnimationType;
 import it.heron.hpet.combat.Deluxe;
 import it.heron.hpet.database.Database;
+import it.heron.hpet.database.PetDatabase;
 import it.heron.hpet.legacyevents.LegacyEvents;
 import it.heron.hpet.levels.LevelEvents;
+import it.heron.hpet.pettypes.CosmeticType;
 import it.heron.hpet.pettypes.PetType;
 import it.heron.hpet.userpets.UserPet;
 import it.heron.hpet.vanish.CMIVanish;
@@ -46,10 +48,7 @@ import it.heron.hpet.placeholders.Placeholders;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public final class Pet extends JavaPlugin {
 
@@ -100,6 +99,7 @@ public final class Pet extends JavaPlugin {
         this.yawCalibration = getConfig().getInt("yawCalibration", 0);
         this.rotate = getConfig().getBoolean("rotateWithPlayer", false);
         this.nameFormat = getConfig().getString("nametags.format", "%name%");
+        CosmeticType.reloadCosmeticsFiles();
     }
 
 
@@ -121,16 +121,29 @@ public final class Pet extends JavaPlugin {
             try {
                 if(string.startsWith("group:")) {
                     String gname = string.replaceFirst("group:", "");
-                    List<String> configTypes = getConfig().getStringList("group."+gname+".pets");
+                    List<String> configTypes = new LinkedList<>();
+
+                    if(getConfig().contains("group."+gname+".pets")) configTypes = getConfig().getStringList("group."+gname+".pets");
+                    if(getConfig().contains("group."+gname+".cosmetics")) configTypes.addAll(getConfig().getStringList("group."+gname+".cosmetics"));
+
                     PetType[] types = new PetType[configTypes.size()];
                     Bukkit.getLogger().info("Loading Pet group "+gname+" x"+configTypes.size());
                     for(int i = 0; i < configTypes.size(); i++) {
-                        types[i] = new PetType(configTypes.get(i));
+                        try {
+                            types[i] = new PetType(configTypes.get(i));
+                        } catch (RuntimeException ignored) {
+                            types[i] = new CosmeticType(configTypes.get(i));
+                        }
                     }
                     petTypes.add(new Group(gname, types));
                 } else {
-                    Bukkit.getLogger().info("Loading pet "+string);
-                    petTypes.add(new PetType(string));
+                    if(string.startsWith("cosmetic:")) {
+                        Bukkit.getLogger().info("Loading cosmetic "+string);
+                        petTypes.add(new CosmeticType(string));
+                    } else {
+                        Bukkit.getLogger().info("Loading pet "+string);
+                        petTypes.add(new PetType(string));
+                    }
                 }
             } catch(Exception ignored) {
                 Bukkit.getLogger().severe("Could not load pet/group "+string);
@@ -223,7 +236,7 @@ public final class Pet extends JavaPlugin {
     }
 
     @Getter
-    private Database database;
+    private PetDatabase database;
 
     @Getter
     private Plugin[] addons = {null};
@@ -394,9 +407,14 @@ public final class Pet extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        for(UserPet pet : Pet.getInstance().getPacketUtils().getPets().values()) {
-                Utils.savePet(pet.getOwner(), pet);
-                if(pet != null) pet.despawn();
+        for(Player player : Bukkit.getOnlinePlayers()) {
+            List<UserPet> userPets = Pet.getApi().getUserPets(player);
+            if(userPets != null && !userPets.isEmpty()) Utils.savePets(player,userPets);
+        }
+        for(UserPet pet : Pet.getPackUtils().getPets()) {
+            if(pet.getOwner() != null) {
+                pet.despawn();
+            }
         }
     }
 }

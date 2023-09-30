@@ -4,6 +4,8 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import it.heron.hpet.database.Database;
+import it.heron.hpet.database.PetDatabase;
+import it.heron.hpet.userpets.UnspawnedUserPet;
 import it.heron.hpet.userpets.UserPet;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -25,26 +27,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import com.mojang.authlib.GameProfile;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Utils {
-
-    public static String getResponse(String surl) {
-        String input = null;
-        try {
-            URL url = new URL(surl);
-            HttpURLConnection httpsURLConnection = (HttpURLConnection) url.openConnection();
-            httpsURLConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(httpsURLConnection.getInputStream(), "UTF-8"));
-            input = reader.readLine();
-            reader.close();
-        } catch(Exception e) {
-            System.out.println("ERROR CONNECTING");
-        }
-        return input;
-    }
 
     public static ItemStack head(String skinName) {
         ItemStack stack = Pet.getInstance().getCachedItems().get(skinName);
@@ -171,9 +159,9 @@ public class Utils {
         new BukkitRunnable() {
             @Override
             public void run() {
-                for(UserPet opet : Pet.getInstance().getPacketUtils().getPets().values()) {
-                    if(!opet.getOwner().equals(p)) {
-                        if(opet.getOwner().getWorld().getUID().equals(p.getWorld().getUID()) && opet.getOwner().getLocation().distance(p.getLocation()) < 50) {
+                for(UserPet opet: Pet.getInstance().getPacketUtils().getPets()) {
+                    if(opet != null && opet.getOwner() != null && !opet.getOwner().equals(p)) {
+                        if(Bukkit.getPlayer(opet.getOwner()).getWorld().getUID().equals(p.getWorld().getUID()) && Bukkit.getPlayer(opet.getOwner()).getLocation().distance(p.getLocation()) < 50) {
                             opet.update();
                         }
                     }
@@ -182,18 +170,16 @@ public class Utils {
         }.runTaskLater(Pet.getInstance(), 20);
     }
 
-    public static void runAsync(Runnable runnable) { new Thread(runnable).start(); }
+    public static void runAsync(Runnable runnable) {
+        CompletableFuture.runAsync(runnable);
+    }
 
     public static void loadDatabasePet(Player p) {
-        UserPet pet = Pet.getInstance().getDatabase().getOfflinePet(p);
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                try {
-                    pet.spawn();
-                } catch(NullPointerException ignored) {}
+        for(UnspawnedUserPet unspawnedUserPet : Pet.getInstance().getDatabase().getUnspawnedPets(p)) {
+            if(unspawnedUserPet != null) {
+                unspawnedUserPet.toUserPet();
             }
-        }.runTaskLater(Pet.getInstance(), Pet.getInstance().getConfig().getInt("delay.joinDatabaseUpdate"));
+        }
     }
 
     public static void makeSureThisArmorstandIsNotRealPlease(int id, World world) {
@@ -225,21 +211,11 @@ public class Utils {
         return getGUIStack(path);
     }
 
-    public static void savePet(Player p, UserPet pet) {
-        Database lite = Pet.getInstance().getDatabase();
-        if(pet == null) {
-            lite.setData(p.getUniqueId(), null, false, false, null, null);
-            return;
-        }
-        String particle = null;
-        if(pet.getParticle() != null) {
-            particle = pet.getParticle().getParticle().name();
-        }
-        try {
-            lite.setData(p.getUniqueId(), pet.getType().getName(), pet.getChild() != null, pet.isGlow(), particle, pet.getName());
-        } catch(Exception exception) {
-            Bukkit.getLogger().warning("There was an error while trying to save a Pet in Database");
-            exception.printStackTrace();
+    public static void savePets(Player p, List<UserPet> pets) {
+        Pet.getInstance().getDatabase().wipePets(p);
+
+        for(UserPet pet : pets) {
+            Pet.getInstance().getDatabase().savePet(pet);
         }
     }
 

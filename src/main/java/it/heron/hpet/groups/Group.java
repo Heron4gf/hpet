@@ -21,11 +21,11 @@ import java.util.List;
 public @Data
 class Group extends HSlot {
     private PetType[] type;
+    private ItemStack icon;
 
     public Group(String name, PetType[] type) {
         setName(name);
         setDisplayName("§a§l"+name);
-        this.type = type;
     }
 
     @Override
