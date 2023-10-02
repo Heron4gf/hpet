@@ -268,6 +268,12 @@ class UserPet {
         Pet.getPackUtils().executePacket(Pet.getPackUtils().destroyEntity(id), Bukkit.getPlayer(owner).getWorld());
     }
     protected void tick() {
+        int repeatDelay = Pet.instance.getConfig().getInt("teleport-delay", 2);
+        if (repeatDelay < 2){
+            // 2 is the minimum allowed value
+            repeatDelay = 2;
+        }
+
         this.taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Pet.getInstance(), new Runnable() {
             @Override
             public void run() {
@@ -310,6 +316,6 @@ class UserPet {
                 step++;
                 animate();
             }
-        }, 2, 2);
+        }, 2, repeatDelay);
     }
 }
