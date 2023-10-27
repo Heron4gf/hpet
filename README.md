@@ -17,7 +17,7 @@ You can install HPET following these steps:
 - Configure HPET!
 <br>
 ## Configure HPET
-<br>
+
 ### Create a Pet
 Your Pets must be configured in pets.yml file. And enabled via config. A Pet must have an **id**, a **displayname**, a **description** and at least **one skin**<br>
 This is an example of a valid base Pet:
@@ -45,7 +45,7 @@ Pets can also have **other attributes**, which are the following:<br><br>
 **visible**, boolean (true|false), defines the default Pet visibility. By default it is true.<br>
 **inherit**, ```(Deprecated)``` inherits attributes from Pet types which are already loaded.<br>
 
-### Create a cosmetic
+### Create a Cosmetic
 Your Cosmetics can be placed in separate YAML files into cosmetics folder and enabled via config.yml. A Cosmetic must have an **id**, a **displayname**, a **wear** ([Valid Equipment Slots](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/EquipmentSlot.html)), a **description** and an **item**<br>
 This is an example of a valid base Cosmetic:
 
