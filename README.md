@@ -1,6 +1,6 @@
 # HPET Documentation
 
-![logo]([https://i.imgur.com/ViZiV7i.png](https://proxy.spigotmc.org/fdf8a8e2053e1e2290e4538556a68768b672e2fc?url=https%3A%2F%2Fi.imgur.com%2FY0hEWEY.jpeg))
+![logo](https://i.imgur.com/Y0hEWEY.jpeg)
 
 ## License
 Here you can consult HPET [Licence](https://github.com/Heron4gf/hpet/blob/main/LICENSE)
