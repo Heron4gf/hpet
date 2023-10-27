@@ -15,7 +15,8 @@ You can install HPET following these steps:
 - Upload the HPET.jar file into your server's plugins folder
 - Restart your server
 - Configure HPET!
-<br>
+
+
 ## Configure HPET
 
 ### Create a Pet
