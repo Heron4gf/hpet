@@ -19,7 +19,7 @@ You can install HPET following these steps:
 ## Configure HPET
 <br>
 ### Create a Pet
-Your Pets must be configured in pets.yml file. A Pet must have an **id**, a **displayname**, a **description** and at least **one skin**<br>
+Your Pets must be configured in pets.yml file. And enabled via config. A Pet must have an **id**, a **displayname**, a **description** and at least **one skin**<br>
 This is an example of a valid base Pet:
 
 ```
@@ -45,6 +45,22 @@ Pets can also have **other attributes**, which are the following:<br><br>
 **visible**, boolean (true|false), defines the default Pet visibility. By default it is true.<br>
 **inherit**, ```(Deprecated)``` inherits attributes from Pet types which are already loaded.<br>
 
+### Create a cosmetic
+Your Cosmetics can be placed in separate YAML files into cosmetics folder and enabled via config.yml. A Cosmetic must have an **id**, a **displayname**, a **wear** ([Valid Equipment Slots](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/EquipmentSlot.html)), a **description** and an **item**<br>
+This is an example of a valid base Cosmetic:
+
+```
+ballcap:
+  displayname: "&9Ballcap"
+  wear: HEAD
+  description:
+    - ""
+  item: "LEATHER_HORSE_ARMOR:10102"
+```
+
+Cosmetics can also have **other attributes**, which are the following:<br><br>
+**color**, to configure the default Cosmetic color in hex, only applies to Leather armor types.<br>
+**price**, requires [Vault](https://www.spigotmc.org/resources/vault.34315/) to be installed. Allows users to unlock Pets using economy. By default pets are not buyable.<br>
 
 ### Pet levelling
 Pets can have levels, to enable levelling you have to enable them in config here:
