@@ -33,11 +33,11 @@ bat:
 Pets can also have other attributes, which are the following:
 **y**, to configure pet relative y location from player's location, default is 1.
 **yaw**, to configure the relative rotation of the pet armorstand, added to player's yaw and yawCalibration, default is 0.
-**abilities**, a list of String defined abilities, see [Abilities] for reference.
+**abilities**, a list of String defined abilities, see [Abilities](#Abilities) for reference.
 **animation**, decide the type of animation the pet should have, by default is GLIDE, valid animation types are: GLIDE, BOUNCE, GLITCH, NONE, SLOW_GLIDE, WALK, SIDE.
 **distance**, used to calculate the radius of the pet location relative to the player, default is 1.
 **price**, requires [Vault](https://www.spigotmc.org/resources/vault.34315/) to be installed. Allows users to unlock Pets using economy. By default pets are not buyable.
-**level**, allows to setup a level type and value, which allows the Pet to level up based on certain factors. See [Pet levelling]
+**level**, allows to setup a level type and value, which allows the Pet to level up based on certain factors. See [Pet levelling](#Pet levelling)
 **particle**, only for 1.9+, allows to set the default Pet particle which can be enabled by levelling or by command. By default it is SNOWBALL Here is a list of valid [Particle types in 1.20](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html).
 **group**, since HPET 4.3+, Players can select multiple pets at same time but only one for each group. This allows to group pets by behaviour, notice that this does not have any graphic/aesthetic effect and should not be confused with GUI groups. Default group is "default".
 **visible**, boolean (true|false), defines the default Pet visibility. By default it is true.
@@ -58,7 +58,7 @@ Levels allow players to unlock the following visual features of their pet:
 - Level > 4, Pet particle (uses the default one)
 - Level > 6, Pet glow effect (only in 1.9+)
 
-Levels can also have impact on abilities. Since HPET 4+ you can setup the minimum level required to unlock a certain ability. See more in [Abilities]
+Levels can also have impact on abilities. Since HPET 4+ you can setup the minimum level required to unlock a certain ability. See more in [Abilities](#Abilities)
 
 ### Abilities
 Pets can have abilities which are defined as Strings with arguments separated by ":", All abilities follow this format: <ABILITY TYPE>:<ARGUMENTS>. Valid ability types are: 
