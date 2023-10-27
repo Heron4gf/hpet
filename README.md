@@ -4,10 +4,10 @@
 
 ## License
 Here you can consult HPET [Licence](https://github.com/Heron4gf/hpet/blob/main/LICENSE)
-
+<br>
 ## Support
 Join Discord to receive fast support post sale or plugin information pre sale! [Discord](https://discord.gg/PX7nGZtshD)
-
+<br>
 ## Install HPET
 You can install HPET following these steps:
 - Download and install [ProtocolLib](https://www.spigotmc.org/resources/protocollib.1997/), accordingly to your Minecraft server version
@@ -15,11 +15,11 @@ You can install HPET following these steps:
 - Upload the HPET.jar file into your server's plugins folder
 - Restart your server
 - Configure HPET!
-
+<br>
 ## Configure HPET
-
+<br>
 ### Create a Pet
-Your Pets must be configured in pets.yml file. A Pet must have an **id**, a **displayname**, a **description** and at least **one skin**
+Your Pets must be configured in pets.yml file. A Pet must have an **id**, a **displayname**, a **description** and at least **one skin**<br>
 This is an example of a valid base Pet:
 
 ```
@@ -32,18 +32,18 @@ bat:
     - "PAPER:31" # this is using custom model data skin
 ```
 
-Pets can also have other attributes, which are the following:
-**y**, to configure pet relative y location from player's location, default is 1.
-**yaw**, to configure the relative rotation of the pet armorstand, added to player's yaw and yawCalibration, default is 0.
-**abilities**, a list of String defined abilities, see [Abilities](#Abilities) for reference.
-**animation**, decide the type of animation the pet should have, by default is GLIDE, valid animation types are: GLIDE, BOUNCE, GLITCH, NONE, SLOW_GLIDE, WALK, SIDE.
-**distance**, used to calculate the radius of the pet location relative to the player, default is 1.
-**price**, requires [Vault](https://www.spigotmc.org/resources/vault.34315/) to be installed. Allows users to unlock Pets using economy. By default pets are not buyable.
-**level**, allows to setup a level type and value, which allows the Pet to level up based on certain factors. See [Pet levelling](#Pet-levelling).
-**particle**, only for 1.9+, allows to set the default Pet particle which can be enabled by levelling or by command. By default it is SNOWBALL Here is a list of valid [Particle types in 1.20](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html).
-**group**, since HPET 4.3+, Players can select multiple pets at same time but only one for each group. This allows to group pets by behaviour, notice that this does not have any graphic/aesthetic effect and should not be confused with GUI groups. Default group is "default".
-**visible**, boolean (true|false), defines the default Pet visibility. By default it is true.
-**inherit**, ```(Deprecated)``` inherits attributes from Pet types which are already loaded.
+Pets can also have other attributes, which are the following:<br>
+**y**, to configure pet relative y location from player's location, default is 1.<br>
+**yaw**, to configure the relative rotation of the pet armorstand, added to player's yaw and yawCalibration, default is 0.<br>
+**abilities**, a list of String defined abilities, see [Abilities](#Abilities) for reference.<br>
+**animation**, decide the type of animation the pet should have, by default is GLIDE, valid animation types are: GLIDE, BOUNCE, GLITCH, NONE, SLOW_GLIDE, WALK, SIDE.<br>
+**distance**, used to calculate the radius of the pet location relative to the player, default is 1.<br>
+**price**, requires [Vault](https://www.spigotmc.org/resources/vault.34315/) to be installed. Allows users to unlock Pets using economy. By default pets are not buyable.<br>
+**level**, allows to setup a level type and value, which allows the Pet to level up based on certain factors. See [Pet levelling](#Pet-levelling).<br>
+**particle**, only for 1.9+, allows to set the default Pet particle which can be enabled by levelling or by command. By default it is SNOWBALL Here is a list of valid [Particle types in 1.20](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html).<br>
+**group**, since HPET 4.3+, Players can select multiple pets at same time but only one for each group. This allows to group pets by behaviour, notice that this does not have any graphic/aesthetic effect and should not be confused with GUI groups. Default group is "default".<br>
+**visible**, boolean (true|false), defines the default Pet visibility. By default it is true.<br>
+**inherit**, ```(Deprecated)``` inherits attributes from Pet types which are already loaded.<br>
 
 
 ### Pet levelling
@@ -54,18 +54,18 @@ level:
   enable: true # enable level based features
 ```
 
-Levels go from 1 to the specified level and can be displayed on Pet nametag using the **%level%** placeholder.
+Levels go from 1 to the specified level and can be displayed on Pet nametag using the **%level%** placeholder.<br>
 Levels allow players to unlock the following visual features of their pet:
 - Level > 2, Pet trail
 - Level > 4, Pet particle (uses the default one)
 - Level > 6, Pet glow effect (only in 1.9+)
 
-Levels can also have impact on abilities. Since HPET 4+ you can setup the minimum level required to unlock a certain ability. See more in [Abilities](#Abilities)
+Levels can also have impact on abilities. Since HPET 4+ you can setup the minimum level required to unlock a certain ability. See more in [Abilities](#Abilities)<br>
 
 ### Abilities
-Pets can have abilities which are defined as Strings with arguments separated by ":", All abilities follow this format: <ABILITY TYPE>:<ARGUMENTS>. Valid ability types are: 
+Pets can have abilities which are defined as Strings with arguments separated by ":", All abilities follow this format: <ABILITY TYPE>:<ARGUMENTS>. Valid ability types are: <br>
 
-Required arguments: (n) = number, (t) = text
+Required arguments: (n) = number, (t) = text<br>
 ```ADD_HEALTH:(n), TITLE:(t), CONSOLE_LOG:(t), FAKE_LOCATION, ADD_FOOD:(n), SHOOT_ENDERPEARL, SUBTITLE:(t), SHOOT_ARROW, SHOOT_SNOWBALL, DAMAGE:(n), HEAL:(n), POISON_NEAR, PLAYER_PARTICLE:(particle):(count), LAUNCH, CURE:(n), NO_KNOCKBACK, DISARM_OPPONENT, PET_PARTICLE:(particle):(count), DISARM_SELF, INCREASE_DAMAGE, EXP:(n), EXPLOSION:(power):(destroyBlocks):(incendiary), EXTINGUISH, FIREBALL, SET_FIRE:(n), TEMP_FLY:(n), FLY, GOD, TEMP_GOD:(n), FREEZE:(n), INVISIBLE, LIGHNING_ON_PLAYER, LIGHTNING_LOOKING, MESSAGE:(t), PLAYER_COMMAND:(t), CONSOLE_COMMAND:(t), POTION:(potionEffectType):(duration):(amplify), PLAY_SOUND:(sound):(pitch):(volume), PLAY_SOUND_EVERYONE:(sound):(pitch):(volume), PUMPKIN, VELOCITY:(power), SWAP_ITEMS, INVISIBLE_ARMOR, FAKE_ARMOR:(EquipmentSlot):(Material), INVISIBLE_HAND, FAKE_HAND:(Material), NO_FALL_DAMAGE```
 
 **Other arguments (can be added to any Ability):**
@@ -121,21 +121,21 @@ useAliases: false # enable aliases for /hpet command
 alias:
   - mpets # you can insert multiple aliases
 ```
-Default aliases are /hpet, /pet
+Default aliases are /hpet, /pet<br>
 
-/hpet - main command, opens gui, pet.command
-/hpet select <petname> - select a pet, pet.use.<petname>
-/hpet remove - remove the current pet, pet.remove
-/hpet glow - change glowing status, pet.glow
-/hpet trail - change trail status, pet.trail
-/hpet update - respawn your pet, pet.update
-/hpet particle <particle> - change your pet particle, pet.particle
-/hpet color <color hex> - set your cosmetic color, pet.color
-/hpet buy <petname> - buy a pet you don't have, pet.see.<petname>
-/hpet addlevel <petname> <amount> - add pet level, pet.addlevel
-/hpet removelevel <petname> <amount> - decrease pet level, pet.removelevel
-/hpet setlevel <petname> <amount> - set a pet level, pet.setlevel
-/hpet level - shows current pet level, pet.level
+/hpet - main command, opens gui, pet.command<br>
+/hpet select <petname> - select a pet, pet.use.<petname><br>
+/hpet remove - remove the current pet, pet.remove<br>
+/hpet glow - change glowing status, pet.glow<br>
+/hpet trail - change trail status, pet.trail<br>
+/hpet update - respawn your pet, pet.update<br>
+/hpet particle <particle> - change your pet particle, pet.particle<br>
+/hpet color <color hex> - set your cosmetic color, pet.color<br>
+/hpet buy <petname> - buy a pet you don't have, pet.see.<petname><br>
+/hpet addlevel <petname> <amount> - add pet level, pet.addlevel<br>
+/hpet removelevel <petname> <amount> - decrease pet level, pet.removelevel<br>
+/hpet setlevel <petname> <amount> - set a pet level, pet.setlevel<br>
+/hpet level - shows current pet level, pet.level<br>
 
 ## Addons
 
@@ -143,17 +143,17 @@ Default aliases are /hpet, /pet
 You can simply drag & drop the addon jar file in the addons folder, inside the Pet folder
 
 ### Official addons
-All official addons are free, avaiable on SpigotMc
+All official addons are free, avaiable on SpigotMc<br>
 
 - [PetItemAddon](https://www.spigotmc.org/resources/pet-item-addon-hpet.95645/)
 
 ## Placeholders: (requires [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/))
-%pet_name% - get current pet name
-%pet_displayname% - get current pet displayname
-%pet_isSelected% - return whether you have a pet or not, true or false
-%pet_hasTrail% - return whether you have or not a trail, true or false
-%pet_isGlowing% - return whether the pet is glowing or not, true or false
-%pet_level% - return the pet level value
+%pet_name% - get current pet name<br>
+%pet_displayname% - get current pet displayname<br>
+%pet_isSelected% - return whether you have a pet or not, true or false<br>
+%pet_hasTrail% - return whether you have or not a trail, true or false<br>
+%pet_isGlowing% - return whether the pet is glowing or not, true or false<br>
+%pet_level% - return the pet level value<br>
 
 
 ## How do I hook into HPET API?
