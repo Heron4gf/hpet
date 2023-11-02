@@ -24,6 +24,9 @@ messages:
   group:
     open: "&a&lOpen this group!"
   pet:
+    color:
+      invalid: "&cInvalid color!"
+      change: "&aPet color changed!"
     rename:
       help: "&eTo rename your pet digit /pet rename <new name>"
     price: "&7Price: &e&l€"

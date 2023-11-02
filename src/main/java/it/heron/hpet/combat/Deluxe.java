@@ -14,7 +14,7 @@ import java.util.UUID;
 public class Deluxe implements Listener {
 
     @EventHandler
-    void onCombat(CombatStateChangeEvent  event) {
+    void onCombat(CombatStateChangeEvent event) {
         switch(event.getState()) {
             case TAGGED:
                 removePet(event.getPlayer());

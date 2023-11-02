@@ -4,12 +4,6 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.wrappers.Vector3F;
-import com.comphenix.protocol.wrappers.WrappedDataValue;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.google.common.collect.Lists;
-import it.heron.hpet.ChildPet;
 import it.heron.hpet.Pet;
 import it.heron.hpet.userpets.UserPet;
 import it.heron.hpet.packetutils.PacketUtils;
@@ -22,11 +16,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.EulerAngle;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 
 public class Utils1_8 extends Utils1_12 {
 

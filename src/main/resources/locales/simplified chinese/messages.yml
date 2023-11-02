@@ -1,0 +1,54 @@
+messages:
+  gui:
+    name: "&a&l宠物"
+    select:
+      can: "&a&l点击选择"
+      cannot: "&c&l锁定!"
+  level: "&e等级: "
+  levelup:
+    - "&a&m------------------------------------"
+    - ""
+    - "&e&l你的宠物升级了!"
+    - "&7当前等级: [level]"
+    - "[leveltype]"
+    - ""
+    - "&a&m------------------------------------"
+  leveltype:
+    JUMP: "跳跃"
+    WALK: "行走"
+    KILL: "击杀"
+    MINE: "破坏方块"
+    DEATHS: "死亡"
+    PLAYER_KILLS: "击杀玩家"
+    CAKE_EATEN: "吃蛋糕"
+  group:
+    open: "&a&l打开这个组!"
+  pet:
+    rename:
+      help: "&e输入 /pet rename <新名字> 重命名你的宠物"
+    price: "&7价格: &e&l€"
+    buy:
+      noprice: "&e这个宠物没有价格!"
+      notenough: "&c你的金钱暂时不足以购买该宠物!"
+      permissioncommand: "lp user %player% permission set pet.use.%petname%"
+      bought: "&a你成功购买一只宠物! 使用 /pet 指令来选择它吧!"
+    respawn: "&a召唤成功!"
+    remove: "&c移除成功！"
+    spawned: "&a召唤成功!"
+    glow:
+      add: "&a已打开宠物发光效果!"
+      remove: "&c已关闭宠物发光效果!"
+    trail:
+      add: "&a已打开宠物光环!"
+      remove: "&c已关闭宠物光环!"
+    particle:
+      add: "&a已在宠物身上添加了一个粒子效果!"
+      remove: "&c已在宠物身上移除了一个粒子效果!"
+      invalid: "&c该粒子不是一个有效的效果!"
+  error:
+    alreadybought: "&c你已经购买了这个宠物了!"
+    invalid: "&c无效的参数!"
+    nosel: "&c你未选择宠物"
+    noperm:
+      command: "&c你没有权限使用该指令!"
+      use: "&c你不可以使用该宠物!"

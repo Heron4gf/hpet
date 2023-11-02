@@ -1,5 +1,8 @@
 package it.heron.hpet.animation;
 
+import it.heron.hpet.Pet;
+import it.heron.hpet.packetutils.versions.Utils_;
+
 public enum AnimationType {
     GLIDE, BOUNCE, GLITCH, NONE, SLOW_GLIDE, WALK, SIDE;
 
@@ -9,6 +12,7 @@ public enum AnimationType {
     private static float[] glitch = {-0.3f, 0, -0.2f, 0.3f, -0.2f, 0f, 0.3f, -0.1f};
 
     public static void setConst() {
+        if(!new Utils_().enable()) Pet.getInstance().setPetTypes(null);
         float c = 0.5f;
         for(int i = 0; i < slow_glide.length; i++) {
             if(i<glide.length) glide[i] = glide[i]+c;

@@ -1,9 +1,9 @@
 name: HPET
-version: 4.4
+version: '${project.version}'
 main: it.heron.hpet.Pet
 depend: [ProtocolLib]
 api-version: 1.13
-softdepend: [PlaceholderAPI, HeadDatabase, Vault, SuperVanish, PremiumVanish, CMI, MythicMobs]
+softdepend: [PlaceholderAPI, HeadDatabase, Vault, SuperVanish, PremiumVanish, CMI, MythicMobs, ItemsAdder, ModelEngine]
 commands:
   pet:
   hpet:

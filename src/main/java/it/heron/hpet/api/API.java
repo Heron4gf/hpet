@@ -12,15 +12,15 @@ import it.heron.hpet.api.events.PetSelectEvent;
 import it.heron.hpet.levels.LType;
 import it.heron.hpet.levels.LevelEvents;
 import it.heron.hpet.messages.Messages;
+import it.heron.hpet.pettypes.CosmeticType;
 import it.heron.hpet.pettypes.PetType;
-import it.heron.hpet.userpets.MobUserPet;
-import it.heron.hpet.userpets.MythicUserPet;
+import it.heron.hpet.userpets.*;
 import lombok.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import it.heron.hpet.Pet;
-import it.heron.hpet.userpets.UserPet;
 import it.heron.hpet.groups.HSlot;
 
 import java.util.*;
@@ -46,10 +46,10 @@ public class API {
     }
     //public Collection<UserPet> getEnabledPets() {return Pet.getInstance().getPacketUtils().getPets().values();}
 
-    public void selectPet(Player player, String petType) {
-        selectPet(player, Pet.getPetTypeByName(petType));
+    public UserPet selectPet(Player player, String petType) {
+        return selectPet(player, Pet.getPetTypeByName(petType));
     }
-    public void selectPet(Player player, PetType petType) {
+    public UserPet selectPet(Player player, PetType petType) {
         if(Pet.getApi().hasUserPet(player)) {
             for(UserPet userPet : getUserPets(player)) {
                 if(userPet.getType().getGroup().equals(petType.getGroup())) {
@@ -61,18 +61,22 @@ public class API {
         UserPet pet;
         if(petType.isMob()) {
             pet = new MobUserPet(player, petType, null);
+        } else if(petType.isMythicMob()) {
+            pet = new MythicUserPet(player, petType, null);
+        } else if(petType.isModelEngine()) {
+            pet = new ModelEngineUserPet(player, petType, null);
+        } else if(petType instanceof CosmeticType && ((CosmeticType)petType).isWearable()) {
+            pet = new PassengerUserPet(player.getUniqueId(), petType, null);
         } else {
-            if(petType.isMythicMob()) {
-                pet = new MythicUserPet(player, petType, null);
-            } else {
-                pet = new UserPet(player.getUniqueId(), petType, null);
-            }
+            pet = new UserPet(player.getUniqueId(), petType, null);
         }
+
         Bukkit.getPluginManager().callEvent(new PetSelectEvent(player, pet));
         player.sendMessage(Messages.getMessage("pet.spawned").replace("[type]", petType.getName()));
+        return pet;
     }
 
-    public int getPetLevel(Player p, String type) {
+    public int getPetLevel(Entity p, String type) {
         LevelData d = new LevelData(p.getUniqueId(), type, Pet.getInstance().getDatabase().getPetLevel(p.getUniqueId(), type));
         return d.getLevel();
     }

@@ -19,6 +19,7 @@ public class MythicUserPet extends MobUserPet {
     @Setter @Getter
     private int[] children = {};
 
+    @Getter
     private Entity entity;
     public void setEntity(Entity e) {
         entity = e;

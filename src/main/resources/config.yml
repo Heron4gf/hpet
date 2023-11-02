@@ -24,7 +24,7 @@ level:
   enable: false # enable level based features
 
 delay:
-  teleport: 10 # ticks waited for pet spawn on join
+  teleport: -1 # ticks waited for pet spawn on join, set to -1 to disable the listener
   join: 20 # ticks waited for pet spawn on join
   joinDatabaseUpdate: 20 # ticks waited from Pet spawn to do a Pet update when joining in order to get all the database data
 
@@ -66,6 +66,7 @@ disabledWorlds:
 yawCalibration: 200 # calibrate the yaw if you think the pet looks misplaced, useful for customModelData pets
 
 mysql:
+  useMariaDb: false # if enabled it will use the credentials for MariaDB
   enabled: false # if disabled it will use SQLite
   name: hpet
   address: localhost

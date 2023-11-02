@@ -36,6 +36,9 @@ class PetType extends HSlot {
     private boolean visible = true;
     private double namey = 1;
 
+    private boolean balloon = false;
+    private double ballon_height = 0;
+
     private Double price = null;
 
     private AnimationType animation = AnimationType.GLIDE;
@@ -47,7 +50,11 @@ class PetType extends HSlot {
     public PetType() {
     }
 
+    private String modelEngine = null;
     public boolean isMythicMob() {return mythicMob != null;}
+    public boolean isModelEngine() {
+        return modelEngine != null;
+    }
     public boolean isMob() {return entityType != EntityType.ARMOR_STAND;}
 
     public PetType(String name) {
@@ -110,11 +117,14 @@ class PetType extends HSlot {
         if(data.contains(name+".group")) {
             this.group = data.getString(name+".group");
         }
-        if(data.contains(name+".distance")) {
-            this.distance = data.getDouble(name+".distance");
-        }
         if(data.contains(name+".y")) {
             this.namey = data.getDouble(name+".y");
+        }
+        if(data.contains(name+".balloon")) {
+            this.balloon = data.getBoolean(name+".balloon");
+            if(data.contains(name+".balloon_height")) {
+                this.ballon_height = data.getDouble(name+".balloon_height");
+            }
         }
         if(data.contains(name+".yaw")) {
             this.yaw = data.getInt(name+".yaw");
@@ -127,15 +137,23 @@ class PetType extends HSlot {
                 this.mythicMob = this.skins[0].replace("MYTHICMOB:", "");
                 if(this.distance == 1) this.distance = 1.3;
             } else {
-                if(this.skins[0].contains(":") && !this.skins[0].contains("HDB:") && !Pet.getInstance().isUsingLegacySound()) this.customModelData = true;
-                Material mat;
-                if(Pet.getInstance().isUsingLegacyId()) {
-                    mat = Material.valueOf("SKULL_ITEM");
+                if(this.skins[0].startsWith("MODELENGINE:")) {
+                    this.modelEngine = this.skins[0].replace("MODELENGINE:", "");
+                    if(this.distance == 1) this.distance = 1.3;
                 } else {
-                    mat = Material.PLAYER_HEAD;
+                    if(this.skins[0].contains(":") && !this.skins[0].contains("HDB:") && !Pet.getInstance().isUsingLegacySound()) this.customModelData = true;
+                    Material mat;
+                    if(Pet.getInstance().isUsingLegacyId()) {
+                        mat = Material.valueOf("SKULL_ITEM");
+                    } else {
+                        mat = Material.PLAYER_HEAD;
+                    }
+                    if(getIcon(null).getType() == mat) this.yaw = -Pet.getInstance().getYawCalibration();
                 }
-                if(getIcon(null).getType() == mat) this.yaw = -Pet.getInstance().getYawCalibration();
             }
+        }
+        if(data.contains(name+".distance")) {
+            this.distance = data.getDouble(name+".distance");
         }
         if(data.contains(name+".abilities")) {
             for(String s : data.getStringList(name+".abilities")) {

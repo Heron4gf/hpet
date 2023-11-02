@@ -1,0 +1,56 @@
+messages:
+  gui:
+    name: "&a&lPETS"
+    select:
+      can: "&a&lCLIQUEZ POUR SÉLECTIONNER"
+      cannot: "&c&lPET BLOQUÉ!"
+  level: "&eNiveau: "
+  levelup:
+    - "&a&m------------------------------------"
+    - ""
+    - "&e&lVOTRE PET A GAGNÉ DES NIVEAUX !"
+    - "&7Nouveau niveau: [level]"
+    - "[leveltype]"
+    - ""
+    - "&a&m------------------------------------"
+  leveltype:
+    JUMP: "SAUTER"
+    WALK: "MARCHER"
+    KILL: "TUER"
+    MINE: "CASSER DES BLOCS"
+    DEATHS: "MOURRIR"
+    PLAYER_KILLS: "JOUEURS TUÉS"
+    CAKE_EATEN: "TRANCHES DE GÂTEAU MANGÉES"
+  group:
+    open: "&a&lOuvrir ce groupe!"
+  pet:
+    rename:
+      help: "&ePour renommer votre Pet écrivez /pet rename <nouveau nom>"
+    color:
+      set: "Vous avez défini la couleur de votre Pet!"
+      invalid: "&cCouleur invalide"
+    price: "&7Prix: &e&l€"
+    buy:
+      noprice: "&eCe Pet n'a pas de prix défini!"
+      notenough: "&cVous avez besoin de plus d'argent pour acheter ce Pet!"
+      permissioncommand: "lp user %player% permission set pet.use.%petname%"
+      bought: "&aYou have bought a new Pet! Use /pet to select it!"
+    respawn: "&aPet respawné!"
+    remove: "&cPet retiré!"
+    spawned: "&aPet apparu!"
+    glow:
+      add: "&aVotre Pet brille!"
+      remove: "&cVotre Pet ne brille plus!"
+    trail:
+      add: "&aTrainée de Pet apparue!"
+      remove: "&cTrainée de Pet retirée!"
+    particle:
+      add: "&aVous avez ajouté une particule à votre Pet"
+      remove: "&cVotre Pet n'a plus de particule!"
+      invalid: "&cCette particule n'est pas valide"
+  error:
+    invalid: "&cArgument Invalide"
+    nosel: "&cPet non sélectionné"
+    noperm:
+      command: "&cVous n'avez pas la permission de faire cette commande"
+      use: "&cVous ne pouvez pas utiliser ce Pet"

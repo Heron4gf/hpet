@@ -1,0 +1,5 @@
+import_itemsadder: lunar_studios # the namespace in itemsadder
+blue_swan_floatie:
+  wear: CHEST
+lifebuoy:
+  wear: CHEST

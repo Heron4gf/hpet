@@ -10,11 +10,13 @@
 package it.heron.hpet;
 
 import it.heron.hpet.animation.AnimationType;
+import it.heron.hpet.api.events.HPETReloadPluginEvent;
 import it.heron.hpet.combat.Deluxe;
-import it.heron.hpet.database.Database;
-import it.heron.hpet.database.PetDatabase;
+import it.heron.hpet.database.*;
+import it.heron.hpet.itemsaddersupport.ItemsAdderListener;
 import it.heron.hpet.legacyevents.LegacyEvents;
 import it.heron.hpet.levels.LevelEvents;
+import it.heron.hpet.messages.Messages;
 import it.heron.hpet.pettypes.CosmeticType;
 import it.heron.hpet.pettypes.PetType;
 import it.heron.hpet.userpets.UserPet;
@@ -38,8 +40,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import it.heron.hpet.api.API;
-import it.heron.hpet.database.MySQL;
-import it.heron.hpet.database.SQLite;
 import it.heron.hpet.groups.Group;
 import it.heron.hpet.groups.HSlot;
 import it.heron.hpet.packetutils.PacketUtils;
@@ -108,7 +108,7 @@ public final class Pet extends JavaPlugin {
     public void parsePetTypes() {
         List<String> enabledPets = getConfig().getStringList("enabledPets");
         if(enabledPets.get(0).equals("*")) {
-            enabledPets = new ArrayList<>();
+            enabledPets.clear();
             for(String s : this.petConfiguration.getKeys(false)) {
                 enabledPets.add(s);
             }
@@ -256,6 +256,7 @@ public final class Pet extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        if(!new Utils_().enable()) return;
         instance = this;
         saveResource("config.yml", demo);
         saveResource("pets.yml", demo);
@@ -277,7 +278,9 @@ public final class Pet extends JavaPlugin {
             Bukkit.getLogger().info("TabComplete is not avaiable on this Minecraft version!");
         }
 
-        if(getConfig().getBoolean("mysql.enabled")) {
+        if(getConfig().getBoolean("mysql.useMariaDb")) {
+            this.database = new MariaDB(this);
+        } else if(getConfig().getBoolean("mysql.enabled")) {
             this.database = new MySQL(this);
         } else {
             this.database = new SQLite(this);
@@ -291,6 +294,12 @@ public final class Pet extends JavaPlugin {
         }
         if(hook("DeluxeCombat") && getConfig().getBoolean("deluxeCombatHook")) {
             Bukkit.getPluginManager().registerEvents(new Deluxe(), this);
+        }
+        if(hook("ItemsAdder")) {
+            Bukkit.getPluginManager().registerEvents(new ItemsAdderListener(), this);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
+                reload();
+            },500);
         }
 
         String version = Bukkit.getServer().getVersion();
@@ -372,6 +381,30 @@ public final class Pet extends JavaPlugin {
 
     }
 
+    public void reload() {
+        Pet.getInstance().reloadConfig();
+        Messages.rl();
+        Pet.getInstance().setPetConfiguration(YamlConfiguration.loadConfiguration(Pet.getInstance().getPetFile()));
+        Pet.getInstance().setPetTypes(new ArrayList<>());
+        Pet.getInstance().parsePetTypes();
+        Pet.getInstance().clearCachedItems();
+        try {
+            for(Plugin plugin : Pet.getInstance().getAddons()) {
+                try {
+                    if(plugin != null) {
+                        Pet.getInstance().getPluginLoader().disablePlugin(plugin);
+                        Pet.getInstance().getPluginLoader().enablePlugin(plugin);
+                        Bukkit.getLogger().info("Reloaded addon: "+plugin.getName());
+                    }
+                } catch(Exception ignored) {
+                    Bukkit.getLogger().info("Could not reload addon: "+plugin.getName());
+                }
+            }
+        } catch(Exception ignored) {}
+        Bukkit.getPluginManager().callEvent(new HPETReloadPluginEvent());
+        Bukkit.getLogger().info("Reloaded HPET!");
+    }
+
     private void convertConfig() {
         if(getConfig().contains("useLevelEvents")) {
             if(!getConfig().contains("level.enable")) {
@@ -409,7 +442,11 @@ public final class Pet extends JavaPlugin {
     public void onDisable() {
         for(Player player : Bukkit.getOnlinePlayers()) {
             List<UserPet> userPets = Pet.getApi().getUserPets(player);
-            if(userPets != null && !userPets.isEmpty()) Utils.savePets(player,userPets);
+            if(userPets != null && !userPets.isEmpty()) {
+                Utils.savePets(player,userPets);
+            } else {
+                Utils.savePets(player,null);
+            }
         }
         for(UserPet pet : Pet.getPackUtils().getPets()) {
             if(pet.getOwner() != null) {

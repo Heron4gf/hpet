@@ -3,8 +3,10 @@ package it.heron.hpet;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
-import it.heron.hpet.database.Database;
-import it.heron.hpet.database.PetDatabase;
+import dev.lone.itemsadder.api.CustomStack;
+import dev.lone.itemsadder.api.ItemsAdder;
+import io.lumine.mythic.bukkit.utils.adventure.text.Component;
+import io.lumine.mythic.bukkit.utils.adventure.text.minimessage.MiniMessage;
 import it.heron.hpet.userpets.UnspawnedUserPet;
 import it.heron.hpet.userpets.UserPet;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -17,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.io.BufferedReader;
@@ -59,7 +62,7 @@ public class Utils {
     }
     public static GameProfile createProfileWithTexture(String texture){
 
-        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), null);
+        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "hpet_gameprofile");
 
         PropertyMap propertyMap = gameProfile.getProperties();
         propertyMap.put("textures", new Property("textures", texture));
@@ -109,11 +112,14 @@ public class Utils {
             //Pet.getInstance().addToCache(skin, stack);
             return stack;
         }
+        if(s[0].equals("ITEMSADDER")) {
+            return CustomStack.getInstance(skin.replace("ITEMSADDER:", "")).getItemStack();
+        }
         Material material;
         int customModelData;
         try {
             material = Material.valueOf(s[0]);
-            customModelData = Integer.parseInt(s[1]);
+            customModelData = Integer.parseInt(skin.replace(s[0]+":", ""));
         } catch(Exception e) {
             return head(skin);
         }
@@ -214,8 +220,10 @@ public class Utils {
     public static void savePets(Player p, List<UserPet> pets) {
         Pet.getInstance().getDatabase().wipePets(p);
 
-        for(UserPet pet : pets) {
-            Pet.getInstance().getDatabase().savePet(pet);
+        if(pets != null) {
+            for(UserPet pet : pets) {
+                Pet.getInstance().getDatabase().savePet(pet);
+            }
         }
     }
 
@@ -232,6 +240,13 @@ public class Utils {
         return ChatColor.translateAlternateColorCodes('&', string);
     }
 
+    public static Component mini_color(String string) {
+        if(string == null) {
+            return null;
+        }
+        return MiniMessage.miniMessage().deserialize(string);
+    }
+
     public static ItemStack createStack(Material material, String name, List<String> lore) {
         return editStack(new ItemStack(material), name, lore);
     }
@@ -245,5 +260,16 @@ public class Utils {
             default:
                 return null;
         }
+    }
+
+    public static ItemStack colorArmor(ItemStack stack, Color color) {
+        stack = stack.clone();
+        if(!stack.getType().name().startsWith("LEATHER_")) {
+            return stack;
+        }
+        LeatherArmorMeta meta = (LeatherArmorMeta) stack.getItemMeta();
+        meta.setColor(color);
+        stack.setItemMeta(meta);
+        return stack;
     }
 }

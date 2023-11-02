@@ -13,10 +13,15 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.*;
-import com.earth2me.essentials.User;
+import com.ticxo.modelengine.api.ModelEngineAPI;
+import com.ticxo.modelengine.api.animation.handler.AnimationHandler;
+import com.ticxo.modelengine.api.model.ActiveModel;
+import com.ticxo.modelengine.api.model.ModeledEntity;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import it.heron.hpet.Pet;
+import it.heron.hpet.userpets.ModelEngineUserPet;
 import it.heron.hpet.userpets.MythicUserPet;
+import it.heron.hpet.userpets.PassengerUserPet;
 import lombok.Getter;
 import org.bukkit.*;
 import org.bukkit.entity.*;
@@ -44,15 +49,7 @@ public abstract class PacketUtils {
         return pts;
     }
 
-    public void spawnPet(Player p, UserPet pet) {
-        /*if(Pet.getInstance().isDemo() && pets.size() > 9) {
-            p.sendMessage("§eThis server is using a demo version of HPET, you cannot spawn more than 10 pets at the same time!");
-            if(p.hasPermission("pet.admin")) {
-                p.sendMessage("§eYou don't want limitations and customize your configs? Buy HPET! §bhttps://www.spigotmc.org/resources/%E2%AD%95%EF%B8%8F1-8-1-18-1%E2%AD%95%EF%B8%8Fhpet%E2%9C%8F%EF%B8%8Fcreate-unique-pets%E2%9D%97%EF%B8%8F20-off.93891/");
-            }
-            return;
-        }*/
-
+    public void spawnPet(Entity p, UserPet pet) {
         if(!pet.isInvisible()) {
             if(pet.getType().isMythicMob()) {
                 try {
@@ -62,13 +59,36 @@ public abstract class PacketUtils {
                     Bukkit.getLogger().info("ERROR SPAWNING "+pet.getType().getName());
                 }
             } else {
-                if(pet.getType().isMob()) {
-                    pet.setId(spawnPetEntity(pet.isGlow(), false, Utils.getCustomItem(pet.getType().getSkins()[0]), p.getLocation(), pet.getType().getEntityType(), pet.getSlot(), pet.getName()));
+                if(pet.getType().isModelEngine()) {
+                    Location location = Bukkit.getEntity(pet.getOwner()).getLocation();
+                    Entity e = location.getWorld().spawn(location, ArmorStand.class);
+                    ((ModelEngineUserPet)pet).setEntity(e);
+                    ModeledEntity modeledEntity = ModelEngineAPI.createModeledEntity(e);
+                    ((ModelEngineUserPet)pet).setModeledEntity(modeledEntity);
+                    String modelname = pet.getType().getModelEngine();
+                    try {
+                        ActiveModel activeModel = ModelEngineAPI.createActiveModel(modelname);
+                        modeledEntity.addModel(activeModel, true);
+                        ((ModelEngineUserPet)pet).setActiveModel(activeModel);
+
+                        try {
+                            AnimationHandler animationHandler = activeModel.getAnimationHandler();
+                            animationHandler.playAnimation("spawn",1,1,1,true);
+                        } catch (Exception ignored) {}
+                    } catch (RuntimeException ignored) {
+                        Bukkit.getLogger().warning("Model not found "+modelname);
+                    }
+                } else if(pet.getType().isMob()) {
+                    pet.setId(spawnPetEntity(pet.isGlow(), false, Utils.getCustomItem(pet.getType().getSkins()[0]), p.getLocation(), pet.getType().getEntityType(), pet.getSlot(), pet.getName(),null));
                 } else {
-                    pet.setId(spawnPetEntity(pet.isGlow(), false, Utils.getCustomItem(pet.getType().getSkins()[0]), p.getLocation(), pet.getType().getEntityType(), pet.getSlot(), null));
+                    if(pet instanceof PassengerUserPet) {
+                        pet.setId(spawnPetEntity(pet.isGlow(), false, Utils.getCustomItem(pet.getType().getSkins()[0]), p.getLocation(), pet.getType().getEntityType(), pet.getSlot(), null,Bukkit.getEntity(pet.getOwner())));
+                    } else {
+                        pet.setId(spawnPetEntity(pet.isGlow(), false, Utils.getCustomItem(pet.getType().getSkins()[0]), p.getLocation(), pet.getType().getEntityType(), pet.getSlot(), null,null));
+                    }
                 }
                 if(pet.getChild() != null) {
-                    pet.getChild().setId(spawnPetEntity(pet.isGlow(), true, Utils.getCustomItem(pet.getType().getSkins()[0]), p.getLocation(), EntityType.ARMOR_STAND, pet.getSlot(), null));
+                    pet.getChild().setId(spawnPetEntity(pet.isGlow(), true, Utils.getCustomItem(pet.getType().getSkins()[0]), p.getLocation(), EntityType.ARMOR_STAND, pet.getSlot(), null,null));
                 }
             }
         }
@@ -108,6 +128,10 @@ public abstract class PacketUtils {
     }
 
     public int spawnPetEntity(boolean glow, boolean small, ItemStack item, Location loc, EntityType entityType, EquipmentSlot slot, String name) {
+        return spawnPetEntity(glow, small, item, loc, entityType, slot, name, null);
+    }
+
+    public int spawnPetEntity(boolean glow, boolean small, ItemStack item, Location loc, EntityType entityType, EquipmentSlot slot, String name, Entity ride) {
         Entity e = loc.getWorld().spawnEntity(loc, entityType);
         int id = e.getEntityId();
         destroyQueue.add(id);
@@ -121,12 +145,19 @@ public abstract class PacketUtils {
         e.setCustomName(name);
         e.setInvulnerable(true);
 
+        if(name != null && name.equals("hpet.leash") && entityType == EntityType.CHICKEN) {
+            ((Chicken)e).setInvisible(true);
+        }
+
         if(entityType == EntityType.ARMOR_STAND) {
             ArmorStand a = (ArmorStand) e;
             a.setSmall(small);
             a.setArms(true);
             a.setVisible(false);
             a.setMarker(true);
+            if(ride != null) {
+                ride.addPassenger(a);
+            }
             executePacket(standardMetaData(e.getEntityId(), null), e.getWorld());
             if(slot != null) a.getEquipment().setItem(slot, item);
         }
@@ -167,6 +198,14 @@ public abstract class PacketUtils {
     
     public abstract int slotHand();
 
+    public PacketContainer leashEntity(int attached, int holding) {
+        PacketContainer entityAttach = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.ATTACH_ENTITY);
+        //entityAttach.getIntegers().writeDefaults();
+        entityAttach.getIntegers().write(0, attached);
+        entityAttach.getIntegers().write(1, holding);
+        return entityAttach;
+    }
+
     public PacketContainer standardMetaData(int entityID, Player p) {
         PacketContainer entityMetadata = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_METADATA);
         entityMetadata.getIntegers().write(0, entityID);
@@ -174,8 +213,6 @@ public abstract class PacketUtils {
     }
     public PacketContainer standardMetaData(PacketContainer entityMetadata, PacketUtils protocol) {
         WrappedDataWatcher dataWatcher = getDataWatcher(entityMetadata);
-
-
         dataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(slotHand(), WrappedDataWatcher.Registry.getVectorSerializer()), protocol.getPose());
         entityMetadata.getWatchableCollectionModifier().write(0, dataWatcher.getWatchableObjects());
         return entityMetadata;
@@ -193,9 +230,43 @@ public abstract class PacketUtils {
         teleportPacket.getDoubles().write(2, location.getZ());
         if(precise) {
             teleportPacket.getBytes().write(0, (byte) (location.getYaw() * 256.0F / 360.0F));
-            //teleportPacket.getBytes().write(1, (byte) (location.getPitch() * 256.0F / 360.0F));
         }
         return teleportPacket;
+
+    }
+
+    public PacketContainer rotateHead(int entityID, int yaw, int pitch) {
+
+        PacketContainer rotateHead = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
+        rotateHead.getIntegers().write(0, entityID);
+        rotateHead.getBytes().writeDefaults();
+        rotateHead.getBytes().write(0, (byte) (yaw * 256.0F / 360.0F));
+        return rotateHead;
+
+    }
+
+    public PacketContainer setInvisible(int entityID) {
+        PacketContainer entityMetadata = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_METADATA);
+
+        entityMetadata.getIntegers().write(0, entityID);
+
+        WrappedDataWatcher dataWatcher = new WrappedDataWatcher();
+
+        dataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
+        entityMetadata.getWatchableCollectionModifier().write(0, dataWatcher.getWatchableObjects());
+        return entityMetadata;
+    }
+
+    public PacketContainer setPassengers(int entityID, int... entities) {
+
+        PacketContainer entityMount = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.MOUNT);
+        entityMount.getIntegers().writeDefaults();
+
+        entityMount.getIntegers().write(0, entityID);
+        entityMount.getIntegers().writeSafely(1, entities.length);
+        entityMount.getIntegerArrays().write(0, entities);
+
+        return entityMount;
 
     }
 

@@ -10,10 +10,19 @@
 #
 #Valid abilities
 #ADD_HEALTH:(n), GLOW, TITLE:(t), CONSOLE_LOG:(t), FAKE_LOCATION, ADD_FOOD:(n), SHOOT_ENDERPEARL, SUBTITLE:(t), SHOOT_ARROW, SHOOT_SNOWBALL, DAMAGE:(n), HEAL:(n), POISON_NEAR, PLAYER_PARTICLE:(particle):(count), LAUNCH, CURE:(n), NO_KNOCKBACK, DISARM_OPPONENT, PET_PARTICLE:(particle):(count), DISARM_SELF, INCREASE_DAMAGE, EXP:(n), EXPLOSION:(power):(destroyBlocks):(incendiary), EXTINGUISH, FIREBALL, SET_FIRE:(n), TEMP_FLY:(n), FLY, GOD, TEMP_GOD:(n), FREEZE:(n), INVISIBLE, LIGHNING_ON_PLAYER, LIGHTNING_LOOKING, MESSAGE:(t), PLAYER_COMMAND:(t), CONSOLE_COMMAND:(t), POTION:(potionEffectType):(duration):(amplify), PLAY_SOUND:(sound):(pitch):(volume), PLAY_SOUND_EVERYONE:(sound):(pitch):(volume), PUMPKIN, VELOCITY:(power), SWAP_ITEMS, INVISIBLE_ARMOR, FAKE_ARMOR:(EquipmentSlot):(Material):(customModelData), INVISIBLE_HAND, FAKE_HAND:(Material), NO_FALL_DAMAGE
+# in abilities you can insert skipFirstRun=true or skipFirstRun=false to not run the ability the first time
 #
 #Valid animations are
 # GLIDE, BOUNCE, GLITCH, NONE, SLOW_GLIDE, WALK, SIDE
 
+hallooween_exclusive:
+  displayname: "&c&lHALLOWEEN EXCLUSIVE"
+  animation: GLIDE
+  description:
+    - ""
+    - "&7A very spooky pet!"
+  skins:
+    - Murderer
 sheep:
   displayname: "&f&lSHEEP"
   animation: SIDE
