@@ -44,7 +44,8 @@ Pets can also have **other attributes**, which are the following:<br><br>
 **particle**, only for 1.9+, allows to set the default Pet particle which can be enabled by levelling or by command. By default it is SNOWBALL Here is a list of valid [Particle types in 1.20](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html).<br>
 **group**, since HPET 4.3+, Players can select multiple pets at same time but only one for each group. This allows to group pets by behaviour, notice that this does not have any graphic/aesthetic effect and should not be confused with GUI groups. Default group is "default".<br>
 **visible**, boolean (true|false), defines the default Pet visibility. By default it is true.<br>
-**inherit**, ```(Deprecated)``` inherits attributes from Pet types which are already loaded.<br>
+**balloon**, boolean (true|false), attach the pet to the player with a lead, so it looks like you're holding a balloon
+**balloon_height**, allows to adjust the height of lead
 
 ### Create a Cosmetic
 Your Cosmetics can be placed in separate YAML files into cosmetics folder and enabled via config.yml. A Cosmetic must have an **id**, a **displayname**, a **wear** ([Valid Equipment Slots](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/EquipmentSlot.html)), a **description** and an **item**<br>
@@ -62,6 +63,12 @@ ballcap:
 Cosmetics can also have **other attributes**, which are the following:<br><br>
 **color**, to configure the default Cosmetic color in hex, only applies to Leather armor types.<br>
 **price**, requires [Vault](https://www.spigotmc.org/resources/vault.34315/) to be installed. Allows users to unlock Pets using economy. By default pets are not buyable.<br>
+
+**Importing Cosmetics from ItemsAdder**
+You can also import cosmetics from an ItemsAdder namespace using the following option:
+**import_itemsadder:** <namespace>
+this option can be put once in each yml file that defines cosmetics. The cosmetics **id**, **description**, and **item** will be defined by default from the ItemsAdder configuration, to override the default values you just need to configure the cosmetic values you want to change. **wear** is set by default to **HEAD** if the item is an ItemsAdder HAT, else it gets set as **OFF_HAND** item
+**Notice:** importing doesn't mean enabling. To enable the cosmetics you will be still required to put them in enabledPets, even if you imported from ItemsAdder
 
 ### Pet levelling
 Pets can have levels, to enable levelling you have to enable them in config here:
@@ -112,13 +119,14 @@ skins:
   - "HDB:10123"
 ```
 
+#### Custom Skins
 **CustomModelData models**, allows to be compatible with **textured pets/cosmetics**, example usage:
 ```
 skins:
   - "DIAMOND_HOE:3"
 ```
 
-**Mobs** and **MythicMobs**, allows to spawn a Mob, only one skin can be applied, only 1.9+, example usage:
+**Mobs**, **MythicMobs** and **ModelEngine 4**, allows to spawn a Mob, only one skin can be applied, only 1.9+, example usage:
 ```
 skins:
   - "MOB:SHEEP"
@@ -130,6 +138,18 @@ skins:
   - "MYTHICMOB:Dragon"
 ```
 
+**Notice:** if you want to use ModelEngine 3, refer to it as MythicMob
+requires [ModelEngine](https://mythiccraft.io/index.php?resources/model-engine—ultimate-entity-model-manager-1-19-4-1-20-2.1213/):
+```
+skins:
+  - "MODELENGINE:Dragon"
+```
+
+**ItemsAdder items**, allows to be compatible with **textured pets/cosmetics**, example usage:
+```
+skins:
+  - "ITEMSADDER:blue_hat"
+```
 
 ## Commands and Permissions
 Command aliases can be defined in ```config.yml``` in the following section:
