@@ -193,8 +193,41 @@ All official addons are free, avaiable on SpigotMc<br>
 %pet_level% - return the pet level value<br>
 
 
-## How do I hook into HPET API?
+## Developer API
 
+**Import Dependency with**<br>
+
+**Maven**
+```
+	<repositories>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+```
+```
+	<dependency>
+	    <groupId>com.github.Heron4gf</groupId>
+	    <artifactId>HPET-api</artifactId>
+	    <version>4.5</version>
+	</dependency>
+```
+**Gradle**
+```
+	dependencyResolutionManagement {
+		repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+		repositories {
+			mavenCentral()
+			maven { url 'https://jitpack.io' }
+		}
+	}
+```
+```
+	dependencies {
+	        implementation 'com.github.Heron4gf:HPET-api:4.5'
+	}
+```
 You can download the PetAPI.jar file here on GitHub, add it to your classpath, then add HPET it into your plugin.yml as dependency
 > softdepend: Pet
 
