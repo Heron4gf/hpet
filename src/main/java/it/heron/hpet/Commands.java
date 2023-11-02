@@ -9,6 +9,7 @@ package it.heron.hpet;
 
 import it.heron.hpet.pettypes.PetType;
 import it.heron.hpet.userpets.UserPet;
+import net.kyori.adventure.text.format.TextColor;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
 import org.bukkit.command.Command;
@@ -103,6 +104,21 @@ public class Commands implements CommandExecutor {
                 } catch (Exception ignored) {}
                 Pet.getApi().setPetLevel(p, type.getName(), current-amount);
                 p.sendMessage("§eNow "+type.getName()+" is level "+(current-amount)+"!");
+                return true;
+            }
+            if(parseCommand(p,argument,"color",true,"pet.color")) {
+                Color color = null;
+                try {
+                    TextColor c = TextColor.fromHexString(args[1]);
+                    color = Color.fromRGB(c.red(),c.green(),c.blue());
+                } catch (Exception ignored) {
+                    p.sendMessage(Messages.getMessage("pet.color.invalid"));
+                    return false;
+                }
+                UserPet pet = Pet.getApi().getUserPet(p);
+                pet.setColor(color);
+                pet.update();
+                p.sendMessage(Messages.getMessage("pet.color.change"));
                 return true;
             }
             if(parseCommand(p, argument, "select", false, null, type)) {
@@ -215,31 +231,8 @@ public class Commands implements CommandExecutor {
                 return true;
             }
             if(parseCommand(p, argument, "reload", false, "pet.reload")) {
-                if(Pet.getInstance().isDemo()) {
-                    sender.sendMessage("§eReload is not supported in DEMO edition, buy HPET on SpigotMC!");
-                    return false;
-                }
-                
-                Pet.getInstance().reloadConfig();
-                Messages.rl();
-                Pet.getInstance().setPetConfiguration(YamlConfiguration.loadConfiguration(Pet.getInstance().getPetFile()));
-                Pet.getInstance().setPetTypes(new ArrayList<>());
-                Pet.getInstance().parsePetTypes();
-                Pet.getInstance().clearCachedItems();
-                try {
-                    for(Plugin plugin : Pet.getInstance().getAddons()) {
-                        try {
-                            if(plugin != null) {
-                                Pet.getInstance().getPluginLoader().disablePlugin(plugin);
-                                Pet.getInstance().getPluginLoader().enablePlugin(plugin);
-                                sender.sendMessage("§aReloaded addon: "+plugin.getName());
-                            }
-                        } catch(Exception ignored) {
-                            sender.sendMessage("§cCould not reload addon: "+plugin.getName());
-                        }
-                    }
-                } catch(Exception ignored) {}
-                sender.sendMessage("§aConfig reloaded!");
+                Pet.getInstance().reload();
+                sender.sendMessage("§aHPET reloaded!");
                 return true;
             }
         }

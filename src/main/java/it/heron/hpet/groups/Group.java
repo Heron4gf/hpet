@@ -26,6 +26,7 @@ class Group extends HSlot {
     public Group(String name, PetType[] type) {
         setName(name);
         setDisplayName("§a§l"+name);
+        this.type = type;
     }
 
     @Override

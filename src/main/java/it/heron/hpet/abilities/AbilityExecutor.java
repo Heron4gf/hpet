@@ -3,14 +3,17 @@ package it.heron.hpet.abilities;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.ticxo.modelengine.api.animation.handler.AnimationHandler;
 import it.heron.hpet.Pet;
 import it.heron.hpet.Utils;
+import it.heron.hpet.userpets.ModelEngineUserPet;
 import it.heron.hpet.userpets.UserPet;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -146,6 +149,19 @@ public class AbilityExecutor implements Listener {
         UserPet upet = userPet;
         if(upet.getLevel() != minlevel) return;
         if(Math.random()*100 > chance) return;
+        if(step == 0) {
+            boolean skipFirstRun = false;
+            for(String string : args) {
+                if(string.contains("skipFirstRun=")) {
+                    try {
+                        skipFirstRun = Boolean.parseBoolean(string.split("skipFirstRun=")[1]);
+                        continue;
+                    } catch (Exception ignored) {}
+                }
+            }
+            if(skipFirstRun) return;
+        }
+
         step++;
 
         if(desecuteAfter != -1) {
@@ -157,6 +173,14 @@ public class AbilityExecutor implements Listener {
         p = Bukkit.getPlayer(upet.getOwner());
 
         //Player p = upet.getOwner();
+
+        if(userPet instanceof ModelEngineUserPet) {
+            try {
+                ModelEngineUserPet m = ((ModelEngineUserPet)userPet);
+                AnimationHandler animationHandler = m.getActiveModel().getAnimationHandler();
+                animationHandler.playAnimation("ability",1,1,1,true);
+            } catch (Exception ignored) {}
+        }
         switch(a) {
             case EXP:
                 p.setTotalExperience(p.getTotalExperience()+getArg(1));
@@ -236,13 +260,30 @@ public class AbilityExecutor implements Listener {
                 setFakeSlot(p, EquipmentSlot.HAND, null);
                 break;
             case FAKE_ARMOR:
-                ItemStack stack = new ItemStack(Material.valueOf(args[2]));
+                ItemStack stack;
+                if(args[2].equals("ITEMSADDER")) {
+                    stack = Utils.colorArmor(Utils.getCustomItem("ITEMSADDER:"+args[3]+":"+args[4]),userPet.getColor());
+                } else {
+                    stack = Utils.colorArmor(new ItemStack(Material.valueOf(args[2])),userPet.getColor());
+                }
                 ItemMeta meta = stack.getItemMeta();
                 try {
                     meta.setCustomModelData(Integer.parseInt(args[3]));
                 } catch(Exception ignored) {}
+                EquipmentSlot slot = EquipmentSlot.valueOf(args[1]);
+                ItemStack current = p.getInventory().getItem(slot);
+                if(current.getType() != Material.AIR) {
+                    if(slot == EquipmentSlot.OFF_HAND) break;
+                }
+                if(current.hasItemMeta() && current.getItemMeta().hasEnchants()) {
+                    for(Enchantment enchant : current.getItemMeta().getEnchants().keySet()) {
+                        meta.addEnchant(enchant,current.getItemMeta().getEnchants().get(enchant),true);
+                    }
+
+                }
+                meta.setDisplayName(userPet.getType().getDisplayName());
                 stack.setItemMeta(meta);
-                setFakeSlot(p, EquipmentSlot.valueOf(args[1]), stack);
+                setFakeSlot(p, slot, stack);
                 break;
             case ADD_FOOD:
                 p.setFoodLevel(p.getFoodLevel()+getArg(1));

@@ -10,9 +10,7 @@ package it.heron.hpet;
 import com.comphenix.protocol.ProtocolLibrary;
 import it.heron.hpet.messages.Messages;
 import it.heron.hpet.pettypes.PetType;
-import it.heron.hpet.updater.Updater;
 import it.heron.hpet.userpets.UserPet;
-import net.md_5.bungee.api.chat.ClickEvent;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Trident;
@@ -73,6 +71,12 @@ public class Events implements Listener {
     @EventHandler
     void onTP(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
+        try {
+            if(event.getFrom().distance(event.getTo()) < 10) {
+                return;
+            }
+        } catch (Exception ignored) {}
+
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -83,19 +87,16 @@ public class Events implements Listener {
                     }
                 }
             }
-        }.runTaskLater(Pet.getInstance(), Pet.getInstance().getConfig().getInt("delay.teleport"));
+        }.runTaskLater(Pet.getInstance(), Pet.getInstance().getConfig().getInt("delay.teleport")+5);
     }
 
 
     @EventHandler
     void onWorldChange(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                Utils.loadVisiblePets(player);
-            }
-        }.runTaskLater(Pet.getInstance(), 5);
+        if(Pet.getInstance().getConfig().getInt("delay.teleport") == -1) {
+            return;
+        }
         List<UserPet> userPets = Pet.getApi().getUserPets(player);
         if(userPets != null && !userPets.isEmpty()) {
             for(UserPet userPet : userPets) {
@@ -111,8 +112,9 @@ public class Events implements Listener {
                         userPet.update();
                     }
                 }
+                Utils.loadVisiblePets(player);
             }
-        }.runTaskLater(Pet.getInstance(), Pet.getInstance().getConfig().getInt("delay.teleport"));
+        }.runTaskLater(Pet.getInstance(), Pet.getInstance().getConfig().getInt("delay.teleport")+5);
     }
 
     @EventHandler
@@ -128,6 +130,8 @@ public class Events implements Listener {
                     userPet.remove();
                 }
             }
+        } else {
+            Utils.savePets(player,null);
         }
     }
 
@@ -145,7 +149,7 @@ public class Events implements Listener {
                         }
                     }
                 }
-            }.runTaskLater(Pet.getInstance(),Pet.getInstance().getConfig().getInt("delay.teleport"));
+            }.runTaskLater(Pet.getInstance(),Pet.getInstance().getConfig().getInt("delay.teleport")+5);
         }
     }
 
@@ -161,7 +165,7 @@ public class Events implements Listener {
             }
         }.runTaskLater(Pet.getInstance(), Pet.getInstance().getConfig().getInt("delay.join"));
 
-        if(p.hasPermission("pet.admin.notifications")) {
+        /*if(p.hasPermission("pet.admin.notifications")) {
             Utils.runAsync(() -> {
                 if(Updater.isThereUpdate()) {
                     new BukkitRunnable() {
@@ -172,7 +176,7 @@ public class Events implements Listener {
                     }.runTaskLater(Pet.getInstance(), 30);
                 }
             });
-        }
+        }*/
     }
 
     @EventHandler
