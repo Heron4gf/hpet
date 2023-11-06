@@ -68,6 +68,7 @@ public class CosmeticType extends PetType {
             }
             if(yaml.contains("import_itemsadder")) {
                 String item = yaml.getString("import_itemsadder")+":"+name;
+                data = yaml;
                 if(CustomStack.getInstance(item) != null) {
                     data = yaml;
                     break;
