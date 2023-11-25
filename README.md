@@ -174,6 +174,8 @@ Default aliases are /hpet, /pet<br>
 /hpet setlevel <petname> <amount> - set a pet level, pet.setlevel<br>
 /hpet level - shows current pet level, pet.level<br>
 
+(Notice) to show a Pet in GUI a Player will need permission pet.see.<petname>, this allows to choose wether you want to show unlocked pets or not in gui. To show all GUI pets you can assign pet.see.* to players. This permission does **not** change the way pets are visualized while spawned.
+
 ## Addons
 
 ### How to install addons?
