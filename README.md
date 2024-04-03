@@ -119,6 +119,12 @@ skins:
   - "HDB:10123"
 ```
 
+**HeadDB heads**, requires [HeadDB](https://www.spigotmc.org/resources/headdb.84967/) to be installed, example usage:
+```
+skins:
+  - "HDB:4023"
+```
+
 #### Custom Skins
 **CustomModelData models**, allows to be compatible with **textured pets/cosmetics**, example usage:
 ```
