@@ -37,7 +37,7 @@ Pets can also have **other attributes**, which are the following:<br><br>
 **y**, to configure pet relative y location from player's location, default is 1.<br>
 **yaw**, to configure the relative rotation of the pet armorstand, added to player's yaw and yawCalibration, default is 0.<br>
 **abilities**, a list of String defined abilities, see [Abilities](#Abilities) for reference.<br>
-**animation**, decide the type of animation the pet should have, by default is GLIDE, valid animation types are: ```GLIDE, BOUNCE, GLITCH, NONE, SLOW_GLIDE, WALK, SIDE```.<br>
+**animation**, decide the type of animation the pet should have, by default is GLIDE, valid animation types are: ```GLIDE, BOUNCE, GLITCH, NONE, SLOW_GLIDE, WALK, SIDE, FOLLOW```.<br>
 **distance**, used to calculate the radius of the pet location relative to the player, default is 1.<br>
 **price**, requires [Vault](https://www.spigotmc.org/resources/vault.34315/) to be installed. Allows users to unlock Pets using economy. By default pets are not buyable.<br>
 **level**, allows to setup a level type and value, which allows the Pet to level up based on certain factors. See [Pet levelling](#Pet-levelling).<br>
