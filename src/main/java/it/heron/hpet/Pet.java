@@ -266,7 +266,7 @@ public final class Pet extends JavaPlugin {
         this.petConfiguration = YamlConfiguration.loadConfiguration(getPetFile());
         //createGUIFile();
 
-        String[] commands = {"pet", "hpet"};
+        String[] commands = {"hpet"};
         for(String s : commands) {
             getCommand(s).setExecutor(new Commands());
             Bukkit.getLogger().info("Registered /"+s+" command!");
@@ -278,7 +278,9 @@ public final class Pet extends JavaPlugin {
             Bukkit.getLogger().info("TabComplete is not avaiable on this Minecraft version!");
         }
 
-        if(getConfig().getBoolean("mysql.useMariaDb")) {
+        if(getConfig().getBoolean("redis.enabled", false)) {
+            this.database = new RedisDatabase(this);
+        } else if(getConfig().getBoolean("mysql.useMariaDb")) {
             this.database = new MariaDB(this);
         } else if(getConfig().getBoolean("mysql.enabled")) {
             this.database = new MySQL(this);
@@ -303,7 +305,8 @@ public final class Pet extends JavaPlugin {
         }
 
         String version = Bukkit.getServer().getVersion();
-        if(checkVersion("1.19.3") || checkVersion("1.19.4") || checkVersion("1.20") || checkVersion("1.21")) this.packetUtils = new Utils1_19_3();
+        if(checkVersion("1.20.4") || checkVersion("1.20.5") || checkVersion("1.20.6") || checkVersion("1.21")) this.packetUtils = new Utils1_20_4();
+        else if(checkVersion("1.19.3") || checkVersion("1.19.4") || checkVersion("1.20") || checkVersion("1.21")) this.packetUtils = new Utils1_19_3();
         else if(checkVersion("1.17") || checkVersion("1.18") || checkVersion("1.19")) this.packetUtils = new Utils1_17();
         if(checkVersion("1.16")) this.packetUtils = new Utils1_16();
         if(checkVersion("1.15")) this.packetUtils = new Utils1_15();
@@ -337,6 +340,7 @@ public final class Pet extends JavaPlugin {
             this.headAPI = new HeadDatabaseAPI();
         }
         hook("MythicMobs");
+        hook("HeadDB");
         if(hook("Vault")) {
             try {
                 this.economy = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class).getProvider();

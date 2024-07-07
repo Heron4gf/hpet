@@ -49,6 +49,10 @@ public class MythicUserPet extends MobUserPet {
 
     @Override
     public void despawn(World world) {
+        if(getFollower() != null) {
+            getFollower().remove();
+            setFollower(null);
+        }
         if(entity == null) return;
         entity.remove();
         entity = null;

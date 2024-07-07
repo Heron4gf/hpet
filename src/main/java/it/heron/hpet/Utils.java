@@ -7,6 +7,7 @@ import dev.lone.itemsadder.api.CustomStack;
 import dev.lone.itemsadder.api.ItemsAdder;
 import io.lumine.mythic.bukkit.utils.adventure.text.Component;
 import io.lumine.mythic.bukkit.utils.adventure.text.minimessage.MiniMessage;
+import it.heron.hpet.headapi.HeadAPIGetter;
 import it.heron.hpet.userpets.UnspawnedUserPet;
 import it.heron.hpet.userpets.UserPet;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -26,13 +27,20 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.regex.Pattern;
 
 import com.mojang.authlib.GameProfile;
+import org.bukkit.profile.PlayerProfile;
+import org.bukkit.profile.PlayerTextures;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Utils {
@@ -51,15 +59,30 @@ public class Utils {
             setHeadTexture(stack, skinName);
         } else {
             if(skinName.startsWith("HDB:")) {
-                return Pet.getInstance().getHeadAPI().getItemHead(skinName.replace("HDB:", ""));
+                if(Pet.getInstance().getHeadAPI() == null) {
+                    try {
+                        return HeadAPIGetter.getHead(skinName);
+                    } catch (Exception ignored) {
+                        Bukkit.getLogger().warning("No Head Database found");
+                    }
+                } else {
+                    return Pet.getInstance().getHeadAPI().getItemHead(skinName.replace("HDB:", ""));
+                }
             }
             SkullMeta meta = (SkullMeta) stack.getItemMeta();
-            meta.setOwner(skinName);
+
+            if(Pet.getPackUtils().isLegacy()) {
+                meta.setOwner(skinName);
+            } else {
+                meta.setOwningPlayer(Bukkit.getOfflinePlayer(skinName));
+            }
+
             stack.setItemMeta(meta);
         }
         Pet.getInstance().addToCache(skinName, stack);
         return stack;
     }
+
     public static GameProfile createProfileWithTexture(String texture){
 
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "hpet_gameprofile");
@@ -68,26 +91,63 @@ public class Utils {
         propertyMap.put("textures", new Property("textures", texture));
 
         return gameProfile;
-
     }
+
+    public static URL getUrlFromBase64(String base64) throws MalformedURLException {
+        String decoded = new String(Base64.getDecoder().decode(base64));
+        // We simply remove the "beginning" and "ending" part of the JSON, so we're left with only the URL. You could use a proper
+        // JSON parser for this, but that's not worth it. The String will always start exactly with this stuff anyway
+        return new URL(decoded.substring("{\"textures\":{\"SKIN\":{\"url\":\"".length(), decoded.length() - "\"}}}".length()));
+    }
+
+    public static boolean isBase64(String text) {
+        return text.length() > 64;
+    }
+
+    public static PlayerProfile createConsistentProfileWithTexture(String texture) {
+        PlayerProfile profile = Bukkit.createPlayerProfile(UUID.randomUUID(), "hello");
+        PlayerTextures textures = profile.getTextures();
+        try {
+            URL url = null;
+            if(isBase64(texture)) {
+                url = getUrlFromBase64(texture);
+            } else {
+                url = new URL(texture);
+            }
+
+            textures.setSkin(url);
+            profile.setTextures(textures);
+        } catch (MalformedURLException ignored) {}
+        return profile;
+    }
+
+
 
     public static void setHeadTexture(ItemStack itemStack, String texture){
         if(itemStack != null){
             ItemMeta itemMeta = itemStack.getItemMeta();
-            try {
-                Field field = itemMeta.getClass().getDeclaredField("profile");
-                if (!field.isAccessible()) {
-                    field.setAccessible(true);
-                }
+
+
+            boolean consistent = Pet.getInstance().getConfig().getBoolean("fix.consistent_heads");
+            if(consistent) {
+                SkullMeta meta = (SkullMeta)itemMeta;
+                meta.setOwnerProfile(createConsistentProfileWithTexture(texture));
+            } else {
                 try {
-                    field.set(itemMeta, createProfileWithTexture(texture));
-                } finally {
+                    Field field = itemMeta.getClass().getDeclaredField("profile");
                     if (!field.isAccessible()) {
-                        field.setAccessible(false);
+                        field.setAccessible(true);
                     }
+                    try {
+                        field.set(itemMeta, createProfileWithTexture(texture));
+                    } finally {
+                        if (!field.isAccessible()) {
+                            field.setAccessible(false);
+                        }
+                    }
+                }catch(Exception ex){
+                    Bukkit.getConsoleSender().sendMessage("Error while generating a textured head!");
                 }
-            }catch(Exception ex){
-                Bukkit.getConsoleSender().sendMessage("Error!");
             }
             itemStack.setItemMeta(itemMeta);
         }

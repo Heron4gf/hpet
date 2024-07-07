@@ -68,7 +68,7 @@ public class Commands implements CommandExecutor {
                 for(String g : Pet.getInstance().getConfig().getStringList("nametags.invalidnames")) {
                     if(s.contains(g)) s = s.replace(g, "*");
                 }
-                upet.setName(s);
+                upet.setName(Pet.getInstance().getNameFormat().replace("%name%",s).replace("%level%",upet.getLevel()+"").replace("%player%",p.getName()));
                 upet.update();
                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
                 p.playEffect(p.getLocation(), Effect.SMOKE, 1);
@@ -188,7 +188,9 @@ public class Commands implements CommandExecutor {
                 return true;
             }
             if(parseCommand(p, argument, "update", true, "pet.update")) {
-                Pet.getApi().getUserPet(p).update();
+                for(UserPet userPet : Pet.getApi().getUserPets(p)) {
+                    userPet.update();
+                }
                 p.sendMessage(Messages.getMessage("pet.respawn"));
                 return true;
             }

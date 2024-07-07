@@ -31,18 +31,18 @@ public abstract class Database {
     protected String[] queryTables() {
         return new String[]{
                 "CREATE TABLE IF NOT EXISTS LastPet (" +
-                        "'id' INT AUTO INCREMENT PRIMARY KEY," +
-                        "'owner' varchar(36) NOT NULL," +
-                        "'type' varchar(32)," +
-                        "'child' boolean," +
-                        "'glow' boolean," +
-                        "'particle' varchar(32)," +
-                        "'name' varchar(32),"+
+                        "id INT AUTO_INCREMENT PRIMARY KEY," +
+                        "owner varchar(36) NOT NULL," +
+                        "type varchar(32)," +
+                        "child boolean," +
+                        "glow boolean," +
+                        "particle varchar(32)," +
+                        "name varchar(32)" +
                         ");",
                 "CREATE TABLE IF NOT EXISTS Levels (" +
-                        "'player' varchar(36) NOT NULL," +
-                        "'data' varchar(300)," +
-                        "PRIMARY KEY (`player`)" +
+                        "player varchar(36) NOT NULL," +
+                        "data varchar(300)," +
+                        "PRIMARY KEY (player)" +
                         ");"
         };
     }

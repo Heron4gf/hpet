@@ -3,10 +3,8 @@ package it.heron.hpet.abilities;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
-import com.ticxo.modelengine.api.animation.handler.AnimationHandler;
 import it.heron.hpet.Pet;
 import it.heron.hpet.Utils;
-import it.heron.hpet.userpets.ModelEngineUserPet;
 import it.heron.hpet.userpets.UserPet;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -147,6 +145,9 @@ public class AbilityExecutor implements Listener {
 
     public void check() {
         UserPet upet = userPet;
+        if(upet == null || upet.getOwner() == null || Bukkit.getEntity(upet.getOwner()) == null) {
+            return;
+        }
         if(upet.getLevel() != minlevel) return;
         if(Math.random()*100 > chance) return;
         if(step == 0) {
@@ -174,13 +175,13 @@ public class AbilityExecutor implements Listener {
 
         //Player p = upet.getOwner();
 
-        if(userPet instanceof ModelEngineUserPet) {
+        /*if(userPet instanceof ModelEngineUserPet) {
             try {
                 ModelEngineUserPet m = ((ModelEngineUserPet)userPet);
                 AnimationHandler animationHandler = m.getActiveModel().getAnimationHandler();
                 animationHandler.playAnimation("ability",1,1,1,true);
             } catch (Exception ignored) {}
-        }
+        }*/
         switch(a) {
             case EXP:
                 p.setTotalExperience(p.getTotalExperience()+getArg(1));

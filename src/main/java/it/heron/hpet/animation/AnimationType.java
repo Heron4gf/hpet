@@ -4,7 +4,7 @@ import it.heron.hpet.Pet;
 import it.heron.hpet.packetutils.versions.Utils_;
 
 public enum AnimationType {
-    GLIDE, BOUNCE, GLITCH, NONE, SLOW_GLIDE, WALK, SIDE;
+    GLIDE, BOUNCE, GLITCH, NONE, SLOW_GLIDE, WALK, SIDE, FOLLOW;
 
     private static float[] glide = {-0.3f, -0.25f, -0.2f, -0.1f, 0, 0.1f, 0.2f, 0.25f, 0.3f, 0.3f, 0.25f, 0.2f, 0.1f, 0, -0.1f, -0.2f, -0.25f, -0.3f};
     private static float[] slow_glide = {-0.3f, -0.3f, -0.25f, -0.25f, -0.2f, -0.2f, -0.1f, -0.1f, 0, 0, 0.1f, 0.1f, 0.2f, 0.2f, 0.25f, 0.25f, 0.3f, 0.3f, 0.3f, 0.3f, 0.25f, 0.25f, 0.2f, 0.2f, 0.1f, 0, 0, -0.1f, -0.1f, -0.2f, -0.2f, -0.25f, -0.25f, -0.3f, -0.3f};
@@ -39,6 +39,8 @@ public enum AnimationType {
                 return new float[]{-0.9f};
             case WALK:
                 return new float[]{-123};
+            case FOLLOW:
+                return new float[]{0.5f};
             default:
                 return glide;
         }

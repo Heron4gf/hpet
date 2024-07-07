@@ -6,13 +6,13 @@
 
     <groupId>pet</groupId>
     <artifactId>HPET</artifactId>
-    <version>4.5</version>
+    <version>4.6</version>
     <packaging>jar</packaging>
 
     <name>HPET</name>
 
     <properties>
-        <java.version>16.0.2</java.version>
+        <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -136,11 +136,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.ticxo.modelengine</groupId>
-            <artifactId>ModelEngine</artifactId>
-            <version>LATEST</version>
-        </dependency>
-        <dependency>
             <groupId>com.viaversion</groupId>
             <artifactId>viaversion-api</artifactId>
             <version>LATEST</version>
@@ -158,8 +153,13 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.16.5-R0.1-SNAPSHOT</version>
+            <version>1.18.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>4.3.1</version>
         </dependency>
         <!-- ProtocolLib -->
         <dependency>

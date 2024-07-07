@@ -13,7 +13,7 @@
 # in abilities you can insert skipFirstRun=true or skipFirstRun=false to not run the ability the first time
 #
 #Valid animations are
-# GLIDE, BOUNCE, GLITCH, NONE, SLOW_GLIDE, WALK, SIDE
+# GLIDE, BOUNCE, GLITCH, NONE, SLOW_GLIDE, WALK, SIDE, FOLLOW
 
 hallooween_exclusive:
   displayname: "&c&lHALLOWEEN EXCLUSIVE"

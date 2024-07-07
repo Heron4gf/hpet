@@ -13,16 +13,17 @@ import it.heron.hpet.ChildPet;
 import it.heron.hpet.Pet;
 import it.heron.hpet.Utils;
 import it.heron.hpet.abilities.AbilityExecutor;
+import it.heron.hpet.animation.AnimationType;
 import it.heron.hpet.operations.Coords;
 import it.heron.hpet.pettypes.CosmeticType;
 import it.heron.hpet.pettypes.PetType;
 import lombok.Data;
 import org.bukkit.*;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import it.heron.hpet.animation.PetParticle;
 import it.heron.hpet.api.events.PetRemoveEvent;
 import it.heron.hpet.api.events.PetUpdateEvent;
+import org.bukkit.entity.Wolf;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
@@ -46,6 +47,7 @@ class UserPet {
     private boolean invisible;
     private Color color;
     int leashId = -1;
+    private Wolf follower = null;
 
     private String name = null;
     private int nameId = Utils.getRandomId();
@@ -126,8 +128,16 @@ class UserPet {
     }
 
     public void updateNameTag() {
+        if(type.isBalloon()) {
+            Location leashed_location;
+            if(slot == EquipmentSlot.HAND) {
+                leashed_location = getTheoricalLocation();
+            } else {
+                leashed_location = location.clone().add(0,-1,0);
+            }
+            leashId = Pet.getPackUtils().spawnPetEntity(false,false,null,leashed_location,EntityType.CHICKEN,null,"hpet.leash");
+        }
         if(Pet.getInstance().getConfig().getBoolean("nametags.enable")) {
-
             String name = getName();
             try {
                 if(name == null) {
@@ -136,6 +146,7 @@ class UserPet {
                         String displayname = type.getDisplayName();
                         displayname = displayname.replace("%player%", Bukkit.getEntity(owner).getName()).replace("%level%",getLevel()+"");
                         name = Utils.color(Pet.getInstance().getNameFormat()).replace("%player%", Bukkit.getEntity(owner).getName()).replace("%name%", displayname).replace("%level%", getLevel() + "");
+                        setName(name);
                         this.nameId = Pet.getPackUtils().spawnPetEntity(false, false, null, getTheoricalLocation(), EntityType.ARMOR_STAND, null, name);
                     }
                 } else {
@@ -168,8 +179,22 @@ class UserPet {
         return this.step != 0;
     }
 
+    public void spawnFollower() {
+        Wolf wolf = getLocation().getWorld().spawn(getLocation(),Wolf.class);
+        wolf.setInvisible(true);
+        wolf.setInvulnerable(false);
+        wolf.setOwner(Bukkit.getPlayer(getOwner()));
+        wolf.setBaby();
+        wolf.setSilent(true);
+        this.follower = wolf;
+    }
+
     public void update() {
         despawn();
+
+        if(getType().getAnimation() == AnimationType.FOLLOW) {
+            spawnFollower();
+        }
 
         if(Pet.getInstance().getDisabledWorlds().contains(Bukkit.getEntity(owner).getWorld().getName())) {
             remove();
@@ -209,8 +234,8 @@ class UserPet {
             if (level > 6) {
                 this.setGlow(true);
             }
-            update();
         } catch(Exception ignored) {}
+        update();
     }
 
     public void despawn() {
@@ -221,6 +246,10 @@ class UserPet {
         }
     }
     public void despawn(World world) {
+        if(follower != null) {
+            follower.remove();
+            follower = null;
+        }
 
         for(AbilityExecutor a : abilities) {
             a.disable(this);
@@ -237,9 +266,10 @@ class UserPet {
 
         // destroy leash
         if(this.leashId != -1) {
-            Pet.getPackUtils().executePacket(Pet.getPackUtils().destroyEntity(this.leashId), world);
             Utils.makeSureThisArmorstandIsNotRealPlease(this.leashId, world);
+            int leashId = this.leashId;
             this.leashId = -1;
+            Pet.getPackUtils().executePacket(Pet.getPackUtils().destroyEntity(leashId), world);
         }
 
         if(this.child != null) {
@@ -306,9 +336,17 @@ class UserPet {
 
                 if(child != null) {
                     if(slot == EquipmentSlot.HAND) {
-                        child.teleport(Bukkit.getEntity(owner).getLocation().clone(), type.getAnimation().getAnimationValues());
+                        if(follower == null) {
+                            child.teleport(Bukkit.getEntity(owner).getLocation().clone(), type.getAnimation().getAnimationValues());
+                        } else {
+                            child.teleport(follower.getLocation().clone(), type.getAnimation().getAnimationValues());
+                        }
                     } else {
-                        child.teleport(coords.getLoc(Bukkit.getEntity(owner).getLocation().clone()), type.getAnimation().getAnimationValues());
+                        if(follower == null) {
+                            child.teleport(coords.getLoc(Bukkit.getEntity(owner).getLocation().clone()), type.getAnimation().getAnimationValues());
+                        } else {
+                            child.teleport(coords.getLoc(follower.getLocation().clone()), type.getAnimation().getAnimationValues());
+                        }
                     }
                 }
                 if(step%20 == 0) {
@@ -332,9 +370,19 @@ class UserPet {
                     }
                 } else {
                     if(slot == EquipmentSlot.HAND) {
-                        teleport(Bukkit.getEntity(owner).getLocation().add(0, steps[(int) (step%steps.length)], 0));
+                        if(follower == null) {
+                            teleport(Bukkit.getEntity(owner).getLocation().add(0, steps[(int) (step%steps.length)], 0));
+                        } else {
+
+                            teleport(follower.getLocation().add(0, steps[(int) (step%steps.length)], 0));
+                        }
                     } else {
-                        teleport(coords.getLoc(Bukkit.getEntity(owner).getLocation().add(0, steps[(int) (step%steps.length)], 0)));
+                        if(follower == null) {
+                            teleport(coords.getLoc(Bukkit.getEntity(owner).getLocation().add(0, steps[(int) (step%steps.length)], 0)));
+                        } else {
+                            teleport(coords.getLoc(follower.getLocation().add(0, steps[(int) (step%steps.length)], 0)));
+                        }
+
                     }
                 }
 
@@ -347,17 +395,18 @@ class UserPet {
                         leashed_location = location.clone().add(0,-1,0);
                     }
                     leashed_location = leashed_location.add(0, type.getBallon_height(), 0);
-                    if(leashId == -1) {
-                        leashId = Pet.getPackUtils().spawnPetEntity(false,false,null,leashed_location,EntityType.CHICKEN,null,"hpet.leash");
-                        Pet.getPackUtils().executePacket(Pet.getPackUtils().leashEntity(leashId, Bukkit.getEntity(owner).getEntityId()), location.getWorld());
-                        //Pet.getPackUtils().executePacket(Pet.getPackUtils().setInvisible(leashId), location.getWorld());
-                    } else {
-                        Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(leashId,leashed_location,false),Bukkit.getEntity(owner).getWorld());
-                    }
+                    Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(leashId,leashed_location,false),Bukkit.getEntity(owner).getWorld());
+                    Pet.getPackUtils().executePacket(Pet.getPackUtils().leashEntity(leashId, Bukkit.getEntity(owner).getEntityId()), location.getWorld());
                 }
 
                 if(!(Bukkit.getEntity(owner).getLocation().getX() == location.getX() && Bukkit.getEntity(owner).getLocation().getZ() == location.getZ())) {
                     if(particle != null && !invisible) particle.tick(getTheoricalLocation());
+                }
+
+                if(!invisible) {
+                    if(step%100 == 99) {
+                        update();
+                    }
                 }
 
                 step++;

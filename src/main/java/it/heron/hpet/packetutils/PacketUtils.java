@@ -13,13 +13,8 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.*;
-import com.ticxo.modelengine.api.ModelEngineAPI;
-import com.ticxo.modelengine.api.animation.handler.AnimationHandler;
-import com.ticxo.modelengine.api.model.ActiveModel;
-import com.ticxo.modelengine.api.model.ModeledEntity;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import it.heron.hpet.Pet;
-import it.heron.hpet.userpets.ModelEngineUserPet;
 import it.heron.hpet.userpets.MythicUserPet;
 import it.heron.hpet.userpets.PassengerUserPet;
 import lombok.Getter;
@@ -59,32 +54,17 @@ public abstract class PacketUtils {
                     Bukkit.getLogger().info("ERROR SPAWNING "+pet.getType().getName());
                 }
             } else {
-                if(pet.getType().isModelEngine()) {
-                    Location location = Bukkit.getEntity(pet.getOwner()).getLocation();
-                    Entity e = location.getWorld().spawn(location, ArmorStand.class);
-                    ((ModelEngineUserPet)pet).setEntity(e);
-                    ModeledEntity modeledEntity = ModelEngineAPI.createModeledEntity(e);
-                    ((ModelEngineUserPet)pet).setModeledEntity(modeledEntity);
-                    String modelname = pet.getType().getModelEngine();
-                    try {
-                        ActiveModel activeModel = ModelEngineAPI.createActiveModel(modelname);
-                        modeledEntity.addModel(activeModel, true);
-                        ((ModelEngineUserPet)pet).setActiveModel(activeModel);
-
-                        try {
-                            AnimationHandler animationHandler = activeModel.getAnimationHandler();
-                            animationHandler.playAnimation("spawn",1,1,1,true);
-                        } catch (Exception ignored) {}
-                    } catch (RuntimeException ignored) {
-                        Bukkit.getLogger().warning("Model not found "+modelname);
-                    }
-                } else if(pet.getType().isMob()) {
+                if(pet.getType().isMob()) {
                     pet.setId(spawnPetEntity(pet.isGlow(), false, Utils.getCustomItem(pet.getType().getSkins()[0]), p.getLocation(), pet.getType().getEntityType(), pet.getSlot(), pet.getName(),null));
                 } else {
                     if(pet instanceof PassengerUserPet) {
                         pet.setId(spawnPetEntity(pet.isGlow(), false, Utils.getCustomItem(pet.getType().getSkins()[0]), p.getLocation(), pet.getType().getEntityType(), pet.getSlot(), null,Bukkit.getEntity(pet.getOwner())));
                     } else {
-                        pet.setId(spawnPetEntity(pet.isGlow(), false, Utils.getCustomItem(pet.getType().getSkins()[0]), p.getLocation(), pet.getType().getEntityType(), pet.getSlot(), null,null));
+                        Location spawn_location = p.getLocation();
+                        if(pet.getLocation() != null) {
+                            spawn_location = pet.getLocation();
+                        }
+                        pet.setId(spawnPetEntity(pet.isGlow(), false, Utils.getCustomItem(pet.getType().getSkins()[0]), spawn_location, pet.getType().getEntityType(), pet.getSlot(), null,null));
                     }
                 }
                 if(pet.getChild() != null) {
@@ -141,8 +121,13 @@ public abstract class PacketUtils {
         if(e instanceof Ageable && small) {
             ((Ageable)e).setBaby();
         }
-        e.setCustomNameVisible(name != null);
-        e.setCustomName(name);
+
+        if(item == null && name != null && !name.isEmpty()) {
+            e.setCustomNameVisible(true);
+            e.setCustomName(name);
+        } else {
+            e.setCustomNameVisible(false);
+        }
         e.setInvulnerable(true);
 
         if(name != null && name.equals("hpet.leash") && entityType == EntityType.CHICKEN) {
