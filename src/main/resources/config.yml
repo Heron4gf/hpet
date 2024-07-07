@@ -23,9 +23,14 @@ level:
   max: 100
   enable: false # enable level based features
 
+fix:
+  consistent_heads: true # set to true to fix inconsistent heads bug, if that doesn't show in console there's no need to enable
+
 delay:
-  teleport: -1 # ticks waited for pet spawn on join, set to -1 to disable the listener
-  join: 20 # ticks waited for pet spawn on join
+  teleport: 20 # ticks waited for pet spawn on teleport, set to -1 to disable the listener
+  respawn: 22
+  world_change: -1 # -1 disables the listener, 
+  join: 24 # ticks waited for pet spawn on join
   joinDatabaseUpdate: 20 # ticks waited from Pet spawn to do a Pet update when joining in order to get all the database data
 
 useAliases: false # enable aliases for /hpet command
@@ -64,6 +69,12 @@ disabledWorlds:
   - nopetsworld
 
 yawCalibration: 200 # calibrate the yaw if you think the pet looks misplaced, useful for customModelData pets
+
+redis:
+  enabled: false # if disabled will try to use MySQL or SQLite
+  host: localhost
+  port: 6379
+  password: ""
 
 mysql:
   useMariaDb: false # if enabled it will use the credentials for MariaDB

@@ -70,6 +70,7 @@ public class Events implements Listener {
 
     @EventHandler
     void onTP(PlayerTeleportEvent event) {
+        if(Pet.getInstance().getConfig().getInt("delay.teleport") < 0) return;
         Player player = event.getPlayer();
         try {
             if(event.getFrom().distance(event.getTo()) < 10) {
@@ -87,22 +88,20 @@ public class Events implements Listener {
                     }
                 }
             }
-        }.runTaskLater(Pet.getInstance(), Pet.getInstance().getConfig().getInt("delay.teleport")+5);
+        }.runTaskLater(Pet.getInstance(), Pet.getInstance().getConfig().getInt("delay.teleport"));
     }
 
 
     @EventHandler
     void onWorldChange(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
-        if(Pet.getInstance().getConfig().getInt("delay.teleport") == -1) {
-            return;
-        }
         List<UserPet> userPets = Pet.getApi().getUserPets(player);
         if(userPets != null && !userPets.isEmpty()) {
             for(UserPet userPet : userPets) {
                 userPet.despawn(event.getFrom());
             }
         }
+        if(Pet.getInstance().getConfig().getInt("delay.world_change") < 0) return;
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -114,7 +113,7 @@ public class Events implements Listener {
                 }
                 Utils.loadVisiblePets(player);
             }
-        }.runTaskLater(Pet.getInstance(), Pet.getInstance().getConfig().getInt("delay.teleport")+5);
+        }.runTaskLater(Pet.getInstance(), Pet.getInstance().getConfig().getInt("delay.world_change"));
     }
 
     @EventHandler
@@ -137,6 +136,7 @@ public class Events implements Listener {
 
     @EventHandler
     void onRespawn(PlayerRespawnEvent event) {
+        if(Pet.getInstance().getConfig().getInt("delay.respawn") < 0) return;
         Player p = event.getPlayer();
         if(event.getRespawnLocation().getWorld().equals(p.getWorld()) && Pet.getApi().hasUserPet(p)) {
             new BukkitRunnable() {
@@ -149,12 +149,13 @@ public class Events implements Listener {
                         }
                     }
                 }
-            }.runTaskLater(Pet.getInstance(),Pet.getInstance().getConfig().getInt("delay.teleport")+5);
+            }.runTaskLater(Pet.getInstance(),Pet.getInstance().getConfig().getInt("delay.respawn"));
         }
     }
 
     @EventHandler
     void onJoin(PlayerJoinEvent event) {
+        if(Pet.getInstance().getConfig().getInt("delay.join") < 0) return;
         Player p = event.getPlayer();
 
         new BukkitRunnable() {
@@ -164,19 +165,6 @@ public class Events implements Listener {
                 Utils.loadDatabasePet(p);
             }
         }.runTaskLater(Pet.getInstance(), Pet.getInstance().getConfig().getInt("delay.join"));
-
-        /*if(p.hasPermission("pet.admin.notifications")) {
-            Utils.runAsync(() -> {
-                if(Updater.isThereUpdate()) {
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            p.spigot().sendMessage(Utils.text("§eHey, there is a new §dHPET Update§e! §2[§a§lDOWNLOAD LATEST§2]", ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/hpet-1-8-1-18-packet-based-pet-system.93891/"));
-                        }
-                    }.runTaskLater(Pet.getInstance(), 30);
-                }
-            });
-        }*/
     }
 
     @EventHandler
@@ -236,15 +224,15 @@ public class Events implements Listener {
         // 50 glow
         if(!c.equals("")) {
             p.closeInventory();
-            p.chat("/pet "+c);
+            p.chat("/hpet "+c);
             return;
         }
         int page = Pet.getInstance().getOpenedPage().get(p.getUniqueId());
         if(slot == 27) {
             if(page >= 10) {
-                p.chat("/pet");
+                p.chat("/hpet");
             } else {
-                p.chat("/pet "+(Pet.getInstance().getOpenedPage().get(p.getUniqueId())-1));
+                p.chat("/hpet "+(Pet.getInstance().getOpenedPage().get(p.getUniqueId())-1));
             }
             return;
         }
@@ -268,10 +256,10 @@ public class Events implements Listener {
             if(p.hasPermission("pet.use."+type.getName())) {
                 Pet.getApi().selectPet(p, type);
             } else {
-                if(type.getPrice() != null) p.chat("/pet buy "+type.getName());
+                if(type.getPrice() != null) p.chat("/hpet buy "+type.getName());
             }
         } else {
-            p.chat("/pet "+(slot+10));
+            p.chat("/hpet "+(slot+10));
             return;
         }
         p.closeInventory();

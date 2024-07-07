@@ -63,8 +63,6 @@ public class API {
             pet = new MobUserPet(player, petType, null);
         } else if(petType.isMythicMob()) {
             pet = new MythicUserPet(player, petType, null);
-        } else if(petType.isModelEngine()) {
-            pet = new ModelEngineUserPet(player, petType, null);
         } else if(petType instanceof CosmeticType && ((CosmeticType)petType).isWearable()) {
             pet = new PassengerUserPet(player.getUniqueId(), petType, null);
         } else {

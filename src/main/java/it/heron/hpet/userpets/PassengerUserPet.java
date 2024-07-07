@@ -28,11 +28,15 @@ public class PassengerUserPet extends UserPet {
                 if(getStep() % 2 == 0) {
 
                     ItemStack itemStack = Utils.getCustomItem(getType().getSkins()[0]);
-                    if(getColor() != null && !itemStack.getType().name().startsWith("LEATHER_")) {
+                    if(getColor() != null) {
                         itemStack = Utils.colorArmor(itemStack, getColor());
                     }
 
                     Pet.getPackUtils().executePacket(Pet.getPackUtils().equipItem(this.getId(), Utils.fromEquipSlot(getSlot()), itemStack), Bukkit.getEntity(getOwner()).getWorld());
+                }
+
+                if(getStep()%100 == 99) {
+                    update();
                 }
 
                 Pet.getPackUtils().executePacket(Pet.getPackUtils().rotateHead(getId(), (int)Bukkit.getEntity(getOwner()).getLocation().getYaw(),0),getLocation().getWorld());

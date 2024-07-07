@@ -21,9 +21,18 @@ public class NewEvents implements Listener {
     @EventHandler
     void onCommandTab(TabCompleteEvent event) {
         String buffer = event.getBuffer();
-        if(!(buffer.startsWith("/hpet") || buffer.startsWith("/pet"))) {
+
+        List<String> aliases = Pet.getInstance().getConfig().getStringList("alias");
+        if(!Pet.getInstance().getConfig().getBoolean("useAliases")) aliases.clear();
+
+        if(aliases.contains(buffer.split(" ")[0].replace("/", ""))) {
+            buffer = buffer.replace(buffer.split(" ")[0], "/hpet");
+        }
+
+        if(!(buffer.startsWith("/hpet"))) {
             return;
         }
+
         String[] args = buffer.split(" ");
         if(args.length < 2) {
             event.setCompletions(Arrays.asList("select", "level", "setlevel", "addlevel", "reload", "update", "trail", "remove", "particle", "buy", "rename"));
