@@ -2,16 +2,11 @@ package it.heron.hpet.packetutils.versions;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
-import it.heron.hpet.Pet;
-import it.heron.hpet.userpets.UserPet;
+import it.heron.hpet.main.PetPlugin;
 import it.heron.hpet.packetutils.PacketUtils;
 import org.bukkit.Location;
-import org.bukkit.entity.Ageable;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -69,7 +64,75 @@ public class Utils1_8 extends Utils1_12 {
             public void run() {
                 e.remove();
             }
-        }.runTaskLater(Pet.getInstance(), 5);
+        }.runTaskLater(PetPlugin.getInstance(), 5);
+        return id;
+    }
+
+    @Override
+    public int spawnPetEntity(boolean glow, boolean small, ItemStack item, Location loc, EntityType entityType, EquipmentSlot slot, String name, Entity ride) {
+        Entity e = loc.getWorld().spawnEntity(loc, entityType);
+        int id = e.getEntityId();
+        destroyQueue.add(id);
+
+        //e.setGlowing(glow);
+        if(e instanceof Ageable && small) {
+            ((Ageable)e).setBaby();
+        }
+
+        if(item == null && name != null && !name.isEmpty()) {
+            e.setCustomNameVisible(true);
+            e.setCustomName(name);
+        } else {
+            e.setCustomNameVisible(false);
+        }
+
+        if(name != null && name.equals("hpet.leash") && entityType == EntityType.CHICKEN) {
+            ((Chicken)e).setInvisible(true);
+        }
+
+        if(entityType == EntityType.ARMOR_STAND) {
+            ArmorStand a = (ArmorStand) e;
+            a.setSmall(small);
+            a.setArms(true);
+            a.setVisible(false);
+            a.setMarker(true);
+            if(ride != null) {
+                ride.addPassenger(a);
+            }
+            executePacket(standardMetaData(e.getEntityId(), null), e.getWorld());
+            if (slot != null) {
+                switch (slot) {
+                    case HAND:
+                        a.setItemInHand(item);
+                        break;
+                    case HEAD:
+                        a.setHelmet(item);
+                        break;
+                    case CHEST:
+                        a.setChestplate(item);
+                        break;
+                    case LEGS:
+                        a.setLeggings(item);
+                        break;
+                    case FEET:
+                        a.setBoots(item);
+                        break;
+                }
+            }
+        }
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                e.remove();
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        destroyQueue.remove(id);
+                    }
+                }.runTaskLater(PetPlugin.getInstance(), 6);
+            }
+        }.runTaskLater(PetPlugin.getInstance(), 5);
         return id;
     }
 

@@ -1,6 +1,6 @@
 package it.heron.hpet.combat;
 
-import it.heron.hpet.Pet;
+import it.heron.hpet.main.PetPlugin;
 import it.heron.hpet.pettypes.PetType;
 import nl.marido.deluxecombat.events.CombatStateChangeEvent;
 import org.bukkit.entity.Player;
@@ -20,7 +20,7 @@ public class Deluxe implements Listener {
                 removePet(event.getPlayer());
                 break;
             case UNTAGGED:
-                Pet.getApi().selectPet(event.getPlayer(), disabledPet.get(event.getPlayer().getUniqueId()));
+                PetPlugin.getApi().selectPet(event.getPlayer(), disabledPet.get(event.getPlayer().getUniqueId()));
                 disabledPet.remove(event.getPlayer().getUniqueId());
                 break;
         }
@@ -28,9 +28,9 @@ public class Deluxe implements Listener {
 
     private Map<UUID, PetType> disabledPet = new HashMap<>();
     private void removePet(Player p) {
-        if(Pet.getApi().hasUserPet(p)) {
-            disabledPet.put(p.getUniqueId(), Pet.getApi().getUserPet(p).getType());
-            Pet.getApi().getUserPet(p).remove();
+        if(PetPlugin.getApi().hasUserPet(p)) {
+            disabledPet.put(p.getUniqueId(), PetPlugin.getApi().getUserPet(p).getType());
+            PetPlugin.getApi().getUserPet(p).remove();
         }
     }
 

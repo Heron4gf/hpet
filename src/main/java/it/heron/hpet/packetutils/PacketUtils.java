@@ -14,7 +14,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.*;
 import io.lumine.mythic.bukkit.MythicBukkit;
-import it.heron.hpet.Pet;
+import it.heron.hpet.main.PetPlugin;
 import it.heron.hpet.userpets.MythicUserPet;
 import it.heron.hpet.userpets.PassengerUserPet;
 import lombok.Getter;
@@ -23,7 +23,7 @@ import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import it.heron.hpet.userpets.UserPet;
-import it.heron.hpet.Utils;
+import it.heron.hpet.main.Utils;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -97,7 +97,7 @@ public abstract class PacketUtils {
     @Getter
     protected Set<Integer> destroyQueue = new HashSet<>();
     public void initDestroyListener() {
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(Pet.getInstance(), new PacketType[]{PacketType.Play.Server.ENTITY_DESTROY}) {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(PetPlugin.getInstance(), new PacketType[]{PacketType.Play.Server.ENTITY_DESTROY}) {
             public void onPacketSending(PacketEvent event) {
                 int id = ((int[])event.getPacket().getIntegerArrays().read(0))[0];
                 if(destroyQueue.contains(id)) {
@@ -156,9 +156,9 @@ public abstract class PacketUtils {
                     public void run() {
                         destroyQueue.remove(id);
                     }
-                }.runTaskLater(Pet.getInstance(), 6);
+                }.runTaskLater(PetPlugin.getInstance(), 6);
             }
-        }.runTaskLater(Pet.getInstance(), 5);
+        }.runTaskLater(PetPlugin.getInstance(), 5);
         return id;
     }
 
@@ -194,7 +194,7 @@ public abstract class PacketUtils {
     public PacketContainer standardMetaData(int entityID, Player p) {
         PacketContainer entityMetadata = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_METADATA);
         entityMetadata.getIntegers().write(0, entityID);
-        return standardMetaData(entityMetadata, Pet.getInstance().getVersionParser().getPlayerPackets(p));
+        return standardMetaData(entityMetadata, PetPlugin.getInstance().getVersionParser().getPlayerPackets(p));
     }
     public PacketContainer standardMetaData(PacketContainer entityMetadata, PacketUtils protocol) {
         WrappedDataWatcher dataWatcher = getDataWatcher(entityMetadata);

@@ -1,8 +1,8 @@
 package it.heron.hpet.userpets;
 
-import it.heron.hpet.ChildPet;
 import it.heron.hpet.pettypes.CosmeticType;
 import it.heron.hpet.pettypes.PetType;
+import it.heron.hpet.userpets.childpet.ChildPet;
 import lombok.Data;
 import org.bukkit.Color;
 

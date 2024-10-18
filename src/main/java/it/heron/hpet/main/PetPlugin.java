@@ -7,18 +7,28 @@
  */
 
 
-package it.heron.hpet;
+package it.heron.hpet.main;
 
+import it.heron.hpet.database.Database;
+import it.heron.hpet.database.redisdatabase.RedisDatabase;
+import it.heron.hpet.database.sqldatabases.MariaDB;
+import it.heron.hpet.database.sqldatabases.MySQL;
+import it.heron.hpet.database.sqldatabases.SQLite;
+import it.heron.hpet.events.Events;
+import it.heron.hpet.events.NewEvents;
 import it.heron.hpet.animation.AnimationType;
 import it.heron.hpet.api.events.HPETReloadPluginEvent;
 import it.heron.hpet.combat.Deluxe;
-import it.heron.hpet.database.*;
+import it.heron.hpet.commands.Commands;
 import it.heron.hpet.itemsaddersupport.ItemsAdderListener;
 import it.heron.hpet.legacyevents.LegacyEvents;
 import it.heron.hpet.levels.LevelEvents;
 import it.heron.hpet.messages.Messages;
+import it.heron.hpet.metrics.Metrics;
 import it.heron.hpet.pettypes.CosmeticType;
 import it.heron.hpet.pettypes.PetType;
+import it.heron.hpet.updater.AutoUpdater;
+import it.heron.hpet.updater.UpdaterEventListener;
 import it.heron.hpet.userpets.UserPet;
 import it.heron.hpet.vanish.CMIVanish;
 import it.heron.hpet.vanish.EssentialsVanish;
@@ -50,10 +60,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public final class Pet extends JavaPlugin {
+public final class PetPlugin extends JavaPlugin {
+
 
     @Getter
-    public static Pet instance;
+    private static PetPlugin instance;
 
     @Getter
     private static API api = new API();
@@ -85,6 +96,8 @@ public final class Pet extends JavaPlugin {
         this.openedPage.remove(p.getUniqueId());
     }
 
+    @Getter
+    private CachedConfiguration cachedConfigurationInfo;
 
     private YamlConfiguration config;
 
@@ -156,7 +169,7 @@ public final class Pet extends JavaPlugin {
 
     public static PetType getPetTypeByName(String name) {
         if(name == null) return null;
-        for(HSlot slot : Pet.getInstance().getPetTypes()) {
+        for(HSlot slot : PetPlugin.getInstance().getPetTypes()) {
             if(slot instanceof PetType) {
                 if(((PetType)slot).getName().equalsIgnoreCase(name)) {
                     return ((PetType)slot);
@@ -208,9 +221,6 @@ public final class Pet extends JavaPlugin {
     @Getter
     private PlayerVersion versionParser = new PlayerVersion();
 
-    @Getter
-    private int maxPetLevel;
-
     private boolean hook(String pluginName) {
         if(Bukkit.getPluginManager().getPlugin(pluginName) != null) {
             Bukkit.getLogger().info("Hooked with "+pluginName+" successfully!");
@@ -236,7 +246,7 @@ public final class Pet extends JavaPlugin {
     }
 
     @Getter
-    private PetDatabase database;
+    private Database database;
 
     @Getter
     private Plugin[] addons = {null};
@@ -248,6 +258,8 @@ public final class Pet extends JavaPlugin {
     @Getter
     private boolean PAPIhooked = false;
 
+    private Metrics metrics;
+
     @Override
     public void saveResource(String resource, boolean overwrite) {
         if(new File(getDataFolder()+File.separator+resource).exists()) return;
@@ -256,12 +268,12 @@ public final class Pet extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if(!new Utils_().enable()) return;
         instance = this;
         saveResource("config.yml", demo);
         saveResource("pets.yml", demo);
         reloadConfig();
         convertConfig();
+        this.cachedConfigurationInfo = new CachedConfiguration(this);
 
         this.petConfiguration = YamlConfiguration.loadConfiguration(getPetFile());
         //createGUIFile();
@@ -278,14 +290,19 @@ public final class Pet extends JavaPlugin {
             Bukkit.getLogger().info("TabComplete is not avaiable on this Minecraft version!");
         }
 
-        if(getConfig().getBoolean("redis.enabled", false)) {
-            this.database = new RedisDatabase(this);
-        } else if(getConfig().getBoolean("mysql.useMariaDb")) {
-            this.database = new MariaDB(this);
-        } else if(getConfig().getBoolean("mysql.enabled")) {
-            this.database = new MySQL(this);
-        } else {
-            this.database = new SQLite(this);
+        switch (cachedConfigurationInfo.getDatabaseType()) {
+            case SQLITE:
+                this.database = new SQLite(this);
+                break;
+            case MYSQL:
+                this.database = new MySQL(this);
+                break;
+            case MARIADB:
+                this.database = new MariaDB(this);
+                break;
+            case REDIS:
+                this.database = new RedisDatabase(this);
+                break;
         }
         this.database.load();
         Bukkit.getLogger().info("Database loaded successfully!");
@@ -381,46 +398,37 @@ public final class Pet extends JavaPlugin {
         parsePetTypes();
         packetUtils.initDestroyListener();
 
-        this.maxPetLevel = getConfig().getInt("level.max");
+        Bukkit.getPluginManager().registerEvents(new UpdaterEventListener(), this);
+        this.metrics = new Metrics(this, 14210);
+        metrics.addCustomChart(new Metrics.SimplePie("plugin_version", () -> AutoUpdater.currentVersion()));
 
+        /*Bukkit.getScheduler().scheduleSyncDelayedTask(this, () ->  {
+            new HDEVCommandHandler(this);
+        }, 300);*/
+
+        new AddonsManager();
     }
 
     public void reload() {
-        Pet.getInstance().reloadConfig();
+        PetPlugin.getInstance().reloadConfig();
         Messages.rl();
-        Pet.getInstance().setPetConfiguration(YamlConfiguration.loadConfiguration(Pet.getInstance().getPetFile()));
-        Pet.getInstance().setPetTypes(new ArrayList<>());
-        Pet.getInstance().parsePetTypes();
-        Pet.getInstance().clearCachedItems();
-        try {
-            for(Plugin plugin : Pet.getInstance().getAddons()) {
-                try {
-                    if(plugin != null) {
-                        Pet.getInstance().getPluginLoader().disablePlugin(plugin);
-                        Pet.getInstance().getPluginLoader().enablePlugin(plugin);
-                        Bukkit.getLogger().info("Reloaded addon: "+plugin.getName());
-                    }
-                } catch(Exception ignored) {
-                    Bukkit.getLogger().info("Could not reload addon: "+plugin.getName());
-                }
-            }
-        } catch(Exception ignored) {}
+        PetPlugin.getInstance().setPetConfiguration(YamlConfiguration.loadConfiguration(PetPlugin.getInstance().getPetFile()));
+        PetPlugin.getInstance().setPetTypes(new ArrayList<>());
+        PetPlugin.getInstance().parsePetTypes();
+        PetPlugin.getInstance().clearCachedItems();
+        AddonsManager.INSTANCE.reload();
         Bukkit.getPluginManager().callEvent(new HPETReloadPluginEvent());
         Bukkit.getLogger().info("Reloaded HPET!");
     }
 
     private void convertConfig() {
-        if(getConfig().contains("useLevelEvents")) {
-            if(!getConfig().contains("level.enable")) {
-                getConfig().set("level.enable", getConfig().getBoolean("useLevelEvents"));
-                getConfig().set("useLevelEvents", null);
-                getConfig().set("level.max", 100);
-            }
-        }
-        if(!getConfig().contains("delay.join")) {
-            getConfig().set("delay.join", 20);
-            getConfig().set("delay.teleport", 10);
-            getConfig().set("delay.joinDatabaseUpdate", 10);
+        if(getConfig().contains("database.mysql")) {
+            getConfig().set("database.type", "SQLITE");
+            getConfig().set("database.name", "hpet");
+            getConfig().set("database.address", "localhost");
+            getConfig().set("database.port", 3306);
+            getConfig().set("database.user", "user");
+            getConfig().set("database.password", "password");
         }
         try {
             getConfig().save(new File(getDataFolder()+File.separator+"config.yml"));
@@ -437,7 +445,6 @@ public final class Pet extends JavaPlugin {
         return new File(getDataFolder().getParent()+File.separator+name);
     }
 
-    private final Metrics metrics = new Metrics(this, 14210);
 
     @Getter @Setter
     private boolean cancellingListener = false;
@@ -445,17 +452,18 @@ public final class Pet extends JavaPlugin {
     @Override
     public void onDisable() {
         for(Player player : Bukkit.getOnlinePlayers()) {
-            List<UserPet> userPets = Pet.getApi().getUserPets(player);
+            List<UserPet> userPets = PetPlugin.getApi().getUserPets(player);
             if(userPets != null && !userPets.isEmpty()) {
                 Utils.savePets(player,userPets);
             } else {
                 Utils.savePets(player,null);
             }
         }
-        for(UserPet pet : Pet.getPackUtils().getPets()) {
+        for(UserPet pet : PetPlugin.getPackUtils().getPets()) {
             if(pet.getOwner() != null) {
                 pet.despawn();
             }
         }
+        this.database.close();
     }
 }

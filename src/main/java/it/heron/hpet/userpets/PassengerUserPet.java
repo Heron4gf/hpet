@@ -1,13 +1,12 @@
 package it.heron.hpet.userpets;
 
-import it.heron.hpet.ChildPet;
-import it.heron.hpet.Pet;
-import it.heron.hpet.Utils;
+import it.heron.hpet.main.PetPlugin;
+import it.heron.hpet.main.Utils;
 import it.heron.hpet.pettypes.PetType;
+import it.heron.hpet.userpets.childpet.ChildPet;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
 import java.util.UUID;
 
 public class PassengerUserPet extends UserPet {
@@ -17,12 +16,12 @@ public class PassengerUserPet extends UserPet {
 
     @Override
     protected void tick() {
-        setTaskID(Bukkit.getScheduler().scheduleSyncRepeatingTask(Pet.getInstance(), () -> {
+        setTaskID(Bukkit.getScheduler().scheduleSyncRepeatingTask(PetPlugin.getInstance(), () -> {
             try {
                 if(getStep() % 2 == 0) {
                     if(getOwner() == null) remove();
                     int owner_id = Bukkit.getEntity(getOwner()).getEntityId();
-                    Pet.getPackUtils().executePacket(Pet.getPackUtils().setPassengers(owner_id,getId()), getLocation().getWorld());
+                    PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().setPassengers(owner_id,getId()), getLocation().getWorld());
                 }
 
                 if(getStep() % 2 == 0) {
@@ -32,14 +31,14 @@ public class PassengerUserPet extends UserPet {
                         itemStack = Utils.colorArmor(itemStack, getColor());
                     }
 
-                    Pet.getPackUtils().executePacket(Pet.getPackUtils().equipItem(this.getId(), Utils.fromEquipSlot(getSlot()), itemStack), Bukkit.getEntity(getOwner()).getWorld());
+                    PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().equipItem(this.getId(), Utils.fromEquipSlot(getSlot()), itemStack), Bukkit.getEntity(getOwner()).getWorld());
                 }
 
                 if(getStep()%100 == 99) {
                     update();
                 }
 
-                Pet.getPackUtils().executePacket(Pet.getPackUtils().rotateHead(getId(), (int)Bukkit.getEntity(getOwner()).getLocation().getYaw(),0),getLocation().getWorld());
+                PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().rotateHead(getId(), (int)Bukkit.getEntity(getOwner()).getLocation().getYaw(),0),getLocation().getWorld());
             } catch (Exception ignored) {}
             setStep(getStep()+1);
         }, 5,5));

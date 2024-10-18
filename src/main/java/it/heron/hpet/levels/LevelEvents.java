@@ -7,7 +7,7 @@
  */
 package it.heron.hpet.levels;
 
-import it.heron.hpet.Pet;
+import it.heron.hpet.main.PetPlugin;
 import it.heron.hpet.userpets.UserPet;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -31,13 +31,13 @@ public class LevelEvents implements Listener {
         Player p = event.getPlayer();
         if(cool.containsKey(p.getUniqueId()) && cool.get(p.getUniqueId()) > System.currentTimeMillis()) return;
         cool.put(p.getUniqueId(), System.currentTimeMillis()+3000);
-        check(Pet.getApi().getUserPet(p));
+        check(PetPlugin.getApi().getUserPet(p));
     }
 
     private void check(UserPet upet) {
         if(upet == null) return;
         if(currentStat(upet) < getMaxStat(upet)) return;
-        Pet.getApi().incrementLevel(Bukkit.getPlayer(upet.getOwner()));
+        upet.incrementLevel();
     }
 
     public static int getMaxStat(UserPet upet) {

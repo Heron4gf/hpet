@@ -5,8 +5,10 @@
  * You are not allowed to decompile, or redestribuite part of this code if not authorized by the original author.
  * You are not allowed to claim this resource as yours.
  */
-package it.heron.hpet;
+package it.heron.hpet.main.guis;
 
+import it.heron.hpet.main.PetPlugin;
+import it.heron.hpet.main.Utils;
 import it.heron.hpet.pettypes.PetType;
 import it.heron.hpet.userpets.UserPet;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -53,9 +55,12 @@ public class GUI {
                             ItemMeta itemMeta = itemStack.getItemMeta();
                             if(itemMeta.hasDisplayName()) {
                                 String displayName = itemMeta.getDisplayName();
-                                displayName = displayName.replace("%player%",p.getDisplayName()).replace("%level%", Pet.getApi().getPetLevel(p,slot.getName())+"");
+                                displayName = displayName.replace("%player%",p.getDisplayName());
+                                try {
+                                    displayName = displayName.replace("%level%", PetPlugin.getInstance().getDatabase().getPetLevel(p.getUniqueId(),(PetType)slot)+"");
+                                } catch (Exception ignored) {}
 
-                                if(Pet.getInstance().isPAPIhooked()) {
+                                if(PetPlugin.getInstance().isPAPIhooked()) {
                                     displayName = PlaceholderAPI.setPlaceholders(p,displayName);
                                 }
 
@@ -67,7 +72,7 @@ public class GUI {
                     }
                 }
             }
-        }.runTaskLater(Pet.getInstance(), 1);
+        }.runTaskLater(PetPlugin.getInstance(), 1);
     }
     public static void loadInventory(Player p, Inventory inv, PetType[] types) {
         for(int i = 0; i < 27; i++) {
@@ -124,14 +129,14 @@ public class GUI {
         inv.setItem(27, border);
         inv.setItem(35, border);
         if(enableItems == null) {
-            enableItems = YamlConfiguration.loadConfiguration(new File(Pet.getInstance().getDataFolder()+File.separator+"gui.yml")).getBoolean("gui.enablePetItems", true);
+            enableItems = YamlConfiguration.loadConfiguration(new File(PetPlugin.getInstance().getDataFolder()+File.separator+"gui.yml")).getBoolean("gui.enablePetItems", true);
         }
-        if(!Pet.getInstance().getPacketUtils().playerPets(u).isEmpty() && enableItems) {
+        if(!PetPlugin.getInstance().getPacketUtils().playerPets(u).isEmpty() && enableItems) {
             inv.setItem(51, Utils.getGUIStack("remove"));
             inv.setItem(49, Utils.getGUIStack("rename"));
             inv.setItem(47, Utils.getGUIStack("respawn"));
 
-            UserPet pet = Pet.getApi().getUserPet(p);
+            UserPet pet = PetPlugin.getApi().getUserPet(p);
             if(pet.getChild() == null) {
                 inv.setItem(48, Utils.getGUIStack("trail.add"));
             } else {
@@ -156,7 +161,7 @@ public class GUI {
 
     public static List<HSlot> canSee(Player p) {
         List<HSlot> see = new ArrayList<>();
-        for(HSlot slot : Pet.getInstance().getPetTypes()) {
+        for(HSlot slot : PetPlugin.getInstance().getPetTypes()) {
             if(p.hasPermission("pet.see."+slot.getName())) {
                 see.add(slot);
             }
@@ -166,7 +171,7 @@ public class GUI {
 
     public static List<String> petLore(List<String> list, PetType petType, Player p) {
         ArrayList<String> lore = new ArrayList<>();
-        if(Pet.getInstance().isPAPIhooked()) {
+        if(PetPlugin.getInstance().isPAPIhooked()) {
             for(String s : list) {
                 lore.add(PlaceholderAPI.setPlaceholders(p,s));
             }

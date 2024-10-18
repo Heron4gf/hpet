@@ -1,11 +1,10 @@
 package it.heron.hpet.placeholders;
 
-import it.heron.hpet.Utils;
 import it.heron.hpet.levels.LevelEvents;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
-import it.heron.hpet.Pet;
+import it.heron.hpet.main.PetPlugin;
 import it.heron.hpet.userpets.UserPet;
 
 public class Placeholders extends PlaceholderExpansion {
@@ -36,16 +35,16 @@ public class Placeholders extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getVersion() {
-        return Pet.getInstance().getDescription().getVersion();
+        return PetPlugin.getInstance().getDescription().getVersion();
     }
 
     @Override
     public String onRequest(OfflinePlayer p, String identifier) {
         UserPet pet;
         if(p.isOnline()) {
-            pet = Pet.getApi().getUserPet(p.getPlayer());
+            pet = PetPlugin.getApi().getUserPet(p.getPlayer());
         } else {
-            pet = Pet.getInstance().getDatabase().getUnspawnedPets(p).get(0).toUserPet();
+            return "";
         }
         if(identifier.equalsIgnoreCase("isSelected")) return (pet != null)+"";
         if(pet == null) return "";

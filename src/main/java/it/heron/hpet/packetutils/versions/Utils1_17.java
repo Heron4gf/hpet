@@ -6,15 +6,8 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import it.heron.hpet.Pet;
+import it.heron.hpet.main.PetPlugin;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.Socket;
-import java.net.URL;
 import java.util.List;
 
 public class Utils1_17 extends Utils1_16 {
@@ -40,7 +33,7 @@ public class Utils1_17 extends Utils1_16 {
     public int slotHand() {return 19;}
 
     public void initDestroyListener() {
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(Pet.getInstance(), new PacketType[]{PacketType.Play.Server.ENTITY_DESTROY}) {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(PetPlugin.getInstance(), new PacketType[]{PacketType.Play.Server.ENTITY_DESTROY}) {
             public void onPacketSending(PacketEvent event) {
                 int id = event.getPacket().getIntLists().readSafely(0).get(0);
                 if(destroyQueue.contains(id)) {

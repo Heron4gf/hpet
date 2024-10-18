@@ -1,8 +1,8 @@
 package it.heron.hpet.messages;
 
 import io.lumine.mythic.bukkit.utils.adventure.text.Component;
-import it.heron.hpet.Pet;
-import it.heron.hpet.Utils;
+import it.heron.hpet.main.PetPlugin;
+import it.heron.hpet.main.Utils;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -39,11 +39,11 @@ public class Messages {
     private YamlConfiguration messagesFile;
 
     public File getFile() {
-        return new File(Pet.getInstance().getDataFolder()+File.separator+"messages.yml");
+        return new File(PetPlugin.getInstance().getDataFolder()+File.separator+"messages.yml");
     }
 
     public Messages() {
-        if(!new File(Pet.getInstance().getDataFolder()+File.separator+"messages.yml").exists()) Pet.getInstance().saveResource("messages.yml", false);
+        if(!new File(PetPlugin.getInstance().getDataFolder()+File.separator+"messages.yml").exists()) PetPlugin.getInstance().saveResource("messages.yml", false);
         this.messagesFile = YamlConfiguration.loadConfiguration(getFile());
     }
 
@@ -55,7 +55,7 @@ public class Messages {
         if(!components.containsKey(path)) {
             String string = this.messagesFile.getString("messages."+path);
             if(string == null) {
-                Pet.getInstance().getConfig().set(path, path);
+                PetPlugin.getInstance().getConfig().set(path, path);
                 try {
                     this.messagesFile.save(getFile());
                 } catch (IOException e) {
@@ -73,7 +73,7 @@ public class Messages {
         if(!messages.containsKey(path)) {
             String string = this.messagesFile.getString("messages."+path);
             if(string == null) {
-                Pet.getInstance().getConfig().set(path, path);
+                PetPlugin.getInstance().getConfig().set(path, path);
                 try {
                     this.messagesFile.save(getFile());
                 } catch (IOException e) {

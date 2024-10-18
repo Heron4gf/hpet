@@ -1,10 +1,12 @@
 name: HPET
-version: '4.7.5'
-main: it.heron.hpet.Pet
+version: '4.7-beta'
+main: it.heron.hpet.main.PetPlugin
 depend: [ProtocolLib]
 api-version: 1.13
 softdepend: [PlaceholderAPI, HeadDatabase, Vault, SuperVanish, PremiumVanish, CMI, MythicMobs, ItemsAdder, ModelEngine, HeadDB]
 commands:
+  hdev:
+    description: "Get information and help about all HDEV products"
   hpet:
 permissions:
   pet.version:

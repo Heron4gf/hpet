@@ -1,8 +1,8 @@
 package it.heron.hpet.pettypes;
 
-import it.heron.hpet.GUI;
-import it.heron.hpet.Pet;
-import it.heron.hpet.Utils;
+import it.heron.hpet.main.guis.GUI;
+import it.heron.hpet.main.PetPlugin;
+import it.heron.hpet.main.Utils;
 import it.heron.hpet.abilities.AbilityExecutor;
 import it.heron.hpet.levels.LType;
 import lombok.Data;
@@ -58,14 +58,14 @@ class PetType extends HSlot {
     public boolean isMob() {return entityType != EntityType.ARMOR_STAND;}
 
     public PetType(String name) {
-        YamlConfiguration data = Pet.getInstance().getPetConfiguration();
+        YamlConfiguration data = PetPlugin.getInstance().getPetConfiguration();
 
         if(!data.contains(name)) throw new RuntimeException();
 
         if(data.contains(name+".inherit")) {
             String o = data.getString(name+".inherit");
             try {
-                PetType type = Pet.getPetTypeByName(o);
+                PetType type = PetPlugin.getPetTypeByName(o);
                 //System.out.println(type);
                 setDisplayName(type.getDisplayName());
                 this.skins = type.skins;
@@ -129,11 +129,11 @@ class PetType extends HSlot {
         if(data.contains(name+".yaw")) {
             this.yaw = data.getInt(name+".yaw");
         }
-        if(this.skins[0].startsWith("MOB:") && !Pet.getInstance().isUsingLegacySound()) {
+        if(this.skins[0].startsWith("MOB:") && !PetPlugin.getInstance().isUsingLegacySound()) {
             this.entityType = EntityType.valueOf(this.skins[0].replace("MOB:", ""));
             if(this.distance == 1) this.distance = 1.3;
         } else {
-            if(this.skins[0].startsWith("MYTHICMOB:") && !Pet.getInstance().isUsingLegacySound()) {
+            if(this.skins[0].startsWith("MYTHICMOB:") && !PetPlugin.getInstance().isUsingLegacySound()) {
                 this.mythicMob = this.skins[0].replace("MYTHICMOB:", "");
                 if(this.distance == 1) this.distance = 1.3;
             } else {
@@ -141,14 +141,14 @@ class PetType extends HSlot {
                     this.modelEngine = this.skins[0].replace("MODELENGINE:", "");
                     if(this.distance == 1) this.distance = 1.3;
                 } else {
-                    if(this.skins[0].contains(":") && !this.skins[0].contains("HDB:") && !Pet.getInstance().isUsingLegacySound()) this.customModelData = true;
+                    if(this.skins[0].contains(":") && !this.skins[0].contains("HDB:") && !PetPlugin.getInstance().isUsingLegacySound()) this.customModelData = true;
                     Material mat;
-                    if(Pet.getInstance().isUsingLegacyId()) {
-                        mat = Material.valueOf("SKULL_ITEM");
+                    if(PetPlugin.getInstance().isUsingLegacyId()) {
+                        mat = Material.LEGACY_SKULL_ITEM;
                     } else {
                         mat = Material.PLAYER_HEAD;
                     }
-                    if(getIcon(null).getType() == mat) this.yaw = -Pet.getInstance().getYawCalibration();
+                    if(getIcon(null).getType() == mat) this.yaw = -PetPlugin.getInstance().getYawCalibration();
                 }
             }
         }
