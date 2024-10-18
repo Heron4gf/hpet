@@ -2,23 +2,9 @@ package it.heron.hpet.packetutils.versions;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.Vector3F;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import it.heron.hpet.ChildPet;
-import it.heron.hpet.Pet;
-import it.heron.hpet.userpets.UserPet;
 import org.bukkit.Location;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.Iterator;
-import java.util.UUID;
 
 public class Utils1_12 extends Utils1_15 {
 

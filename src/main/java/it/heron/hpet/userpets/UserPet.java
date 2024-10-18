@@ -9,20 +9,26 @@ package it.heron.hpet.userpets;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
 
-import it.heron.hpet.ChildPet;
-import it.heron.hpet.Pet;
-import it.heron.hpet.Utils;
+import it.heron.hpet.levels.LType;
+import it.heron.hpet.levels.LevelEvents;
+import it.heron.hpet.main.PetPlugin;
+import it.heron.hpet.main.Utils;
 import it.heron.hpet.abilities.AbilityExecutor;
 import it.heron.hpet.animation.AnimationType;
+import it.heron.hpet.messages.Messages;
 import it.heron.hpet.operations.Coords;
 import it.heron.hpet.pettypes.CosmeticType;
 import it.heron.hpet.pettypes.PetType;
+import it.heron.hpet.userpets.childpet.ChildPet;
 import lombok.Data;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.*;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import it.heron.hpet.animation.PetParticle;
 import it.heron.hpet.api.events.PetRemoveEvent;
 import it.heron.hpet.api.events.PetUpdateEvent;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -33,30 +39,27 @@ public @Data
 class UserPet {
     public boolean needRespawn() {return true;}
 
-    private int id = 0;
-    private UUID owner;
+    protected int id = 0;
+    protected UUID owner;
 
-    private long step = 0;
+    protected long step = 0;
 
-    private PetType type;
-    private boolean glow;
-    private ChildPet child;
-    private int taskID;
-    private PetParticle particle;
-    private Location location;
-    private boolean invisible;
-    private Color color;
-    int leashId = -1;
-    private Wolf follower = null;
+    protected PetType type;
+    protected boolean glow;
+    protected ChildPet child;
+    protected int taskID;
+    protected PetParticle particle;
+    protected Location location;
+    protected boolean invisible;
+    protected int level;
+    protected Color color;
+    protected int leashId = -1;
+    protected Wolf follower = null;
 
-    private String name = null;
-    private int nameId = Utils.getRandomId();
+    protected String name = null;
+    protected int nameId = Utils.getRandomId();
 
-    private Coords coords = Coords.calculate(0, 1, 1);
-
-    public int getLevel() {
-        return Pet.getApi().getPetLevel(Bukkit.getEntity(owner), type.getName());
-    }
+    protected Coords coords = Coords.calculate(0, 1, 1);
 
     public Location getTheoricalLocation() {
         return getCoords().getLoc(location);
@@ -71,12 +74,21 @@ class UserPet {
         }
     }
 
+    public Entity getOwnerEntity() {
+        if(PetPlugin.getInstance().isUsingLegacyId()) {
+            return Bukkit.getPlayer(owner);
+        } else {
+            return Bukkit.getEntity(owner);
+        }
+    }
+
     public UserPet(UUID owner, PetType type, ChildPet child) {
         this.owner = owner;
         this.type = type;
         this.child = child;
         if(this.owner == null) return;
-        this.location = Bukkit.getEntity(owner).getLocation();
+
+        this.location = getOwnerEntity().getLocation();
 
         this.invisible = !this.type.isVisible();
 
@@ -88,9 +100,12 @@ class UserPet {
             this.color = ((CosmeticType)this.type).getColor();
         }
 
+        PetPlugin.getInstance().getDatabase().getPetLevel(this.owner, this.type);
         spawn();
         tick();
     }
+
+
 
     public void setInvisible(boolean state) {
         if(state == this.invisible) {
@@ -101,12 +116,26 @@ class UserPet {
         update();
     }
 
+    public void incrementLevel() {
+        if(type.getLtype() == LType.NONE) return;
+        level++;
+        PetPlugin.getInstance().getDatabase().setPetLevel(owner, type, level);
+        if(level <= 1) return;
+        Player player = Bukkit.getPlayer(owner);
+        if(player == null) return;
+
+        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+        for(String s : Messages.getList("levelup")) {
+            player.sendMessage(s.replace("[level]", level+"").replace("[leveltype]", Messages.getMessage("leveltype."+type.getLtype().name())+" §7"+ LevelEvents.currentStat(this)+"/"+LevelEvents.getMaxStat(this)));
+        }
+    }
+
     public void teleport(Location newLoc) {
 
-            newLoc.setYaw((newLoc.getYaw()+200+Pet.getInstance().getYawCalibration()+this.type.getYaw())%360);
+            newLoc.setYaw((newLoc.getYaw()+200+ PetPlugin.getInstance().getYawCalibration()+this.type.getYaw())%360);
 
         if(this.coords.getCos().getN() != (int)newLoc.getYaw()) {
-            if(Pet.getInstance().getPacketUtils().isLegacy()) {
+            if(PetPlugin.getInstance().getPacketUtils().isLegacy()) {
                 this.coords = Coords.calculate((int)newLoc.getYaw()-180, type.getDistance(), type.getNamey());
                 newLoc.setYaw(newLoc.getYaw()-30);
             } else {
@@ -115,16 +144,16 @@ class UserPet {
         }
             newLoc.setY(newLoc.getY()+this.type.getNamey()-1);
 
-            if(slot == EquipmentSlot.HAND) Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(this.id, newLoc, true), Bukkit.getEntity(owner).getWorld());
+            if(slot == EquipmentSlot.HAND) PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().teleportEntity(this.id, newLoc, true), getOwnerEntity().getWorld());
             else {
                 newLoc = newLoc.add(0, -type.getNamey(), 0);
-                Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(this.id, newLoc, true), Bukkit.getEntity(owner).getWorld());
+                PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().teleportEntity(this.id, newLoc, true), getOwnerEntity().getWorld());
             }
             this.location = newLoc;
 
             // tp name id
-            if(slot == EquipmentSlot.HAND) Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(this.nameId, getTheoricalLocation(), false), Bukkit.getEntity(owner).getWorld());
-            else Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(getNameId(), newLoc.clone().add(0, type.getNamey()+1, 0), false), Bukkit.getEntity(owner).getWorld());
+            if(slot == EquipmentSlot.HAND) PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().teleportEntity(this.nameId, getTheoricalLocation(), false), getOwnerEntity().getWorld());
+            else PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().teleportEntity(getNameId(), newLoc.clone().add(0, type.getNamey()+1, 0), false), getOwnerEntity().getWorld());
     }
 
     public void updateNameTag() {
@@ -135,22 +164,28 @@ class UserPet {
             } else {
                 leashed_location = location.clone().add(0,-1,0);
             }
-            leashId = Pet.getPackUtils().spawnPetEntity(false,false,null,leashed_location,EntityType.CHICKEN,null,"hpet.leash");
+            leashId = PetPlugin.getPackUtils().spawnPetEntity(false,false,null,leashed_location,EntityType.CHICKEN,null,"hpet.leash");
         }
-        if(Pet.getInstance().getConfig().getBoolean("nametags.enable")) {
+        if(PetPlugin.getInstance().getConfig().getBoolean("nametags.enable")) {
             String name = getName();
             try {
                 if(name == null) {
-                    if(Pet.getInstance().getConfig().getBoolean("nametags.defaultnametag")) {
+                    if(PetPlugin.getInstance().getConfig().getBoolean("nametags.defaultnametag")) {
 
                         String displayname = type.getDisplayName();
-                        displayname = displayname.replace("%player%", Bukkit.getEntity(owner).getName()).replace("%level%",getLevel()+"");
-                        name = Utils.color(Pet.getInstance().getNameFormat()).replace("%player%", Bukkit.getEntity(owner).getName()).replace("%name%", displayname).replace("%level%", getLevel() + "");
+                        displayname = displayname.replace("%player%", getOwnerEntity().getName()).replace("%level%",getLevel()+"");
+                        name = Utils.color(PetPlugin.getInstance().getNameFormat()).replace("%player%", getOwnerEntity().getName()).replace("%name%", displayname).replace("%level%", getLevel() + "");
                         setName(name);
-                        this.nameId = Pet.getPackUtils().spawnPetEntity(false, false, null, getTheoricalLocation(), EntityType.ARMOR_STAND, null, name);
+                        if(Bukkit.getPlayer(owner) != null) {
+                            name = PlaceholderAPI.setPlaceholders(Bukkit.getPlayer(owner), name);
+                        }
+                        this.nameId = PetPlugin.getPackUtils().spawnPetEntity(false, false, null, getTheoricalLocation(), EntityType.ARMOR_STAND, null, name);
                     }
                 } else {
-                    this.nameId = Pet.getPackUtils().spawnPetEntity(false, false, null, getTheoricalLocation(), EntityType.ARMOR_STAND, null, name);
+                    if(Bukkit.getPlayer(owner) != null) {
+                        name = PlaceholderAPI.setPlaceholders(Bukkit.getPlayer(owner), name);
+                    }
+                    this.nameId = PetPlugin.getPackUtils().spawnPetEntity(false, false, null, getTheoricalLocation(), EntityType.ARMOR_STAND, null, name);
                 }
             } catch(Exception ignored) {}
 
@@ -171,7 +206,7 @@ class UserPet {
                 itemStack = Utils.colorArmor(itemStack, color);
             }
 
-            Pet.getPackUtils().executePacket(Pet.getPackUtils().equipItem(this.id, Utils.fromEquipSlot(slot), itemStack), Bukkit.getEntity(owner).getWorld());
+            PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().equipItem(this.id, Utils.fromEquipSlot(slot), itemStack), getOwnerEntity().getWorld());
         }
     }
 
@@ -196,7 +231,7 @@ class UserPet {
             spawnFollower();
         }
 
-        if(Pet.getInstance().getDisabledWorlds().contains(Bukkit.getEntity(owner).getWorld().getName())) {
+        if(PetPlugin.getInstance().getDisabledWorlds().contains(getOwnerEntity().getWorld().getName())) {
             remove();
             return;
         }
@@ -206,7 +241,7 @@ class UserPet {
         this.abilities = this.type.getAbilities();
         for(AbilityExecutor a : abilities) a.execute(this);
 
-        Pet.getPackUtils().spawnPet(Bukkit.getEntity(owner), this);
+        PetPlugin.getPackUtils().spawnPet(getOwnerEntity(), this);
         if(this.invisible) {
             return;
         }
@@ -215,7 +250,7 @@ class UserPet {
 
     private List<AbilityExecutor> abilities = new ArrayList<>();
     public void updateLevel() {
-        if(!Pet.getInstance().getConfig().getBoolean("useLevelEvents")) {
+        if(!PetPlugin.getInstance().getConfig().getBoolean("useLevelEvents")) {
             update();
             return;
         }
@@ -226,8 +261,8 @@ class UserPet {
             }
             if (level > 4) {
                 Particle recommended = Particle.SNOWBALL;
-                if (Pet.getInstance().getPetConfiguration().contains(type.getName() + ".particle")) {
-                    recommended = Particle.valueOf(Pet.getInstance().getPetConfiguration().getString(type.getName() + ".particle"));
+                if (PetPlugin.getInstance().getPetConfiguration().contains(type.getName() + ".particle")) {
+                    recommended = Particle.valueOf(PetPlugin.getInstance().getPetConfiguration().getString(type.getName() + ".particle"));
                 }
                 this.setParticle(new PetParticle(recommended));
             }
@@ -240,7 +275,7 @@ class UserPet {
 
     public void despawn() {
         try {
-            despawn(Bukkit.getEntity(owner).getWorld());
+            despawn(getOwnerEntity().getWorld());
         } catch (Exception exception) {
             despawn(Bukkit.getWorlds().get(0));
         }
@@ -258,9 +293,9 @@ class UserPet {
         int id = this.id;
         this.id = 0;
         // destroy main pet
-        if(slot == EquipmentSlot.HAND) Pet.getPackUtils().executePacket(Pet.getPackUtils().equipItem(id, EnumWrappers.ItemSlot.MAINHAND,null), world);
-        else Pet.getPackUtils().executePacket(Pet.getPackUtils().equipItem(id, EnumWrappers.ItemSlot.HEAD,null),world);
-        Pet.getPackUtils().executePacket(Pet.getPackUtils().destroyEntity(id), world);
+        if(slot == EquipmentSlot.HAND) PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().equipItem(id, EnumWrappers.ItemSlot.MAINHAND,null), world);
+        else PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().equipItem(id, EnumWrappers.ItemSlot.HEAD,null),world);
+        PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().destroyEntity(id), world);
         Utils.makeSureThisArmorstandIsNotRealPlease(id, world);
         // destroy main pet
 
@@ -269,7 +304,7 @@ class UserPet {
             Utils.makeSureThisArmorstandIsNotRealPlease(this.leashId, world);
             int leashId = this.leashId;
             this.leashId = -1;
-            Pet.getPackUtils().executePacket(Pet.getPackUtils().destroyEntity(leashId), world);
+            PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().destroyEntity(leashId), world);
         }
 
         if(this.child != null) {
@@ -277,23 +312,26 @@ class UserPet {
             this.child.setId(0);
 
             // destroy child
-            if(slot == EquipmentSlot.HAND) Pet.getPackUtils().executePacket(Pet.getPackUtils().equipItem(childid, EnumWrappers.ItemSlot.MAINHAND,null), world);
-            else Pet.getPackUtils().executePacket(Pet.getPackUtils().equipItem(childid, EnumWrappers.ItemSlot.HEAD,null),world);
-            Pet.getPackUtils().executePacket(Pet.getPackUtils().destroyEntity(childid), world);
+            if(slot == EquipmentSlot.HAND) PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().equipItem(childid, EnumWrappers.ItemSlot.MAINHAND,null), world);
+            else PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().equipItem(childid, EnumWrappers.ItemSlot.HEAD,null),world);
+            PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().destroyEntity(childid), world);
             Utils.makeSureThisArmorstandIsNotRealPlease(childid, world);
             // destroy child
         }
         // destroy nametag
         for(World world1 : Bukkit.getWorlds()) {
-            Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(nameId, new Location(world1,0,-10,0),false),world);
+            PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().teleportEntity(nameId, new Location(world1,0,-10,0),false),world);
             break;
         }
-        Pet.getPackUtils().executePacket(Pet.getPackUtils().destroyEntity(this.nameId), world);
+        PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().destroyEntity(this.nameId), world);
         Utils.makeSureThisArmorstandIsNotRealPlease(nameId, world);
         // destroy nametag
     }
 
     public void remove() {
+        if(PetPlugin.getInstance().getCachedConfigurationInfo().isPetLevellingEnabled()) {
+            PetPlugin.getInstance().getDatabase().setPetLevel(owner, type, level);
+        }
         try {
             Bukkit.getPluginManager().callEvent(new PetRemoveEvent(Bukkit.getPlayer(owner), this));
         } catch (Exception ignored) {}
@@ -303,15 +341,15 @@ class UserPet {
         Bukkit.getScheduler().cancelTask(this.taskID);
 
         despawn();
-        if(Pet.getInstance().isUsingLegacySound()) {
+        if(PetPlugin.getInstance().isUsingLegacySound()) {
             this.owner = null;
             return;
         }
         try {
-            Bukkit.getEntity(owner).getLocation().getWorld().spawnParticle(Particle.SMOKE_LARGE, Bukkit.getEntity(owner).getLocation(), 5);
+            getOwnerEntity().getLocation().getWorld().spawnParticle(Particle.SMOKE_LARGE, getOwnerEntity().getLocation(), 5);
         } catch (Exception ignored) {}
         this.owner = null;
-        Pet.getPackUtils().removeFromPets(this);
+        PetPlugin.getPackUtils().removeFromPets(this);
     }
 
     public void destroyChild() {
@@ -320,15 +358,15 @@ class UserPet {
         }
         int id = this.child.getId();
         this.child = null;
-        Pet.getPackUtils().executePacket(Pet.getPackUtils().destroyEntity(id), Bukkit.getEntity(owner).getWorld());
+        PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().destroyEntity(id), getOwnerEntity().getWorld());
     }
 
     protected void tick() {
-        this.taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Pet.getInstance(), new Runnable() {
+        this.taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(PetPlugin.getInstance(), new Runnable() {
             @Override
             public void run() {
 
-                if(Bukkit.getEntity(owner) == null) {
+                if(getOwnerEntity() == null) {
                     remove();
                     return;
                 }
@@ -337,13 +375,13 @@ class UserPet {
                 if(child != null) {
                     if(slot == EquipmentSlot.HAND) {
                         if(follower == null) {
-                            child.teleport(Bukkit.getEntity(owner).getLocation().clone(), type.getAnimation().getAnimationValues());
+                            child.teleport(getOwnerEntity().getLocation().clone(), type.getAnimation().getAnimationValues());
                         } else {
                             child.teleport(follower.getLocation().clone(), type.getAnimation().getAnimationValues());
                         }
                     } else {
                         if(follower == null) {
-                            child.teleport(coords.getLoc(Bukkit.getEntity(owner).getLocation().clone()), type.getAnimation().getAnimationValues());
+                            child.teleport(coords.getLoc(getOwnerEntity().getLocation().clone()), type.getAnimation().getAnimationValues());
                         } else {
                             child.teleport(coords.getLoc(follower.getLocation().clone()), type.getAnimation().getAnimationValues());
                         }
@@ -351,7 +389,7 @@ class UserPet {
                 }
                 if(step%20 == 0) {
                     try {
-                        if(type.isVisible()) setInvisible(Pet.getInstance().getVanish().isInvisible(Bukkit.getPlayer(owner)));
+                        if(type.isVisible()) setInvisible(PetPlugin.getInstance().getVanish().isInvisible(Bukkit.getPlayer(owner)));
                     } catch (Exception ignored) {}
                 }
 
@@ -361,24 +399,24 @@ class UserPet {
 
 
                     Location theorical = getTheoricalLocation();
-                    int y = Bukkit.getEntity(owner).getWorld().getHighestBlockYAt(theorical.getBlockX(), theorical.getBlockZ())+1;
-                    if(Bukkit.getEntity(owner).getLocation().getBlockY()+5 < y) y = Bukkit.getEntity(owner).getLocation().getBlockY();
+                    int y = getOwnerEntity().getWorld().getHighestBlockYAt(theorical.getBlockX(), theorical.getBlockZ())+1;
+                    if(getOwnerEntity().getLocation().getBlockY()+5 < y) y = getOwnerEntity().getLocation().getBlockY();
                     if(slot == EquipmentSlot.HAND) {
-                        teleport(Bukkit.getEntity(owner).getLocation().add(0, y-Bukkit.getEntity(owner).getLocation().getBlockY(), 0));
+                        teleport(getOwnerEntity().getLocation().add(0, y-getOwnerEntity().getLocation().getBlockY(), 0));
                     } else {
-                        teleport(coords.getLoc(Bukkit.getEntity(owner).getLocation().add(0, y-Bukkit.getEntity(owner).getLocation().getBlockY(), 0)));
+                        teleport(coords.getLoc(getOwnerEntity().getLocation().add(0, y-getOwnerEntity().getLocation().getBlockY(), 0)));
                     }
                 } else {
                     if(slot == EquipmentSlot.HAND) {
                         if(follower == null) {
-                            teleport(Bukkit.getEntity(owner).getLocation().add(0, steps[(int) (step%steps.length)], 0));
+                            teleport(getOwnerEntity().getLocation().add(0, steps[(int) (step%steps.length)], 0));
                         } else {
 
                             teleport(follower.getLocation().add(0, steps[(int) (step%steps.length)], 0));
                         }
                     } else {
                         if(follower == null) {
-                            teleport(coords.getLoc(Bukkit.getEntity(owner).getLocation().add(0, steps[(int) (step%steps.length)], 0)));
+                            teleport(coords.getLoc(getOwnerEntity().getLocation().add(0, steps[(int) (step%steps.length)], 0)));
                         } else {
                             teleport(coords.getLoc(follower.getLocation().add(0, steps[(int) (step%steps.length)], 0)));
                         }
@@ -395,11 +433,11 @@ class UserPet {
                         leashed_location = location.clone().add(0,-1,0);
                     }
                     leashed_location = leashed_location.add(0, type.getBallon_height(), 0);
-                    Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(leashId,leashed_location,false),Bukkit.getEntity(owner).getWorld());
-                    Pet.getPackUtils().executePacket(Pet.getPackUtils().leashEntity(leashId, Bukkit.getEntity(owner).getEntityId()), location.getWorld());
+                    PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().teleportEntity(leashId,leashed_location,false),getOwnerEntity().getWorld());
+                    PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().leashEntity(leashId, getOwnerEntity().getEntityId()), location.getWorld());
                 }
 
-                if(!(Bukkit.getEntity(owner).getLocation().getX() == location.getX() && Bukkit.getEntity(owner).getLocation().getZ() == location.getZ())) {
+                if(!(getOwnerEntity().getLocation().getX() == location.getX() && getOwnerEntity().getLocation().getZ() == location.getZ())) {
                     if(particle != null && !invisible) particle.tick(getTheoricalLocation());
                 }
 

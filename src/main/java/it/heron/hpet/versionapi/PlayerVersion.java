@@ -1,6 +1,6 @@
 package it.heron.hpet.versionapi;
 
-import it.heron.hpet.Pet;
+import it.heron.hpet.main.PetPlugin;
 import it.heron.hpet.packetutils.PacketUtils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -34,6 +34,6 @@ public class PlayerVersion {
         return getServerProtocol();
     }
     public PacketUtils getPlayerPackets(Player p) {
-        return Pet.getInstance().getPacketUtils();
+        return PetPlugin.getInstance().getPacketUtils();
     }
 }

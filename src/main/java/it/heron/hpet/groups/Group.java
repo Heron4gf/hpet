@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import it.heron.hpet.pettypes.PetType;
-import it.heron.hpet.Utils;
+import it.heron.hpet.main.Utils;
 import it.heron.hpet.messages.Messages;
 
 import java.util.ArrayList;

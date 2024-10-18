@@ -3,8 +3,8 @@ package it.heron.hpet.abilities;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
-import it.heron.hpet.Pet;
-import it.heron.hpet.Utils;
+import it.heron.hpet.main.PetPlugin;
+import it.heron.hpet.main.Utils;
 import it.heron.hpet.userpets.UserPet;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -13,7 +13,6 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -59,11 +58,11 @@ public class AbilityExecutor implements Listener {
         for(String s : args) {
             try {
                 int m = -1;
-                if(s.contains("m")) {
+                if(s.endsWith("m")) {
                     m = s.indexOf("m");
                     repeat = 60*Integer.parseInt(s.substring(0, m));
                 }
-                if(s.contains("s")) {
+                if(s.endsWith("s")) {
                     if(m == -1) {
                         repeat = Integer.parseInt(s.substring(0, s.indexOf("s")));
                     } else {
@@ -145,7 +144,7 @@ public class AbilityExecutor implements Listener {
 
     public void check() {
         UserPet upet = userPet;
-        if(upet == null || upet.getOwner() == null || Bukkit.getEntity(upet.getOwner()) == null) {
+        if(upet == null || upet.getOwner() == null || upet.getOwnerEntity() == null) {
             return;
         }
         if(upet.getLevel() != minlevel) return;
@@ -294,7 +293,7 @@ public class AbilityExecutor implements Listener {
                 break;
             case FAKE_LOCATION:
                 for(Player g : p.getWorld().getPlayers()) {
-                    PacketContainer t = Pet.getInstance().getPacketUtils().teleportEntity(p.getEntityId(), p.getLocation().clone().add(Math.random()*20-10, Math.random()*20-10, Math.random()*20-10), true);
+                    PacketContainer t = PetPlugin.getInstance().getPacketUtils().teleportEntity(p.getEntityId(), p.getLocation().clone().add(Math.random()*20-10, Math.random()*20-10, Math.random()*20-10), true);
                     try {
                         ProtocolLibrary.getProtocolManager().sendServerPacket(g, t);
                     } catch(Exception ignored) {}
@@ -388,9 +387,9 @@ public class AbilityExecutor implements Listener {
 
     public void execute(UserPet upet) {
         userPet = upet;
-        Bukkit.getPluginManager().registerEvents(this, Pet.getInstance());
+        Bukkit.getPluginManager().registerEvents(this, PetPlugin.getInstance());
         if(abilityEvent != AbilityEvent.TIME) return;
-        task = Bukkit.getScheduler().scheduleSyncRepeatingTask(Pet.getInstance(), () -> {
+        task = Bukkit.getScheduler().scheduleSyncRepeatingTask(PetPlugin.getInstance(), () -> {
             check();
         }, 1, repeat*20);
     }
@@ -416,7 +415,7 @@ public class AbilityExecutor implements Listener {
         switch(a) {
             case FAKE_LOCATION:
                 for(Player g : p.getWorld().getPlayers()) {
-                    PacketContainer t = Pet.getInstance().getPacketUtils().teleportEntity(p.getEntityId(), p.getLocation(), true);
+                    PacketContainer t = PetPlugin.getInstance().getPacketUtils().teleportEntity(p.getEntityId(), p.getLocation(), true);
                     try {
                         ProtocolLibrary.getProtocolManager().sendServerPacket(g, t);
                     } catch(Exception ignored) {}
@@ -485,7 +484,7 @@ public class AbilityExecutor implements Listener {
     }
 
     private void setFakeSlot(Player p, EquipmentSlot slot, ItemStack stack) {
-        Pet.getPackUtils().executePacket(Pet.getPackUtils().equipItem(p.getEntityId(), fromEquipment(slot), stack), p.getWorld());
+        PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().equipItem(p.getEntityId(), fromEquipment(slot), stack), p.getWorld());
     }
     private EnumWrappers.ItemSlot fromEquipment(EquipmentSlot s) {
         switch(s) {

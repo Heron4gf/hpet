@@ -1,9 +1,8 @@
 package it.heron.hpet.pettypes;
 
 import dev.lone.itemsadder.api.CustomStack;
-import dev.lone.itemsadder.api.ItemsAdder;
-import it.heron.hpet.Pet;
-import it.heron.hpet.Utils;
+import it.heron.hpet.main.PetPlugin;
+import it.heron.hpet.main.Utils;
 import it.heron.hpet.abilities.AbilityExecutor;
 import it.heron.hpet.animation.AnimationType;
 import lombok.Getter;
@@ -34,7 +33,7 @@ public class CosmeticType extends PetType {
 
     public static void reloadCosmeticsFiles() {
         try {
-            File cosmetics_folder = new File(Pet.getInstance().getDataFolder(),"cosmetics");
+            File cosmetics_folder = new File(PetPlugin.getInstance().getDataFolder(),"cosmetics");
             if(!cosmetics_folder.exists()) cosmetics_folder.mkdir();
 
             cosmeticsFiles.clear();
@@ -116,7 +115,7 @@ public class CosmeticType extends PetType {
         setAnimation(AnimationType.NONE);
         if(pretend_slots.contains(equipmentSlot)) {
             setNamey(data.getDouble(name+".y",1.8));
-            setYaw(data.getInt(name+".yaw",Pet.instance.getYawCalibration())+180);
+            setYaw(data.getInt(name+".yaw", PetPlugin.getInstance().getYawCalibration())+180);
             setCustomModelData(true);
             wearable = true;
             setDistance(0);

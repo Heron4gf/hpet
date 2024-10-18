@@ -1,8 +1,8 @@
 package it.heron.hpet.userpets;
 
-import it.heron.hpet.ChildPet;
-import it.heron.hpet.Pet;
+import it.heron.hpet.main.PetPlugin;
 import it.heron.hpet.pettypes.PetType;
+import it.heron.hpet.userpets.childpet.ChildPet;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -43,7 +43,7 @@ public class MythicUserPet extends MobUserPet {
     public void teleport(Location newLoc) {
         if(entity == null) return;
         Location loc = getCoords().getLoc(newLoc);
-        Pet.getPackUtils().executePacket(Pet.getPackUtils().teleportEntity(getNameId(), loc, true), Bukkit.getPlayer(getOwner()).getWorld());
+        PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().teleportEntity(getNameId(), loc, true), Bukkit.getPlayer(getOwner()).getWorld());
         entity.teleport(loc.add(0, -getType().getNamey(), 0));
     }
 
@@ -56,7 +56,7 @@ public class MythicUserPet extends MobUserPet {
         if(entity == null) return;
         entity.remove();
         entity = null;
-        Pet.getPackUtils().executePacket(Pet.getPackUtils().destroyEntity(getNameId()), world);
+        PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().destroyEntity(getNameId()), world);
     }
 
 }

@@ -1,10 +1,9 @@
-package it.heron.hpet;
+package it.heron.hpet.main;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import dev.lone.itemsadder.api.CustomStack;
-import dev.lone.itemsadder.api.ItemsAdder;
 import io.lumine.mythic.bukkit.utils.adventure.text.Component;
 import io.lumine.mythic.bukkit.utils.adventure.text.minimessage.MiniMessage;
 import it.heron.hpet.headapi.HeadAPIGetter;
@@ -23,20 +22,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.regex.Pattern;
 
 import com.mojang.authlib.GameProfile;
 import org.bukkit.profile.PlayerProfile;
@@ -46,11 +39,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class Utils {
 
     public static ItemStack head(String skinName) {
-        ItemStack stack = Pet.getInstance().getCachedItems().get(skinName);
+        ItemStack stack = PetPlugin.getInstance().getCachedItems().get(skinName);
         if(stack != null) {
             return stack;
         }
-        if(Pet.getInstance().isUsingLegacyId()) {
+        if(PetPlugin.getInstance().isUsingLegacyId()) {
             stack = new ItemStack(Material.valueOf("SKULL_ITEM"), 1, (short)3);
         } else {
             stack = new ItemStack(Material.PLAYER_HEAD);
@@ -59,19 +52,19 @@ public class Utils {
             setHeadTexture(stack, skinName);
         } else {
             if(skinName.startsWith("HDB:")) {
-                if(Pet.getInstance().getHeadAPI() == null) {
+                if(PetPlugin.getInstance().getHeadAPI() == null) {
                     try {
                         return HeadAPIGetter.getHead(skinName);
                     } catch (Exception ignored) {
                         Bukkit.getLogger().warning("No Head Database found");
                     }
                 } else {
-                    return Pet.getInstance().getHeadAPI().getItemHead(skinName.replace("HDB:", ""));
+                    return PetPlugin.getInstance().getHeadAPI().getItemHead(skinName.replace("HDB:", ""));
                 }
             }
             SkullMeta meta = (SkullMeta) stack.getItemMeta();
 
-            if(Pet.getPackUtils().isLegacy()) {
+            if(PetPlugin.getPackUtils().isLegacy()) {
                 meta.setOwner(skinName);
             } else {
                 meta.setOwningPlayer(Bukkit.getOfflinePlayer(skinName));
@@ -79,7 +72,7 @@ public class Utils {
 
             stack.setItemMeta(meta);
         }
-        Pet.getInstance().addToCache(skinName, stack);
+        PetPlugin.getInstance().addToCache(skinName, stack);
         return stack;
     }
 
@@ -128,7 +121,7 @@ public class Utils {
             ItemMeta itemMeta = itemStack.getItemMeta();
 
 
-            boolean consistent = Pet.getInstance().getConfig().getBoolean("fix.consistent_heads");
+            boolean consistent = PetPlugin.getInstance().getConfig().getBoolean("fix.consistent_heads");
             if(consistent) {
                 SkullMeta meta = (SkullMeta)itemMeta;
                 meta.setOwnerProfile(createConsistentProfileWithTexture(texture));
@@ -154,8 +147,8 @@ public class Utils {
     }
 
     public static ItemStack getCustomItem(String skin) {
-        if(Pet.getInstance().getCachedItems().containsKey(skin)) {
-            return Pet.getInstance().getCachedItems().get(skin);
+        if(PetPlugin.getInstance().getCachedItems().containsKey(skin)) {
+            return PetPlugin.getInstance().getCachedItems().get(skin);
         }
         if(!skin.contains(":")) {
             return head(skin);
@@ -164,7 +157,7 @@ public class Utils {
         String[] s = skin.split(":");
         if(s[0].equals("MOB")) {
             ItemStack stack;
-            if(Pet.getInstance().isUsingLegacyId()) {
+            if(PetPlugin.getInstance().isUsingLegacyId()) {
                 stack = new ItemStack(Material.valueOf("MONSTER_EGG"));
             } else {
                 stack = new ItemStack(Material.valueOf(s[1]+"_SPAWN_EGG"));
@@ -189,7 +182,7 @@ public class Utils {
             meta.setCustomModelData(customModelData);
         } catch(Exception ignored) {}
         stack.setItemMeta(meta);
-        Pet.getInstance().addToCache(skin, stack);
+        PetPlugin.getInstance().addToCache(skin, stack);
         return stack;
     }
 
@@ -225,7 +218,7 @@ public class Utils {
         new BukkitRunnable() {
             @Override
             public void run() {
-                for(UserPet opet: Pet.getInstance().getPacketUtils().getPets()) {
+                for(UserPet opet: PetPlugin.getInstance().getPacketUtils().getPets()) {
                     if(opet != null && opet.getOwner() != null && !opet.getOwner().equals(p)) {
                         if(Bukkit.getPlayer(opet.getOwner()).getWorld().getUID().equals(p.getWorld().getUID()) && Bukkit.getPlayer(opet.getOwner()).getLocation().distance(p.getLocation()) < 50) {
                             opet.update();
@@ -233,7 +226,7 @@ public class Utils {
                     }
                 }
             }
-        }.runTaskLater(Pet.getInstance(), 20);
+        }.runTaskLater(PetPlugin.getInstance(), 20);
     }
 
     public static void runAsync(Runnable runnable) {
@@ -241,7 +234,7 @@ public class Utils {
     }
 
     public static void loadDatabasePet(Player p) {
-        for(UnspawnedUserPet unspawnedUserPet : Pet.getInstance().getDatabase().getUnspawnedPets(p)) {
+        for(UnspawnedUserPet unspawnedUserPet : PetPlugin.getInstance().getDatabase().offlineUserPets(p)) {
             if(unspawnedUserPet != null) {
                 unspawnedUserPet.toUserPet();
             }
@@ -252,37 +245,37 @@ public class Utils {
         for(Entity e : world.getEntities()) {
             if(e.getEntityId() == id) {
                 e.remove();
-                Pet.getPackUtils().executePacket(Pet.getPackUtils().destroyEntity(id), world);
+                PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().destroyEntity(id), world);
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        Pet.getPackUtils().executePacket(Pet.getPackUtils().destroyEntity(id), world);
+                        PetPlugin.getPackUtils().executePacket(PetPlugin.getPackUtils().destroyEntity(id), world);
                     }
-                }.runTaskLater(Pet.getInstance(), 5);
+                }.runTaskLater(PetPlugin.getInstance(), 5);
                 return;
             }
         }
     }
 
     public static ItemStack getGUIStack(String path) {
-        if(Pet.getInstance().getCachedItems().containsKey(path)) return Pet.getInstance().getCachedItems().get(path);
+        if(PetPlugin.getInstance().getCachedItems().containsKey(path)) return PetPlugin.getInstance().getCachedItems().get(path);
         path = "gui."+path+".";
         YamlConfiguration data;
-        if(Pet.getInstance().isUsingLegacyId()) {
-            data = YamlConfiguration.loadConfiguration(new File(Pet.getInstance().getDataFolder()+File.separator+"legacy_gui.yml"));
+        if(PetPlugin.getInstance().isUsingLegacyId()) {
+            data = YamlConfiguration.loadConfiguration(new File(PetPlugin.getInstance().getDataFolder()+File.separator+"legacy_gui.yml"));
         } else {
-            data = YamlConfiguration.loadConfiguration(new File(Pet.getInstance().getDataFolder()+File.separator+"gui.yml"));
+            data = YamlConfiguration.loadConfiguration(new File(PetPlugin.getInstance().getDataFolder()+File.separator+"gui.yml"));
         }
-        Pet.getInstance().addToCache(path, createStack(Material.valueOf(data.getString(path+"material")), color(data.getString(path+"name")), color(data.getStringList(path+"desc"))));
+        PetPlugin.getInstance().addToCache(path, createStack(Material.valueOf(data.getString(path+"material")), color(data.getString(path+"name")), color(data.getStringList(path+"desc"))));
         return getGUIStack(path);
     }
 
     public static void savePets(Player p, List<UserPet> pets) {
-        Pet.getInstance().getDatabase().wipePets(p);
+        PetPlugin.getInstance().getDatabase().wipeLastPets(p);
 
         if(pets != null) {
             for(UserPet pet : pets) {
-                Pet.getInstance().getDatabase().savePet(pet);
+                PetPlugin.getInstance().getDatabase().savePet(pet);
             }
         }
     }

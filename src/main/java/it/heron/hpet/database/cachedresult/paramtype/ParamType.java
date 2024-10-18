@@ -1,4 +1,4 @@
-package it.heron.hpet.database.paramtype;
+package it.heron.hpet.database.cachedresult.paramtype;
 
 public enum ParamType {
     OBJECT,BOOLEAN,INT,DOUBLE,STRING;

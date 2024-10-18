@@ -5,9 +5,10 @@
  * You are not allowed to decompile, or redestribuite part of this code if not authorized by the original author.
  * You are not allowed to claim this resource as yours.
  */
-package it.heron.hpet;
+package it.heron.hpet.events;
 
 import it.heron.hpet.groups.HSlot;
+import it.heron.hpet.main.PetPlugin;
 import it.heron.hpet.pettypes.PetType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,8 +23,8 @@ public class NewEvents implements Listener {
     void onCommandTab(TabCompleteEvent event) {
         String buffer = event.getBuffer();
 
-        List<String> aliases = Pet.getInstance().getConfig().getStringList("alias");
-        if(!Pet.getInstance().getConfig().getBoolean("useAliases")) aliases.clear();
+        List<String> aliases = PetPlugin.getInstance().getConfig().getStringList("alias");
+        if(!PetPlugin.getInstance().getConfig().getBoolean("useAliases")) aliases.clear();
 
         if(aliases.contains(buffer.split(" ")[0].replace("/", ""))) {
             buffer = buffer.replace(buffer.split(" ")[0], "/hpet");
@@ -40,7 +41,7 @@ public class NewEvents implements Listener {
         }
         if(args[1].equalsIgnoreCase("select") || args[1].equalsIgnoreCase("buy") || args[1].equalsIgnoreCase("addlevel") || args[1].equalsIgnoreCase("setlevel") || args[1].equalsIgnoreCase("removelevel")) {
             List<String> ptypes = new ArrayList<>();
-            for(HSlot slot : Pet.getApi().getEnabledPetTypes()) {
+            for(HSlot slot : PetPlugin.getApi().getEnabledPetTypes()) {
                 if(slot instanceof PetType) {
                     ptypes.add(slot.getName());
                 }
