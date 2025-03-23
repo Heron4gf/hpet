@@ -12,7 +12,7 @@
     <name>HPET</name>
 
     <properties>
-        <java.version>16</java.version>
+        <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -167,12 +167,12 @@
             <version>4.3.1</version>
         </dependency>
         <!-- ProtocolLib -->
-        <dependency>
+        <!--<dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
-            <version>5.0.0</version>
+            <version>5.3.0</version>
             <scope>provided</scope>
-        </dependency>
+        </dependency>-->
         <!-- ProtocolLib -->
         <dependency>
             <groupId>com.github.LoneDev6</groupId>

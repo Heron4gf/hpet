@@ -6,7 +6,6 @@ import com.mojang.authlib.properties.PropertyMap;
 import dev.lone.itemsadder.api.CustomStack;
 import io.lumine.mythic.bukkit.utils.adventure.text.Component;
 import io.lumine.mythic.bukkit.utils.adventure.text.minimessage.MiniMessage;
-import it.heron.hpet.headapi.HeadAPIGetter;
 import it.heron.hpet.userpets.UnspawnedUserPet;
 import it.heron.hpet.userpets.UserPet;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -52,15 +51,7 @@ public class Utils {
             setHeadTexture(stack, skinName);
         } else {
             if(skinName.startsWith("HDB:")) {
-                if(PetPlugin.getInstance().getHeadAPI() == null) {
-                    try {
-                        return HeadAPIGetter.getHead(skinName);
-                    } catch (Exception ignored) {
-                        Bukkit.getLogger().warning("No Head Database found");
-                    }
-                } else {
-                    return PetPlugin.getInstance().getHeadAPI().getItemHead(skinName.replace("HDB:", ""));
-                }
+                return PetPlugin.getInstance().getHeadAPI().getItemHead(skinName.replace("HDB:", ""));
             }
             SkullMeta meta = (SkullMeta) stack.getItemMeta();
 

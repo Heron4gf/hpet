@@ -19,5 +19,5 @@ public interface Database {
     void wipeLastPets(Player player);
     void wipePetLevel(Player player, PetType petType);
 
-
+    void convertToNewerVersion(String oldVersion);
 }

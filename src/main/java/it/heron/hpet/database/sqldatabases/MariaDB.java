@@ -21,10 +21,10 @@ public final class MariaDB extends SQLDatabase {
                 return connection;
             }
             //Class.forName("com.mysql.cj.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mariadb://" + PetPlugin.getInstance().getConfig().getString("mysql.host")
-                    + ":" + PetPlugin.getInstance().getConfig().getInt("mysql.port")
-                    + "/" + PetPlugin.getInstance().getConfig().getString("mysql.name")
-                    + "?autoReconnect=true", PetPlugin.getInstance().getConfig().getString("mysql.user"), PetPlugin.getInstance().getConfig().getString("mysql.password"));
+            connection = DriverManager.getConnection("jdbc:mariadb://" + PetPlugin.getInstance().getConfig().getString("database.host")
+                    + ":" + PetPlugin.getInstance().getConfig().getInt("database.port")
+                    + "/" + PetPlugin.getInstance().getConfig().getString("database.name")
+                    + "?autoReconnect=true", PetPlugin.getInstance().getConfig().getString("database.user"), PetPlugin.getInstance().getConfig().getString("database.password"));
             return connection;
         } catch (SQLException ex) {
             PLUGIN.getLogger().log(Level.SEVERE,"MariaDB exception on initialize", ex);

@@ -3,6 +3,7 @@ package it.heron.hpet.database.sqldatabases;
 import it.heron.hpet.database.AbstractDatabase;
 import it.heron.hpet.database.cachedresult.Row;
 import it.heron.hpet.database.cachedresult.paramtype.ParamType;
+import it.heron.hpet.groups.HSlot;
 import it.heron.hpet.main.PetPlugin;
 import it.heron.hpet.database.cachedresult.CachedResult;
 import it.heron.hpet.pettypes.NoPetType;
@@ -10,6 +11,7 @@ import it.heron.hpet.pettypes.PetType;
 import it.heron.hpet.userpets.UnspawnedUserPet;
 import it.heron.hpet.userpets.UserPet;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -37,11 +39,12 @@ public abstract class SQLDatabase extends AbstractDatabase {
 
     public String LevelsTable() {
         return
-                "CREATE TABLE IF NOT EXISTS Levels (" +
+                "CREATE TABLE IF NOT EXISTS PetLevels (" +
+                        "id INT AUTO_INCREMENT," +
                         "player varchar(36) NOT NULL," +
                         "petType VARCHAR(36) NOT NULL," +
                         "level INT," +
-                        "PRIMARY KEY (player, petType)" +
+                        "PRIMARY KEY (id)" +
                         ");";
     }
 
@@ -64,7 +67,7 @@ public abstract class SQLDatabase extends AbstractDatabase {
                 statement = connection.createStatement();
                 statement.execute(LevelsTable());
                 statement.close();
-                executeQuery("INSERT INTO Levels (player,petType,level) VALUES ('unknown','unknown',0);");
+                executeQuery("INSERT INTO PetLevels (player,petType,level) VALUES ('unknown','unknown',0);");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -149,7 +152,7 @@ public abstract class SQLDatabase extends AbstractDatabase {
         if(!PetPlugin.getInstance().getCachedConfigurationInfo().isPetLevellingEnabled()) return -1;
         try {
             String name = petType.getName();
-            CachedResult cachedResult = executeQuery("SELECT level FROM Levels WHERE player = ? AND petType = ?;", uuid.toString(), name);
+            CachedResult cachedResult = executeQuery("SELECT level FROM PetLevels WHERE player = ? AND petType = ?;", uuid.toString(), name);
             int level = cachedResult.getInt("level");
             badQueries = 0;
             return level;
@@ -166,7 +169,7 @@ public abstract class SQLDatabase extends AbstractDatabase {
     public void setPetLevel(UUID uuid, PetType petType, int level) {
         if(!PetPlugin.getInstance().getCachedConfigurationInfo().isPetLevellingEnabled()) return;
         String name = petType.getName();
-        executeQuery("INSERT INTO Levels (player,petType,level) VALUES(?,?,?);", uuid.toString(), name, "INT:"+level);
+        executeQuery("INSERT INTO PetLevels (player,petType,level) VALUES(?,?,?);", uuid.toString(), name, "INT:"+level);
     }
 
     @Override
@@ -224,6 +227,40 @@ public abstract class SQLDatabase extends AbstractDatabase {
 
     @Override
     public void wipePetLevel(Player player, PetType petType) {
-        this.executeQuery("DELETE FROM Levels WHERE player=? AND petType=?", player.getUniqueId().toString(), petType.getName());
+        this.executeQuery("DELETE FROM PetLevels WHERE player=? AND petType=?", player.getUniqueId().toString(), petType.getName());
+    }
+
+    @Override
+    public void convertToNewerVersion(String oldVersion) {
+        long start = System.currentTimeMillis();
+        if(!oldVersion.equals("4.6")) {
+            return;
+        }
+
+        CachedResult all = executeQuery("SELECT * FROM Levels");
+        while(all.next()) {
+            try {
+                UUID uuid = UUID.fromString(all.getString("player"));
+                String allLevels = all.getString("data");
+
+                String[] splitted = allLevels.split(";");
+                for(String s : splitted) {
+                    for(HSlot hslot : PetPlugin.getInstance().getPetTypes()) {
+                        if(s.contains(hslot.getName())) {
+                            int level = Integer.parseInt(s.split(hslot.getName())[1]);
+                            executeQuery("INSERT INTO PetLevels (player,petType,level) VALUES (?,?,?)", uuid.toString(), hslot.getName(), "INT:"+level);
+                            break;
+                        }
+                    }
+                }
+
+            } catch (Exception exception) {
+                Bukkit.getLogger().warning("There was an error while converting an user levels data to the newer database table");
+                exception.printStackTrace();
+            }
+        }
+
+        float secondsPassed = (System.currentTimeMillis()-start)/1000f;
+        Bukkit.getLogger().info("Levels database was converted in "+secondsPassed+"s");
     }
 }

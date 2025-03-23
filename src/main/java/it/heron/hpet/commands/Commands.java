@@ -252,6 +252,12 @@ public class Commands implements CommandExecutor {
             p.sendMessage("§cGui is disabled");
             return false;
         }
+
+        if(p == null) {
+            sender.sendMessage("Invalid argument");
+            return false;
+        }
+
         Inventory inv = GUI.getGUI(p);
 
         p.openInventory(inv);

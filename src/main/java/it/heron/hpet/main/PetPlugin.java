@@ -10,6 +10,7 @@
 package it.heron.hpet.main;
 
 import it.heron.hpet.database.Database;
+import it.heron.hpet.database.databasetype.DatabaseType;
 import it.heron.hpet.database.redisdatabase.RedisDatabase;
 import it.heron.hpet.database.sqldatabases.MariaDB;
 import it.heron.hpet.database.sqldatabases.MySQL;
@@ -258,6 +259,8 @@ public final class PetPlugin extends JavaPlugin {
     @Getter
     private boolean PAPIhooked = false;
 
+    private String lastUsedVersion = getDescription().getVersion();
+
     private Metrics metrics;
 
     @Override
@@ -304,8 +307,14 @@ public final class PetPlugin extends JavaPlugin {
                 this.database = new RedisDatabase(this);
                 break;
         }
-        this.database.load();
-        Bukkit.getLogger().info("Database loaded successfully!");
+
+        try {
+            this.database.load();
+            Bukkit.getLogger().info("Database loaded successfully!");
+        } catch (Exception e) {
+            Bukkit.getLogger().warning("Error while loading database");
+            e.printStackTrace();
+        }
 
         if(hook("PlaceholderAPI")) {
             new Placeholders().register();
@@ -322,19 +331,20 @@ public final class PetPlugin extends JavaPlugin {
         }
 
         String version = Bukkit.getServer().getVersion();
+        //if(checkVersion("1.21.3") || checkVersion("1.21.4") || checkVersion("1.21.5") || checkVersion("1.22")) this.packetUtils = new Utils1_21_3();
         if(checkVersion("1.20.4") || checkVersion("1.20.5") || checkVersion("1.20.6") || checkVersion("1.21")) this.packetUtils = new Utils1_20_4();
         else if(checkVersion("1.19.3") || checkVersion("1.19.4") || checkVersion("1.20") || checkVersion("1.21")) this.packetUtils = new Utils1_19_3();
         else if(checkVersion("1.17") || checkVersion("1.18") || checkVersion("1.19")) this.packetUtils = new Utils1_17();
-        if(checkVersion("1.16")) this.packetUtils = new Utils1_16();
-        if(checkVersion("1.15")) this.packetUtils = new Utils1_15();
-        if(checkVersion("1.12")) this.packetUtils = new Utils1_12();
+        else if(checkVersion("1.16")) this.packetUtils = new Utils1_16();
+        else if(checkVersion("1.15")) this.packetUtils = new Utils1_15();
+        else if(checkVersion("1.12")) this.packetUtils = new Utils1_12();
+
         if(checkVersion("1.8")) {
             this.packetUtils = new Utils1_8();
             saveResource("legacy_gui.yml", demo);
         } else {
             saveResource("gui.yml", demo);
         }
-
         for(String s : getConfig().getStringList("disabledWorlds")) {
             try {
                 this.disabledWorlds.add(s);
@@ -398,6 +408,8 @@ public final class PetPlugin extends JavaPlugin {
         parsePetTypes();
         packetUtils.initDestroyListener();
 
+        this.database.convertToNewerVersion(this.lastUsedVersion);
+
         Bukkit.getPluginManager().registerEvents(new UpdaterEventListener(), this);
         this.metrics = new Metrics(this, 14210);
         metrics.addCustomChart(new Metrics.SimplePie("plugin_version", () -> AutoUpdater.currentVersion()));
@@ -422,13 +434,48 @@ public final class PetPlugin extends JavaPlugin {
     }
 
     private void convertConfig() {
-        if(getConfig().contains("database.mysql")) {
-            getConfig().set("database.type", "SQLITE");
-            getConfig().set("database.name", "hpet");
-            getConfig().set("database.address", "localhost");
-            getConfig().set("database.port", 3306);
-            getConfig().set("database.user", "user");
-            getConfig().set("database.password", "password");
+        if(getConfig().contains("mysql")) {
+            DatabaseType databaseType = DatabaseType.SQLITE;
+
+            String host = "localhost";
+            String name = "hpet";
+            int port = 3306;
+            String user = "root";
+            String password = "password";
+
+            if(getConfig().getBoolean("mysql.enabled")) {
+                databaseType = DatabaseType.MYSQL;
+                if(getConfig().getBoolean("mysql.useMariaDb")) {
+                    databaseType = DatabaseType.MARIADB;
+                }
+
+                host = getConfig().getString("mysql.address");
+                port = getConfig().getInt("mysql.port");
+                name = getConfig().getString("mysql.name");
+                user = getConfig().getString("mysql.user");
+                password = getConfig().getString("mysql.password");
+            } else if(getConfig().getBoolean("redis")) {
+                databaseType = DatabaseType.REDIS;
+
+                host = getConfig().getString("redis.address");
+                port = getConfig().getInt("redis.port");
+                name = getConfig().getString("redis.name");
+                user = getConfig().getString("redis.user");
+                password = getConfig().getString("redis.password");
+            }
+
+            getConfig().set("database.type", databaseType.name());
+            getConfig().set("database.name", name);
+            getConfig().set("database.address", host);
+            getConfig().set("database.port", port);
+            getConfig().set("database.user", user);
+            getConfig().set("database.password", password);
+
+
+            getConfig().set("mysql", null);
+            getConfig().set("redis", null);
+
+            this.lastUsedVersion = "4.6";
         }
         try {
             getConfig().save(new File(getDataFolder()+File.separator+"config.yml"));

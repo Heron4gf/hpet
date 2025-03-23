@@ -183,7 +183,7 @@ class UserPet {
                     }
                 } else {
                     if(Bukkit.getPlayer(owner) != null) {
-                        name = PlaceholderAPI.setPlaceholders(Bukkit.getPlayer(owner), name);
+                        name = Utils.color(PlaceholderAPI.setPlaceholders(Bukkit.getPlayer(owner), name));
                     }
                     this.nameId = PetPlugin.getPackUtils().spawnPetEntity(false, false, null, getTheoricalLocation(), EntityType.ARMOR_STAND, null, name);
                 }

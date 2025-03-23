@@ -22,7 +22,7 @@ public final class SQLite extends SQLDatabase {
     public String LastPetTable() {
         return
                 "CREATE TABLE IF NOT EXISTS LastPet (" +
-                        "id INT AUTO_INCREMENT PRIMARY KEY," +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                         "owner varchar(36) NOT NULL," +
                         "type varchar(32)," +
                         "child INTEGER," +
@@ -35,13 +35,14 @@ public final class SQLite extends SQLDatabase {
     @Override
     public String LevelsTable() {
         return
-                "CREATE TABLE IF NOT EXISTS Levels (" +
+                "CREATE TABLE IF NOT EXISTS PetLevels (" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                         "player TEXT NOT NULL," +
                         "petType TEXT NOT NULL," +
-                        "level INT," +
-                        "PRIMARY KEY (player, petType)" +
+                        "level INTEGER" +
                         ");";
     }
+
 
 
     public Connection getSQLConnection() {

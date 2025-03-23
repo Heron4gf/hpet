@@ -32,7 +32,7 @@ public final class MySQL extends SQLDatabase {
                 return connection;
             }
             //Class.forName("com.mysql.cj.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://"+ PetPlugin.getInstance().getConfig().getString("mysql.address")+":"+ PetPlugin.getInstance().getConfig().getInt("mysql.port")+"/"+ PetPlugin.getInstance().getConfig().getString("mysql.name")+"?autoReconnect=true", PetPlugin.getInstance().getConfig().getString("mysql.user"), PetPlugin.getInstance().getConfig().getString("mysql.password"));
+            connection = DriverManager.getConnection("jdbc:mysql://"+ PetPlugin.getInstance().getConfig().getString("database.address")+":"+ PetPlugin.getInstance().getConfig().getInt("database.port")+"/"+ PetPlugin.getInstance().getConfig().getString("database.name")+"?autoReconnect=true", PetPlugin.getInstance().getConfig().getString("database.user"), PetPlugin.getInstance().getConfig().getString("database.password"));
             return connection;
         } catch (SQLException ex) {
             PLUGIN.getLogger().log(Level.SEVERE,"MYSQL exception on initialize", ex);

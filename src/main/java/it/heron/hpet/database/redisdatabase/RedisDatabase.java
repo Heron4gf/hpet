@@ -5,6 +5,7 @@ import it.heron.hpet.main.PetPlugin;
 import it.heron.hpet.pettypes.PetType;
 import it.heron.hpet.userpets.UnspawnedUserPet;
 import it.heron.hpet.userpets.UserPet;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import redis.clients.jedis.Jedis;
@@ -20,8 +21,8 @@ public final class RedisDatabase extends AbstractDatabase {
 
     public RedisDatabase(PetPlugin instance) {
         super(instance);
-        jedisPool = new JedisPool(PetPlugin.getInstance().getConfig().getString("redis.address"),
-                PetPlugin.getInstance().getConfig().getInt("redis.port"));
+        jedisPool = new JedisPool(PetPlugin.getInstance().getConfig().getString("database.host"),
+                PetPlugin.getInstance().getConfig().getInt("database.port"));
     }
 
     @Override
@@ -119,6 +120,13 @@ public final class RedisDatabase extends AbstractDatabase {
             jedis.del(key); // Remove the pet level for the specified player and pet type
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void convertToNewerVersion(String oldVersion) {
+        if(oldVersion.equals("4.6")) {
+            Bukkit.getLogger().warning("Couldn't convert database table from "+oldVersion);
         }
     }
 }

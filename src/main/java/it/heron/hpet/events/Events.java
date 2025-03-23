@@ -15,6 +15,7 @@ import it.heron.hpet.messages.Messages;
 import it.heron.hpet.pettypes.PetType;
 import it.heron.hpet.userpets.UserPet;
 import org.bukkit.*;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Trident;
 import org.bukkit.event.EventHandler;
@@ -133,6 +134,18 @@ public class Events implements Listener {
             }
         } else {
             Utils.savePets(player,null);
+        }
+    }
+
+    @EventHandler
+    void onInteract(PlayerArmorStandManipulateEvent event) {
+        ArmorStand armorStand = event.getRightClicked();
+        int id = armorStand.getEntityId();
+        for(UserPet userPet : PetPlugin.getInstance().getPacketUtils().getPets()) {
+            if(userPet.getId() == id) {
+                event.setCancelled(true);
+                return;
+            }
         }
     }
 

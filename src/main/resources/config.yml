@@ -74,7 +74,7 @@ database:
   type: SQLITE # valid: MARIADB, MYSQL, SQLITE, REDIS
 
   name: hpet
-  address: localhost
+  host: localhost
   port: 3306
   user: user
   password: password
