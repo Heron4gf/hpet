@@ -22,6 +22,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -192,6 +193,15 @@ public class Events implements Listener {
                 return;
             }
         }
+    }
+
+    @EventHandler
+    void onInventoryInteract(InventoryInteractEvent event) {
+        InventoryView view = event.getView();
+        if(!view.getTitle().equals(Messages.getMessage("gui.name"))) {
+            return;
+        }
+        event.setCancelled(true);
     }
 
     @EventHandler
