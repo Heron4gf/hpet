@@ -6,10 +6,10 @@ import it.heron.hpet.database.cachedresult.paramtype.ParamType;
 import it.heron.hpet.groups.HSlot;
 import it.heron.hpet.main.PetPlugin;
 import it.heron.hpet.database.cachedresult.CachedResult;
-import it.heron.hpet.pettypes.NoPetType;
-import it.heron.hpet.pettypes.PetType;
-import it.heron.hpet.userpets.UnspawnedUserPet;
-import it.heron.hpet.userpets.UserPet;
+import it.heron.hpet.modules.pets.pettypes.NoPetType;
+import it.heron.hpet.modules.pets.pettypes.OldPetType;
+import it.heron.hpet.modules.pets.userpets.old.UnspawnedUserPet;
+import it.heron.hpet.modules.pets.userpets.old.HeadUserPet;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -148,7 +148,7 @@ public abstract class SQLDatabase extends AbstractDatabase {
 }
 
     @Override
-    public int getPetLevel(UUID uuid, PetType petType) {
+    public int getPetLevel(UUID uuid, OldPetType petType) {
         if(!PetPlugin.getInstance().getCachedConfigurationInfo().isPetLevellingEnabled()) return -1;
         try {
             String name = petType.getName();
@@ -166,7 +166,7 @@ public abstract class SQLDatabase extends AbstractDatabase {
     }
 
     @Override
-    public void setPetLevel(UUID uuid, PetType petType, int level) {
+    public void setPetLevel(UUID uuid, OldPetType petType, int level) {
         if(!PetPlugin.getInstance().getCachedConfigurationInfo().isPetLevellingEnabled()) return;
         String name = petType.getName();
         executeQuery("INSERT INTO PetLevels (player,petType,level) VALUES(?,?,?);", uuid.toString(), name, "INT:"+level);
@@ -202,7 +202,7 @@ public abstract class SQLDatabase extends AbstractDatabase {
     }
 
     @Override
-    public void savePet(UserPet userPet) {
+    public void savePet(HeadUserPet userPet) {
         String particle = "";
         if(userPet.getParticle() != null) {
             particle = userPet.getParticle().getParticle().name();
@@ -226,7 +226,7 @@ public abstract class SQLDatabase extends AbstractDatabase {
     }
 
     @Override
-    public void wipePetLevel(Player player, PetType petType) {
+    public void wipePetLevel(Player player, OldPetType petType) {
         this.executeQuery("DELETE FROM PetLevels WHERE player=? AND petType=?", player.getUniqueId().toString(), petType.getName());
     }
 

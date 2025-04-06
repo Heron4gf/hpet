@@ -1,13 +1,12 @@
 package it.heron.hpet.main;
 
-import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import dev.lone.itemsadder.api.CustomStack;
 import io.lumine.mythic.bukkit.utils.adventure.text.Component;
 import io.lumine.mythic.bukkit.utils.adventure.text.minimessage.MiniMessage;
-import it.heron.hpet.userpets.UnspawnedUserPet;
-import it.heron.hpet.userpets.UserPet;
+import it.heron.hpet.modules.pets.userpets.old.UnspawnedUserPet;
+import it.heron.hpet.modules.pets.userpets.old.HeadUserPet;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
@@ -183,11 +182,6 @@ public class Utils {
         return t;
     }
 
-    public static int getRandomId() {
-        double did = Math.random()*Integer.MAX_VALUE;
-        return (int)did;
-    }
-
     public static ItemStack editStack(ItemStack stack, String name, List<String> lore) {
         if(stack.getType() == Material.AIR) return stack;
         ItemMeta meta = stack.getItemMeta();
@@ -209,7 +203,7 @@ public class Utils {
         new BukkitRunnable() {
             @Override
             public void run() {
-                for(UserPet opet: PetPlugin.getInstance().getPacketUtils().getPets()) {
+                for(HeadUserPet opet: PetPlugin.getInstance().getPacketUtils().getPets()) {
                     if(opet != null && opet.getOwner() != null && !opet.getOwner().equals(p)) {
                         if(Bukkit.getPlayer(opet.getOwner()).getWorld().getUID().equals(p.getWorld().getUID()) && Bukkit.getPlayer(opet.getOwner()).getLocation().distance(p.getLocation()) < 50) {
                             opet.update();
@@ -261,11 +255,11 @@ public class Utils {
         return getGUIStack(path);
     }
 
-    public static void savePets(Player p, List<UserPet> pets) {
+    public static void savePets(Player p, List<HeadUserPet> pets) {
         PetPlugin.getInstance().getDatabase().wipeLastPets(p);
 
         if(pets != null) {
-            for(UserPet pet : pets) {
+            for(HeadUserPet pet : pets) {
                 PetPlugin.getInstance().getDatabase().savePet(pet);
             }
         }

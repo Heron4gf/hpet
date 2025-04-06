@@ -1,7 +1,7 @@
 package it.heron.hpet.versionapi;
 
 import it.heron.hpet.main.PetPlugin;
-import it.heron.hpet.packetutils.PacketUtils;
+import it.heron.hpet.packetutils.versions.PacketUtils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

@@ -1,7 +1,7 @@
 package it.heron.hpet.versionapi;
 
 import com.viaversion.viaversion.api.Via;
-import it.heron.hpet.packetutils.PacketUtils;
+import it.heron.hpet.packetutils.versions.PacketUtils;
 import it.heron.hpet.packetutils.versions.*;
 import org.bukkit.entity.Player;
 

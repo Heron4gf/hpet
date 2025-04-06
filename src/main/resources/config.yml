@@ -1,54 +1,48 @@
-enabledPets: # you can disable pets, without deleting their configuration just by removing from here!
-  #- * # putting * instead of pet names will automaticcaly enable all pets in pets.yml. Notice that it will not put groups if you don't add them manually
-  - sheep
-  - goat
-  - ghast
-  - pig
-  - world
-  - mariobros
-  - slime
-  - glitch
+locale: "en"
+
+disabledWorlds:
+  - nopetsworld
+
+enabledPets: # You can disable pets by removing from this list!
+  #- * # Enable all pets in pets.yml automatically (groups must be added separately)
   - group:mobs
   - group:fantasy
+  - group:specials # Special or rare pets
   - penguin
   - puffle
   - snail
   - burger
-  - moreslimes
   - enderman
   - creeper
-  - #group:materials
+  - dried_ghast
+  - bread_scientist
+  - gecko
+  - red_bee
+  - seagull
 
-level:
-  max: 100
-  enable: true # enable level based features
+gui:
+  enable: true
 
-fix:
-  consistent_heads: true # set to true to fix inconsistent heads bug, if that doesn't show in console there's no need to enable
-
-delay:
-  teleport: 20 # ticks waited for pet spawn on teleport, set to -1 to disable the listener
-  respawn: 22
-  world_change: -1 # -1 disables the listener, 
-  join: 24 # ticks waited for pet spawn on join
-  joinDatabaseUpdate: 20 # ticks waited from Pet spawn to do a Pet update when joining in order to get all the database data
-
-useAliases: false # enable aliases for /hpet command
-alias:
-  - mpets # you can insert multiple aliases
-
-enableGui: true
 nametags:
   enable: true
-  format: "%player%'s %name% %level%" # possible placeholders: %player% (owner of the pet), %name% (pet's name), %level% (pet level)
-  defaultnametag: true # if false pet will not have nametag until you rename it
-  maxlength: 20 # anything longer than this will get cut
-  invalidnames: # you can put swear words here, so that players cannot use them in pet names
+  format: "{name} {level}"
+  maxlength: 20
+  invalidnames:
     - ass
     - bitch
 
-vanish: true # if true the pet will turn invisible when the owner is vanished!
-deluxeCombatHook: true # will hook in deluxecombat and disable the pet when entering combat
+vanish: true # Pets invisible while vanished
+
+fix:
+  yawCalibration: 0 # adjust if all pets look at wrong direction
+  delay:
+    teleport: 20 # Pet spawn delay on teleport (-1 disables)
+    respawn: 22
+    tridentThrow: 3 # despawn and respawn the pet when throwing a trident
+    changeWorld: -1 # World change spawn listener (-1 disables)
+    join: 24 # Pet spawn delay on join
+    joinDatabaseUpdate: 20 # Update from database after join
+
 group:
   materials:
     pets:
@@ -58,21 +52,23 @@ group:
     pets:
       - world
       - mariobros
-      - glitch
   mobs:
     pets:
       - ghast
       - pig
       - slime
-      - penguin
-disabledWorlds:
-  - nopetsworld
-
-yawCalibration: 200 # calibrate the yaw if you think the pet looks misplaced, useful for customModelData pets
+      - sheep
+      - goat
+      - red_bee
+      - gecko
+  specials:
+    pets:
+      - bread_scientist
+      - dried_ghast
+      - seagull
 
 database:
-  type: SQLITE # valid: MARIADB, MYSQL, SQLITE, REDIS
-
+  type: SQLITE # Supported: MARIADB, MYSQL, SQLITE, REDIS
   name: hpet
   host: localhost
   port: 3306

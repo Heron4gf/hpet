@@ -1,10 +1,6 @@
 package it.heron.hpet.database;
 
 import it.heron.hpet.main.PetPlugin;
-import it.heron.hpet.pettypes.NoPetType;
-import it.heron.hpet.pettypes.PetType;
-
-import java.util.UUID;
 
 
 public abstract class AbstractDatabase implements Database {
