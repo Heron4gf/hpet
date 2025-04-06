@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
-import it.heron.hpet.userpets.UserPet;
+import it.heron.hpet.modules.pets.userpets.old.HeadUserPet;
 
 public abstract class PetEvent extends PlayerEvent {
 
@@ -13,9 +13,9 @@ public abstract class PetEvent extends PlayerEvent {
     private static final HandlerList handlerList = new HandlerList();
 
     @Getter
-    private UserPet pet;
+    private HeadUserPet pet;
 
-    public PetEvent(@NotNull Player who, UserPet pet) {
+    public PetEvent(@NotNull Player who, HeadUserPet pet) {
         super(who);
         this.pet = pet;
     }

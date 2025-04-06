@@ -2,9 +2,9 @@ package it.heron.hpet.database.redisdatabase;
 
 import it.heron.hpet.database.AbstractDatabase;
 import it.heron.hpet.main.PetPlugin;
-import it.heron.hpet.pettypes.PetType;
-import it.heron.hpet.userpets.UnspawnedUserPet;
-import it.heron.hpet.userpets.UserPet;
+import it.heron.hpet.modules.pets.pettypes.OldPetType;
+import it.heron.hpet.modules.pets.userpets.old.UnspawnedUserPet;
+import it.heron.hpet.modules.pets.userpets.old.HeadUserPet;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -36,7 +36,7 @@ public final class RedisDatabase extends AbstractDatabase {
     }
 
     @Override
-    public int getPetLevel(UUID uuid, PetType petType) {
+    public int getPetLevel(UUID uuid, OldPetType petType) {
         try (Jedis jedis = jedisPool.getResource()) {
             String key = "hpet.levels." + uuid.toString() + "." + petType.getName();
             String level = jedis.get(key);
@@ -47,7 +47,7 @@ public final class RedisDatabase extends AbstractDatabase {
     }
 
     @Override
-    public void setPetLevel(UUID uuid, PetType petType, int level) {
+    public void setPetLevel(UUID uuid, OldPetType petType, int level) {
         try (Jedis jedis = jedisPool.getResource()) {
             String key = "hpet.levels." + uuid.toString() + "." + petType.getName();
             jedis.set(key, Integer.toString(level)); // Set pet level
@@ -67,7 +67,7 @@ public final class RedisDatabase extends AbstractDatabase {
                 String[] petData = jedis.hvals(key).toArray(new String[0]);
                 if (petData.length > 0) {
                     // Unpack Redis hash values into pet attributes (example: type, glow, etc.)
-                    PetType type = PetPlugin.getPetTypeByName(petData[0]);
+                    OldPetType type = PetPlugin.getPetTypeByName(petData[0]);
                     boolean glow = Boolean.parseBoolean(petData[1]);
                     String name = petData[2];
                     boolean child = Boolean.parseBoolean(petData[3]);
@@ -83,7 +83,7 @@ public final class RedisDatabase extends AbstractDatabase {
     }
 
     @Override
-    public void savePet(UserPet userPet) {
+    public void savePet(HeadUserPet userPet) {
         String particle = userPet.getParticle() != null ? userPet.getParticle().getParticle().name() : "";
         String name = userPet.getName() != null ? userPet.getName() : "";
         String key = "hpet.lastpet." + userPet.getOwner().toString() + "." + userPet.getType().getName();
@@ -114,7 +114,7 @@ public final class RedisDatabase extends AbstractDatabase {
     }
 
     @Override
-    public void wipePetLevel(Player player, PetType petType) {
+    public void wipePetLevel(Player player, OldPetType petType) {
         try (Jedis jedis = jedisPool.getResource()) {
             String key = "hpet.levels." + player.getUniqueId().toString() + "." + petType.getName();
             jedis.del(key); // Remove the pet level for the specified player and pet type

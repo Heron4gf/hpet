@@ -1,5 +1,5 @@
 name: HPET
-version: '5.0'
+version: '5.0-hotfix2'
 main: it.heron.hpet.main.PetPlugin
 depend: [ProtocolLib]
 api-version: 1.13
