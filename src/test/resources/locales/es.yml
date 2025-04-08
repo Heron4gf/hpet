@@ -1,0 +1,54 @@
+messages:
+  gui:
+    name: "&a&lPETS"
+    select:
+      can: "&a&lHAZ CLIC PARA SELECCIONAR"
+      cannot: "&c&lPET BLOQUEADO!"
+  level: "&eLevello:"
+  levelup:
+    - "&s-------------------------------------"
+    - ""
+    - "&e&lTu MASCOTA HA AUMENTADO DE NIVEL!"
+    - "&7Nuevo nivel: [nivel]"
+    - "[tipo de nivel]"
+    - ""
+    - "&s ------------------------------------"
+  leveltype:
+    JUMP: "SALTA"
+    WALK: "CAMINAR"
+    KILL: "ASESINOS"
+    MINE: "EXCAVACION"
+    DEATHS: "MUERTOS"
+    PLAYER_KILLS: "JUGADOR ASESINADO"
+    CAKE_EATEN: "REBANADAS DE PASTEL COMIDAS"
+  group:
+    open: "&a&lAbrir este grupo!"
+  pet:
+    rename:
+      help: "&ePara cambiar el nombre de su tipo de mascota /pet rename <nuevo nombre>"
+    price: "&7Precio: &e&l€"
+    buy:
+      noprice: "& eEsta mascota no tiene precio!"
+      notough: "& c¡Necesitas más dinero!"
+      permissioncommand: "lp user %player% permission set pet.use.%petname%"
+      bought: "&a¡Has comprado una mascota nueva!"
+    respawn: "¡Y una mascota reapareció!"
+    remove: "&cPet eliminado!"
+    spawned: "y una mascota engendrada!"
+    glow:
+      add: "&a¡Tu mascota brilla!"
+      remove: "&c¡Le quitaste el brillo a la Mascota!"
+    trail:
+      add: "&a¡Has creado un rastro!"
+      remove: "&c¡Eliminó el rastro!"
+    particle:
+      add: "&a¡Agregaste partículas!"
+      remove: "&cTu mascota ya no tiene partículas!"
+      invalid: "&cEsta partícula no existe!"
+  error:
+    alreadybought: "&cYa compraste esta mascota!"
+    invalid: "&cArgumento no válido!"
+    nosel: "&cPet no seleccionado"
+    noperm:
+      command: "&cNo tienes permiso!"
+      use: "&cNo puedes usar esta mascota!"

@@ -6,8 +6,6 @@ import it.heron.hpet.database.cachedresult.paramtype.ParamType;
 import it.heron.hpet.groups.HSlot;
 import it.heron.hpet.main.PetPlugin;
 import it.heron.hpet.database.cachedresult.CachedResult;
-import it.heron.hpet.modules.pets.pettypes.NoPetType;
-import it.heron.hpet.modules.pets.pettypes.OldPetType;
 import it.heron.hpet.modules.pets.userpets.old.UnspawnedUserPet;
 import it.heron.hpet.modules.pets.userpets.old.HeadUserPet;
 import lombok.Getter;

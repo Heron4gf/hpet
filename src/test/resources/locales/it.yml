@@ -1,0 +1,54 @@
+messages:
+  gui:
+    name: "&a&lPETS"
+    select:
+      can: "&a&lCLICCA PER SELEZIONARE"
+      cannot: "&c&lPET BLOCCATO!"
+  level: "&eLivello: "
+  levelup:
+    - "&a&m------------------------------------"
+    - ""
+    - "&e&lIL TUO PET HA INCREMENTATO LIVELLO!"
+    - "&7Nuovo Livello: [level]"
+    - "[leveltype]"
+    - ""
+    - "&a&m------------------------------------"
+  leveltype:
+    JUMP: "SALTO"
+    WALK: "CAMMINA"
+    KILL: "UCCISIOONI"
+    MINE: "SCAVO"
+    DEATHS: "MORTI"
+    PLAYER_KILLS: "PLAYER UCCISI"
+    CAKE_EATEN: "FETTE DI TORTA MANGIATE"
+  group:
+    open: "&a&lApri questo gruppo!"
+  pet:
+    rename:
+      help: "&ePer rinominare il tuo pet digita /pet rename <nuovo nome>"
+    price: "&7Prezzo: &e&l€"
+    buy:
+      noprice: "&eQuesto Pet non ha prezzo!"
+      notenough: "&cTi servono più soldi!"
+      permissioncommand: "lp user %player% permission set pet.use.%petname%"
+      bought: "&aHai comprato un nuovo Pet!"
+    respawn: "&aPet respawnato!"
+    remove: "&cPet rimosso!"
+    spawned: "&aPet spawnato!"
+    glow:
+      add: "&aIl tuo pet brilla!"
+      remove: "&cHai rimosso la brillantezza dal Pet!"
+    trail:
+      add: "&aHai creato una trail!"
+      remove: "&cHai rimosso la trail!"
+    particle:
+      add: "&aHai aggiunto delle particelle!"
+      remove: "&cIl tuo pet ora non ha particelle!"
+      invalid: "&cQuesta particella non esiste!"
+  error:
+    alreadybought: "&cHai già comprato questo pet!"
+    invalid: "&cArgomento invalido!"
+    nosel: "&cPet non selezionato"
+    noperm:
+      command: "&cNon hai il permesso!"
+      use: "&cNon puoi usare questo Pet!"

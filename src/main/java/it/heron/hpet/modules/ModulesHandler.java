@@ -1,5 +1,6 @@
 package it.heron.hpet.modules;
 
+import it.heron.hpet.modules.abilities.AbilitiesHandler;
 import it.heron.hpet.modules.abstracts.Module;
 import it.heron.hpet.modules.exceptions.InvalidLoadException;
 import it.heron.hpet.modules.exceptions.RefusedLoadException;
@@ -29,7 +30,7 @@ public class ModulesHandler {
     }
 
     public Module moduleByName(String moduleName) {
-        return this.modules.get(moduleName);
+        return this.modules.get(moduleName.toLowerCase());
     }
 
     public void loadModules() {
@@ -47,19 +48,21 @@ public class ModulesHandler {
 
     private Collection<Module> validModules() {
         List<Module> modules = new ArrayList<>();
-        modules.add(new InvisibilityHandler());
+        modules.add(new DatabaseModule());
+        modules.add(new PetTypesHandler());
+        modules.add(new PetsHandler());
+        modules.add(new AbilitiesHandler());
+
         modules.add(new PapiModule());
         modules.add(new VaultHook());
         modules.add(new ItemsAdderModule());
         modules.add(new HeadDatabaseModule());
-        modules.add(new DatabaseModule());
-        modules.add(new PetTypesHandler());
-        modules.add(new PetsHandler());
+        modules.add(new InvisibilityHandler());
         return modules;
     }
 
     private void addModule(Module module) {
-        this.modules.put(module.name(), module);
+        this.modules.put(module.name().toLowerCase(), module);
     }
 
     private void removeModule(Module module) {

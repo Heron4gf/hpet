@@ -1,0 +1,57 @@
+messages:
+  gui:
+    name: "&a&lPETS"
+    select:
+      can: "&a&lCLICK TO SELECT"
+      cannot: "&c&lPET LOCKED!"
+  level: "&eLevel: "
+  levelup:
+    - "&a&m------------------------------------"
+    - ""
+    - "&e&lYOUR PET HAS LEVELLED UP!"
+    - "&7New Level: [level]"
+    - "[leveltype]"
+    - ""
+    - "&a&m------------------------------------"
+  leveltype:
+    JUMP: "JUMP"
+    WALK: "WALK"
+    KILL: "KILLS"
+    MINE: "BREAK BLOCKS"
+    DEATHS: "DEATHS"
+    PLAYER_KILLS: "PLAYER KILLED"
+    CAKE_EATEN: "CAKE SLICES EATEN"
+  group:
+    open: "&a&lOpen this group!"
+  pet:
+    color:
+      invalid: "&cInvalid color!"
+      change: "&aPet color changed!"
+    rename:
+      help: "&eTo rename your pet digit /pet rename <new name>"
+    price: "&7Price: &e&l€"
+    buy:
+      noprice: "&eThis Pet has no price!"
+      notenough: "&cYou need more money to buy this Pet!"
+      permissioncommand: "lp user %player% permission set pet.use.%petname%"
+      bought: "&aYou have bought a new Pet! Use /pet to select it!"
+    respawn: "&aPet respawned!"
+    remove: "&cPet removed!"
+    spawned: "&aPet spawned!"
+    glow:
+      add: "&aYour pet is now glowing!"
+      remove: "&cYour pet is no longer glowing!"
+    trail:
+      add: "&aSpawned a pet trail!"
+      remove: "&cPet trail removed!"
+    particle:
+      add: "&aYou added a particle on your pet!"
+      remove: "&cYour pet now doesn't have particles!"
+      invalid: "&cThis particle is not a valid type!"
+  error:
+    alreadybought: "&cYou have already bought this pet!"
+    invalid: "&cInvalid argument!"
+    nosel: "&cPet not selected"
+    noperm:
+      command: "&cYou do not have permission for this command!"
+      use: "&cYou cannot use this pet!"

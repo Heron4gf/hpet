@@ -2,6 +2,7 @@ package it.heron.hpet.modules.pets.userpets.nametags;
 
 import it.heron.hpet.modules.pets.userpets.fakeentities.FakeTextDisplay;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Location;
 
 public class DisplayNametag extends AbstractNametag {
     private FakeTextDisplay textDisplay = null;
@@ -19,6 +20,11 @@ public class DisplayNametag extends AbstractNametag {
     @Override
     public Component getName() {
         return textDisplay.getText();
+    }
+
+    @Override
+    public void teleport(Location location) {
+        textDisplay.teleport(location, false);
     }
 
     @Override

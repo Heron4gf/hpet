@@ -1,11 +1,11 @@
 package it.heron.hpet.api.events;
 
+import it.heron.hpet.modules.pets.userpets.abstracts.UserPet;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import it.heron.hpet.modules.pets.userpets.old.HeadUserPet;
 
 public class PetSelectEvent extends PetEvent {
-    public PetSelectEvent(@NotNull Player who, HeadUserPet pet) {
+    public PetSelectEvent(@NotNull Player who, UserPet pet) {
         super(who, pet);
     }
 }

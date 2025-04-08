@@ -2,7 +2,6 @@ package it.heron.hpet.database.redisdatabase;
 
 import it.heron.hpet.database.AbstractDatabase;
 import it.heron.hpet.main.PetPlugin;
-import it.heron.hpet.modules.pets.pettypes.OldPetType;
 import it.heron.hpet.modules.pets.userpets.old.UnspawnedUserPet;
 import it.heron.hpet.modules.pets.userpets.old.HeadUserPet;
 import org.bukkit.Bukkit;

@@ -15,11 +15,6 @@ public abstract class FakeEntitiesUserPet extends AbstractUserPet {
         super(petType, owner, level);
     }
 
-    @Override
-    protected Location getNextLocation() {
-        return null;
-    }
-
 
     @Override
     public void onSpawn() {

@@ -10,18 +10,20 @@
  */
 package it.heron.hpet.api;
 
+import it.heron.hpet.modules.pets.PetsHandler;
 import it.heron.hpet.modules.pets.pettypes.PetType;
 import it.heron.hpet.modules.pets.userpets.abstracts.UserPet;
+import lombok.NonNull;
 import org.bukkit.entity.Entity;
 import it.heron.hpet.main.PetPlugin;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 public class PetAPI {
 
     public Collection<UserPet> spawnedPets() {
-        return PetPlugin.getInstance().getPetsHandler().
+        PetsHandler petsHandler = (PetsHandler) PetPlugin.getInstance().getModulesHandler().moduleByName("PetsHandler");
+        return petsHandler.spawnedPets();
     }
 
     /**
@@ -30,7 +32,7 @@ public class PetAPI {
      * @param owner The entity to check.
      * @return {@code true} if the entity has a pet, {@code false} otherwise.
      */
-    public boolean hasUserPet(@NotNull Entity owner) {
+    public boolean hasUserPet(@NonNull Entity owner) {
         return userPet(owner) != null;
     }
 
@@ -40,7 +42,7 @@ public class PetAPI {
      * @param owner The entity whose pets are being retrieved.
      * @return A set of {@link UserPet} instances owned by the entity.
      */
-    public Set<UserPet> userPets(@NotNull Entity owner) {
+    public Set<UserPet> userPets(@NonNull Entity owner) {
         return userPets(owner.getUniqueId());
     }
 
@@ -50,8 +52,9 @@ public class PetAPI {
      * @param owner The UUID of the pet owner.
      * @return A set of {@link UserPet} instances owned by the UUID.
      */
-    public Set<UserPet> userPets(@NotNull UUID owner) {
-        return PetPlugin.getInstance().getPetsHandler().userPets(owner);
+    public Set<UserPet> userPets(@NonNull UUID owner) {
+        PetsHandler petsHandler = (PetsHandler) PetPlugin.getInstance().getModulesHandler().moduleByName("PetsHandler");
+        return petsHandler.userPets(owner);
     }
 
     /**
@@ -60,7 +63,7 @@ public class PetAPI {
      * @param owner The entity whose primary pet is being retrieved.
      * @return A {@link UserPet} instance or {@code null} if the entity has no pets.
      */
-    public UserPet userPet(@NotNull Entity owner) {
+    public UserPet userPet(@NonNull Entity owner) {
         try {
             return userPets(owner).iterator().next();
         } catch (NoSuchElementException ignored) {
@@ -94,7 +97,7 @@ public class PetAPI {
      * @param petType The name of the pet type to select.
      * @return The newly selected {@link UserPet}, or {@code null} if selection failed.
      */
-    public UserPet selectPet(@NotNull Entity owner, @NotNull String petType) {
+    public UserPet selectPet(@NonNull Entity owner, @NonNull String petType) {
         return selectPet(owner, petType(petType));
     }
 
@@ -105,8 +108,9 @@ public class PetAPI {
      * @param petType The pet type to assign.
      * @return The newly selected {@link UserPet}, or {@code null} if selection failed.
      */
-    public UserPet selectPet(@NotNull Entity owner, @NotNull PetType petType) {
-        return PetPlugin.getInstance().getPetsHandler().selectPet(owner, petType);
+    public UserPet selectPet(@NonNull Entity owner, @NonNull PetType petType) {
+        PetsHandler petsHandler = (PetsHandler) PetPlugin.getInstance().getModulesHandler().moduleByName("PetsHandler");
+        return petsHandler.selectPet(owner, petType);
     }
 
     /**
@@ -114,8 +118,9 @@ public class PetAPI {
      *
      * @param userPet The {@link UserPet} to be removed.
      */
-    public void removePet(UserPet userPet) {
-        PetPlugin.getInstance().getPetsHandler().removePet(userPet);
+    public void removePet(@NonNull UserPet userPet) {
+        PetsHandler petsHandler = (PetsHandler) PetPlugin.getInstance().getModulesHandler().moduleByName("PetsHandler");
+        petsHandler.removePet(userPet);
     }
 
 }

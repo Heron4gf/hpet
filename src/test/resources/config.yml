@@ -1,0 +1,76 @@
+locale: "en"
+
+disabledWorlds:
+  - nopetsworld
+
+enabledPets: # You can disable pets by removing from this list!
+  #- * # Enable all pets in pets.yml automatically (groups must be added separately)
+  - group:mobs
+  - group:fantasy
+  - group:specials # Special or rare pets
+  - penguin
+  - puffle
+  - snail
+  - burger
+  - enderman
+  - creeper
+  - dried_ghast
+  - bread_scientist
+  - gecko
+  - red_bee
+  - seagull
+
+gui:
+  enable: true
+
+nametags:
+  enable: true
+  format: "{name} {level}"
+  maxlength: 20
+  invalidnames:
+    - ass
+    - bitch
+
+vanish: true # Pets invisible while vanished
+
+fix:
+  yawCalibration: 0 # adjust if all pets look at wrong direction
+  delay:
+    teleport: 20 # Pet spawn delay on teleport (-1 disables)
+    respawn: 22
+    tridentThrow: 3 # despawn and respawn the pet when throwing a trident
+    changeWorld: -1 # World change spawn listener (-1 disables)
+    join: 24 # Pet spawn delay on join
+    joinDatabaseUpdate: 20 # Update from database after join
+
+group:
+  materials:
+    pets:
+      - dirt
+      - netherite
+  fantasy:
+    pets:
+      - world
+      - mariobros
+  mobs:
+    pets:
+      - ghast
+      - pig
+      - slime
+      - sheep
+      - goat
+      - red_bee
+      - gecko
+  specials:
+    pets:
+      - bread_scientist
+      - dried_ghast
+      - seagull
+
+database:
+  type: SQLITE # Supported: MARIADB, MYSQL, SQLITE, REDIS
+  name: hpet
+  host: localhost
+  port: 3306
+  user: user
+  password: password

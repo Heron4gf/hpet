@@ -12,7 +12,7 @@
     <name>HPET</name>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -148,6 +148,34 @@
             <version>2.7.0</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- TESTS -->
+        <dependency>
+            <groupId>com.github.seeseemelk</groupId>
+            <artifactId>MockBukkit-v1.20</artifactId> <!-- Adjust version as needed -->
+            <version>3.33.0</version> <!-- Check latest version on GitHub/Maven Central -->
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.10.2</version> <!-- Use latest stable version -->
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sf.py4j</groupId>
+            <artifactId>py4j</artifactId>
+            <version>0.10.9.9</version>
+        </dependency>
+
+        <!-- TESTS -->
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>Mythic-Dist</artifactId>
@@ -180,14 +208,6 @@
             <artifactId>jedis</artifactId>
             <version>4.3.1</version>
         </dependency>
-        <!-- ProtocolLib -->
-        <!--<dependency>
-            <groupId>com.comphenix.protocol</groupId>
-            <artifactId>ProtocolLib</artifactId>
-            <version>5.3.0</version>
-            <scope>provided</scope>
-        </dependency>-->
-        <!-- ProtocolLib -->
         <dependency>
             <groupId>com.github.LoneDev6</groupId>
             <artifactId>api-itemsadder</artifactId>
@@ -240,12 +260,5 @@
             <version>1.7</version>
             <scope>provided</scope>
         </dependency>
-        <!--<dependency>
-            <groupId>net.citizensnpcs</groupId>
-            <artifactId>citizensapi</artifactId>
-            <version>2.0.24-SNAPSHOT</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>-->
     </dependencies>
 </project>

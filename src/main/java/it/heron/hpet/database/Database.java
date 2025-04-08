@@ -1,6 +1,5 @@
 package it.heron.hpet.database;
 
-import it.heron.hpet.modules.pets.pettypes.OldPetType;
 import it.heron.hpet.modules.pets.pettypes.PetType;
 import it.heron.hpet.modules.pets.userpets.old.UnspawnedUserPet;
 import it.heron.hpet.modules.pets.userpets.old.HeadUserPet;
