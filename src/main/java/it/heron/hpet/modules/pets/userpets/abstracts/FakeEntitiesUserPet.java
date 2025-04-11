@@ -8,8 +8,8 @@ import org.bukkit.entity.Entity;
 
 public abstract class FakeEntitiesUserPet extends AbstractUserPet {
 
-    private FakeEntity fakeEntity;
-    private INametag nametag;
+    protected FakeEntity fakeEntity;
+    protected INametag nametag;
 
     public FakeEntitiesUserPet(PetType petType, Entity owner, int level) {
         super(petType, owner, level);
@@ -28,7 +28,4 @@ public abstract class FakeEntitiesUserPet extends AbstractUserPet {
         this.id = -1;
     }
 
-    public void tick() {
-        super.tick();
-    }
 }

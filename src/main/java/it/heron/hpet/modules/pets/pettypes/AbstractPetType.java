@@ -1,11 +1,10 @@
 package it.heron.hpet.modules.pets.pettypes;
 
-import it.heron.hpet.database.Database;
+import it.heron.hpet.database.AbstractDatabase;
 import it.heron.hpet.main.PetPlugin;
 import it.heron.hpet.modules.abilities.AbilitiesHandler;
 import it.heron.hpet.modules.abilities.abstracts.Ability;
 import it.heron.hpet.modules.messages.ComponentsHelper;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -13,7 +12,6 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -78,7 +76,7 @@ public abstract class AbstractPetType implements PetType {
 
     @Override
     public boolean bought(Player player) {
-        Database database = (Database) PetPlugin.getInstance().getModulesHandler().moduleByName("Database");
+        AbstractDatabase database = (AbstractDatabase) PetPlugin.getInstance().getModulesHandler().moduleByName("Database");
         return database.hasBought(player, this);
     }
 

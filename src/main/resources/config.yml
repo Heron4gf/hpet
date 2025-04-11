@@ -68,7 +68,7 @@ group:
       - seagull
 
 database:
-  type: SQLITE # Supported: MARIADB, MYSQL, SQLITE, REDIS
+  type: SQLITE # Supported: MARIADB, MYSQL, SQLITE, POSTGRE
   name: hpet
   host: localhost
   port: 3306

@@ -1,7 +1,6 @@
 package it.heron.hpet.modules.pets;
 
 import it.heron.hpet.main.PetPlugin;
-import it.heron.hpet.modules.abstracts.AbstractModule;
 import it.heron.hpet.modules.abstracts.DefaultInstanceModule;
 import it.heron.hpet.modules.pets.pettypes.PetType;
 import it.heron.hpet.modules.pets.userpets.abstracts.UserPet;
@@ -9,7 +8,6 @@ import it.heron.hpet.modules.pets.userpets.workloads.WorkloadRunnable;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collection;
 import java.util.HashSet;

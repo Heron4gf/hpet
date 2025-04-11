@@ -6,9 +6,10 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEn
 import it.heron.hpet.main.PetPlugin;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import org.bukkit.inventory.ItemStack;
 
 
-public class FakeArmostand extends AbstractFakeEntity {
+public class FakeArmostand extends AbstractFakeEntity implements CanHaveItemOnHead, CanHaveItemInHand {
 
     @Getter
     private Component name;
@@ -45,6 +46,16 @@ public class FakeArmostand extends AbstractFakeEntity {
 
     @Override
     protected void onDespawn() {
+
+    }
+
+    @Override
+    public void setHeldItem(ItemStack itemStack) {
+
+    }
+
+    @Override
+    public void setHeadItem(ItemStack itemStack) {
 
     }
 

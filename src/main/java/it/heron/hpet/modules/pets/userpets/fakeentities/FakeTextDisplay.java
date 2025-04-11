@@ -7,11 +7,12 @@ import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class FakeTextDisplay extends AbstractFakeEntity {
+public class FakeTextDisplay extends AbstractFakeEntity implements CanHaveItemOnHead {
 
     @Getter
     private Component text;
@@ -51,5 +52,10 @@ public class FakeTextDisplay extends AbstractFakeEntity {
         );
         WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata(this.id, entityData);
         sendPacket(packet);
+    }
+
+    @Override
+    public void setHeadItem(ItemStack itemStack) {
+
     }
 }
