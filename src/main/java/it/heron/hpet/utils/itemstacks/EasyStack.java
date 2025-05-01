@@ -13,6 +13,13 @@ public class EasyStack {
 
     protected ItemStack itemStack;
 
+    /**
+     * Constructs an ItemStack with the specified material, and optionally sets a custom display name and lore using Adventure Components.
+     *
+     * @param material the material for the ItemStack (must not be null)
+     * @param name the display name to set, or null for default
+     * @param lore the lore to set, or null for none
+     */
     public EasyStack(@NonNull Material material, @Nullable Component name, @Nullable List<Component> lore) {
         // Create the ItemStack with the specified material.
         this.itemStack = new ItemStack(material);
@@ -27,6 +34,11 @@ public class EasyStack {
         }
     }
 
+    /**
+     * Returns the underlying {@link ItemStack} instance created by this wrapper.
+     *
+     * @return the customized ItemStack
+     */
     public ItemStack get() {
         return this.itemStack;
     }

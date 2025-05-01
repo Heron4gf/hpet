@@ -19,6 +19,14 @@ public class InvisibilityHandler extends PluginHook {
 
     private Set<InvisibilityIntegration> invisibilityIntegrations = new HashSet<>();
 
+    /**
+     * Constructs an InvisibilityHandler with default and supported plugin integrations.
+     *
+     * Initializes the handler with built-in invisibility detection strategies and dynamically loads integrations
+     * for supported external vanish plugins present on the server.
+     *
+     * @param plugin the JavaPlugin instance associated with this handler
+     */
     public InvisibilityHandler(JavaPlugin plugin) {
         super(plugin);
         InvisibilityIntegration[] default_integrations = {
@@ -41,11 +49,20 @@ public class InvisibilityHandler extends PluginHook {
         scanAndLoadSupportedPlugins();
     }
 
+    /**
+     * Clears all registered invisibility integrations when the handler is unloaded.
+     */
     @Override
     protected void onUnload() {
         this.invisibilityIntegrations.clear();
     }
 
+    /**
+     * Detects supported external vanish plugins and adds their integrations to the handler.
+     *
+     * Attempts to integrate with CMI, Essentials, and SuperVanish/PremiumVanish if present and supported,
+     * handling missing classes gracefully by disabling unavailable integrations.
+     */
     private void scanAndLoadSupportedPlugins() {
         PluginManager pluginManager = Bukkit.getPluginManager();
         if(super.canHook("CMI")) {

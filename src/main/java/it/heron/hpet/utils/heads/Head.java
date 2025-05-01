@@ -4,5 +4,10 @@ import org.bukkit.inventory.ItemStack;
 
 public interface Head {
 
-    ItemStack get();
+    /**
+ * Returns the ItemStack representation associated with this head.
+ *
+ * @return the ItemStack for this head
+ */
+ItemStack get();
 }

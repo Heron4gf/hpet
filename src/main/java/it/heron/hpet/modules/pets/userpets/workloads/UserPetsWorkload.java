@@ -17,6 +17,11 @@ public class UserPetsWorkload implements ScheduledWorkload {
         this.userPet.tick();
     }
 
+    /**
+     * Determines whether the workload should be rescheduled based on the registration status of the associated pet.
+     *
+     * @return {@code true} if the pet is still registered and the workload should continue; {@code false} if the task is complete.
+     */
     @Override
     public boolean shouldBeRescheduled() {
         PetsHandler handler = (PetsHandler) PetPlugin.getInstance().getModulesHandler().moduleByName("petshandler");

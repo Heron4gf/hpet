@@ -27,14 +27,32 @@ public class ModulesHandler {
         this.plugin = plugin;
     }
 
+    /**
+     * Checks if a module with the specified name exists.
+     *
+     * @param moduleName the name of the module to check (case-insensitive)
+     * @return true if the module exists, false otherwise
+     */
     public boolean hasModule(String moduleName) {
         return this.modules.containsKey(moduleName);
     }
 
+    /**
+     * Retrieves a module by its name, ignoring case.
+     *
+     * @param moduleName the name of the module to retrieve
+     * @return the corresponding Module instance, or null if not found
+     */
     public Module moduleByName(String moduleName) {
         return this.modules.get(moduleName.toLowerCase());
     }
 
+    /**
+     * Loads and registers all valid modules, then initializes them.
+     *
+     * This method retrieves the list of valid modules, adds each to the internal module map,
+     * and then loads all registered modules to make them active within the plugin environment.
+     */
     public void loadModules() {
         for(Module module : validModules()) {
             addModule(module);
@@ -42,10 +60,18 @@ public class ModulesHandler {
         loadAddedModules();
     }
 
+    /**
+     * Unloads all currently loaded modules and removes them from the internal registry.
+     */
     public void unloadModules() {
         new ArrayList<>(modules.values()).forEach(this::removeModule);
     }
 
+    /**
+     * Creates and returns a collection of all predefined module instances for the plugin.
+     *
+     * @return a collection containing new instances of all valid modules
+     */
     private Collection<Module> validModules() {
         List<Module> modules = new ArrayList<>();
         modules.add(new DatabaseModule(plugin));
@@ -62,10 +88,20 @@ public class ModulesHandler {
         return modules;
     }
 
+    /**
+     * Adds a module to the internal map, keyed by the module's name in lowercase.
+     *
+     * @param module the module instance to add
+     */
     private void addModule(Module module) {
         this.modules.put(module.name().toLowerCase(), module);
     }
 
+    /**
+     * Unloads the specified module and removes it from the internal modules map.
+     *
+     * @param module the module to unload and remove
+     */
     private void removeModule(Module module) {
         module.unload();
         modules.remove(module.name());

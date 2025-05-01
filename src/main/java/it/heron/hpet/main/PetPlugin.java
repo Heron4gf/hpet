@@ -95,6 +95,11 @@ public class PetPlugin extends JavaPlugin {
         this.modulesHandler.unloadModules();
     }
 
+    /**
+     * Initializes the plugin by setting up configuration files, spawning pets for online players, loading modules, verifying essential modules, and registering commands.
+     *
+     * This method ensures required resources exist, reloads configuration, spawns pets for all currently online players, loads all plugin modules, checks for the presence of the "Messages" module, and registers the main pet command. Errors during module loading or command registration are logged but do not halt the initialization process.
+     */
     private void load() {
         instance = this;
         saveResource("config.yml", false);

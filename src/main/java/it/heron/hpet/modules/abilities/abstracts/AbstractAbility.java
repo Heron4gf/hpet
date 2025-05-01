@@ -22,7 +22,9 @@ public abstract class AbstractAbility implements Ability { // Assuming Ability i
     private final long runevery; // The interval (in milliseconds) at which the ability should attempt to run
 
     /**
-     * @param seconds The interval in seconds at which this ability should try to execute.
+     * Constructs an AbstractAbility with a specified execution interval.
+     *
+     * @param seconds the interval, in seconds, at which the ability should attempt to execute; values less than 0.05 seconds are rounded up to ensure a minimum interval of 50 milliseconds
      */
     public AbstractAbility(float seconds) {
         long ms = Math.max(50, (long) (seconds * 1000)); // Ensure minimum interval (e.g., 1 tick)
@@ -30,17 +32,23 @@ public abstract class AbstractAbility implements Ability { // Assuming Ability i
     }
 
     /**
-     * Checks if enough time has passed since the last execution.
+     * Determines whether the ability's cooldown period has expired and it is eligible to execute again.
+     *
+     * @param userPet the pet instance associated with the ability
+     * @return true if the cooldown has expired; false otherwise
      */
     protected boolean shouldExecute(UserPet userPet) {
         return System.currentTimeMillis() >= (last_run + runevery);
     }
 
     /**
-     * Executes the ability if the conditions (owner online, cooldown expired) are met.
-     * Attempts to find the last player who damaged the owner.
-     * This method should typically be called periodically (e.g., by a scheduler).
-     * @param userPet The pet instance triggering the ability.
+     * Executes the ability for the given pet if the owner is online and the cooldown has expired.
+     * <p>
+     * Identifies the last player who damaged the owner within a specified distance and passes this information,
+     * along with a flag indicating if this is the first successful execution, to the ability logic.
+     * If an exception occurs during execution, the cooldown state is not updated.
+     *
+     * @param userPet the pet instance triggering the ability
      */
     @Override
     public final void execute(UserPet userPet) {
@@ -80,14 +88,13 @@ public abstract class AbstractAbility implements Ability { // Assuming Ability i
     }
 
     /**
-     * The core logic of the ability, implemented by subclasses.
-     * Called by execute() when the owner is online and the cooldown has expired.
-     *
-     * @param userPet   The pet instance associated with this ability.
-     * @param owner     The online Player who owns the pet.
-     * @param first_run True if this is the first time this ability instance is executing successfully.
-     * @param enemy     The Player who last damaged the owner, if identifiable via getLastDamageCause() and was a Player. Can be null.
-     */
+ * Executes the specific ability logic for a pet when triggered.
+ *
+ * @param userPet   the pet instance this ability is associated with
+ * @param owner     the online player who owns the pet
+ * @param first_run true if this is the first successful execution of this ability instance
+ * @param enemy     the player who most recently damaged the owner within range, or null if not applicable
+ */
     public abstract void onExecute(UserPet userPet, Player owner, boolean first_run, Player enemy);
 
 }

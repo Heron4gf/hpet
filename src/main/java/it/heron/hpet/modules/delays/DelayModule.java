@@ -14,10 +14,20 @@ public abstract class DelayModule extends ListenerModule {
     @Getter
     private long delay;
 
+    /**
+     * Constructs a DelayModule with the specified plugin instance.
+     *
+     * @param plugin the JavaPlugin instance to associate with this module
+     */
     public DelayModule(JavaPlugin plugin) {
         super(plugin);
     }
 
+    /**
+     * Loads the delay value from the plugin configuration and registers this module as an event listener.
+     *
+     * @throws RefusedLoadException if the delay value is not found in the configuration
+     */
     @Override
     protected void onLoad() {
         this.delay = plugin.getConfig().getLong("fix.delay."+name(), -1);

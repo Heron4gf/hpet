@@ -26,11 +26,19 @@ public final class PetCommand {
     private final PetAPI petAPI;
     private volatile MessagesHandler messagesHandler;
 
+    /**
+     * Initializes the PetCommand handler with references to the PetAPI and MessagesHandler modules.
+     */
     public PetCommand() {
         this.petAPI = PetPlugin.getApi();
         this.messagesHandler = (MessagesHandler) PetPlugin.getInstance().getModulesHandler().moduleByName("Messages");
     }
 
+    /**
+     * Returns the {@code MessagesHandler} instance, initializing it if necessary using thread-safe lazy initialization.
+     *
+     * @return the {@code MessagesHandler} used for sending localized messages
+     */
     private MessagesHandler getMessagesHandler() {
         MessagesHandler handler = messagesHandler;
         if (handler == null) {
@@ -45,7 +53,11 @@ public final class PetCommand {
         return handler;
     }
 
-    // --- Helper methods for Suggestions ---
+    /**
+     * Retrieves the names of all enabled pet types.
+     *
+     * @return a collection of enabled pet type names, or an empty list if the PetAPI is unavailable
+     */
 
     private Collection<String> getEnabledPetTypeNames() {
         if (petAPI == null) return List.of();
@@ -54,21 +66,47 @@ public final class PetCommand {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Returns a list of enabled pet type names for command argument suggestions.
+     *
+     * @param event the argument suggestion event triggering this suggestion
+     * @return a list of enabled pet type names
+     */
     private List<String> suggestPetTypes(ArgumentSuggestionEvent event) {
         return new ArrayList<>(getEnabledPetTypeNames());
     }
 
+    /**
+     * Returns a list of enabled pet type names for command argument suggestions when buying pets.
+     *
+     * @param event the argument suggestion event context
+     * @return a list of enabled pet type names
+     */
     private List<String> suggestBuyablePetTypes(ArgumentSuggestionEvent event) {
         // TODO: Implement logic to only suggest pet types the sender doesn't own yet and/or can afford.
         return new ArrayList<>(getEnabledPetTypeNames());
     }
 
-    // --- Helper methods for Command Logic ---
+    /**
+     * Sends a message to the specified sender with color codes translated using '&' as the color character.
+     *
+     * @param sender the recipient of the message
+     * @param message the message to send, with color codes using '&'
+     */
 
     private void sendColoredMessage(CommandSender sender, String message) {
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
     }
 
+    /**
+     * Sends a localized message to the specified sender, replacing placeholders as needed.
+     *
+     * For players, delegates to the MessagesHandler to handle built-in placeholders. For non-player senders (e.g., console), retrieves the raw message, replaces placeholders (including a default for {player}), and sends the colored message. If the message subpath is not found, notifies the sender of the missing message.
+     *
+     * @param sender the recipient of the message
+     * @param messageSubpath the key or subpath identifying the message in the locale
+     * @param placeholders a map of placeholders to replace in the message, or null if none
+     */
     private void sendMessageToSender(CommandSender sender, String messageSubpath, Map<String, String> placeholders) {
         MessagesHandler handler = getMessagesHandler();
         if (handler == null) {
@@ -96,6 +134,15 @@ public final class PetCommand {
         }
     }
 
+    /**
+     * Resolves the target player for a command, defaulting to the sender if they are a player.
+     *
+     * If no target is specified and the sender is not a player (e.g., console), sends an error message and returns null.
+     *
+     * @param sender the command sender
+     * @param targetArg the specified target player, or null to default to the sender
+     * @return the resolved target player, or null if not applicable
+     */
     private Player getTargetPlayer(CommandSender sender, Player targetArg) {
         if (targetArg != null) return targetArg;
         if (sender instanceof Player) return (Player) sender;
@@ -104,6 +151,13 @@ public final class PetCommand {
         return null;
     }
 
+    /**
+     * Retrieves the active pet for the specified player, sending an error message to the sender if none is active.
+     *
+     * @param sender the command sender requesting the pet
+     * @param target the player whose active pet is to be retrieved
+     * @return the active UserPet of the target player, or null if no active pet exists
+     */
     private UserPet getUserPet(CommandSender sender, Player target) {
         if (target == null) return null;
 
@@ -118,8 +172,8 @@ public final class PetCommand {
     }
 
 
-    /*
-     * /hpet - main command, opens gui, pet.command
+    /**
+     * Handles the main /hpet command, displaying the help message to the sender.
      */
     @FCommand(
         name = "hpet", 
@@ -131,6 +185,11 @@ public final class PetCommand {
         sendHelpMessage(sender);
     }
 
+    /**
+     * Sends a help message to the command sender listing available HPET commands.
+     *
+     * @param sender the command sender to receive the help message
+     */
     @FCommand(
         name = "hpet help", 
         permission = "pet.command", 
@@ -140,6 +199,11 @@ public final class PetCommand {
         sendHelpMessage(sender);
     }
 
+    /**
+     * Sends a formatted help message to the specified command sender, listing all available pet-related commands and their descriptions.
+     *
+     * @param sender the recipient of the help message
+     */
     private void sendHelpMessage(CommandSender sender) {
         List<String> helpLines = new ArrayList<>();
         helpLines.add("&6&lHPET Commands:");
@@ -157,8 +221,13 @@ public final class PetCommand {
     }
 
 
-    /*
-     * /hpet select <petType> [target:Player] - select a pet, pet.use.
+    /**
+     * Selects a pet of the specified type for the target player.
+     *
+     * If the pet type exists, assigns it as the active pet for the target player and sends confirmation messages to both the sender and the target. If the pet type does not exist or selection fails, sends an error message to the sender.
+     *
+     * @param petType the name of the pet type to select
+     * @param target the player to assign the pet to; if null, defaults to the sender if they are a player
      */
     @FCommand(
         pattern = "/hpet select <petType:Text(s:suggestPetTypes)> <target:Player?>",
@@ -199,8 +268,10 @@ public final class PetCommand {
         }
     }
 
-    /*
-     * /hpet remove [target:Player] - remove the current pet, pet.remove
+    /**
+     * Removes the current active pet of the specified player.
+     *
+     * If no target player is provided, removes the sender's pet. Sends confirmation messages to both the sender and the affected player.
      */
     @FCommand(
         pattern = "/hpet remove <target:Player?>",
@@ -228,8 +299,12 @@ public final class PetCommand {
         }
     }
 
-    /*
-     * /hpet update [target:Player] - respawn your pet, pet.update
+    /**
+     * Respawns the current active pet for the specified player.
+     *
+     * If the sender is the target player, sends a success message to the sender. If the sender is updating another player's pet, sends success messages to both the sender and the target player. If the pet cannot be respawned, sends an error message to the sender.
+     *
+     * @param target the player whose pet should be respawned; if null, defaults to the sender if the sender is a player
      */
     @FCommand(
         pattern = "/hpet update <target:Player?>",
@@ -265,8 +340,13 @@ public final class PetCommand {
         }
     }
 
-    /*
-     * /hpet buy <petType:Text> [target:Player] - buy a pet you don't have, pet.see.
+    /**
+     * Handles the /hpet buy command, allowing a player to purchase a pet of the specified type for themselves or another player.
+     *
+     * If the specified pet type does not exist, an error message is sent. The actual purchase logic is not yet implemented; a work-in-progress message is shown instead. Success and failure messages are simulated for demonstration purposes.
+     *
+     * @param petType the name of the pet type to purchase
+     * @param target the player who will receive the pet; if null, defaults to the sender if they are a player
      */
     @FCommand(
         pattern = "/hpet buy <petType:Text(s:suggestBuyablePetTypes)> <target:Player?>",
@@ -320,8 +400,13 @@ public final class PetCommand {
         }
     }
 
-    /*
-     * /hpet addlevel <amount:Integer> [target:Player] - add pet level, pet.addlevel
+    /**
+     * Adds the specified number of levels to the target player's active pet.
+     *
+     * If the amount is not positive, sends an error message to the sender. Sends success messages to both the sender and the target player upon successful level addition.
+     *
+     * @param amount the number of levels to add; must be positive
+     * @param target the player whose pet will receive the added levels; if null, defaults to the sender if they are a player
      */
     @FCommand(
         pattern = "/hpet addlevel <amount:Number> <target:Player?>",
@@ -361,8 +446,13 @@ public final class PetCommand {
     }
 
 
-    /*
-     * /hpet removelevel <amount:Integer> [target:Player] - decrease pet level, pet.removelevel
+    /**
+     * Decreases the active pet's level for the specified player by the given amount.
+     *
+     * If the resulting level would be negative, it is set to zero. Sends appropriate success or error messages to the sender and target player.
+     *
+     * @param amount the amount to decrease the pet's level by; must be positive
+     * @param target the player whose pet level will be decreased; if null, defaults to the sender if they are a player
      */
     @FCommand(
         pattern = "/hpet removelevel <amount:Number> <target:Player?>",
@@ -401,8 +491,13 @@ public final class PetCommand {
     }
 
 
-    /*
-     * /hpet setlevel <level:Integer> [target:Player] - set a pet level, pet.setlevel
+    /**
+     * Sets the active pet's level for the specified player.
+     *
+     * If the level is negative, sends an error message and does not update the pet. Sends confirmation messages to both the sender and the target player as appropriate.
+     *
+     * @param level the new level to set for the pet; must be non-negative
+     * @param target the player whose pet level will be set; if null, defaults to the sender if they are a player
      */
     @FCommand(
         pattern = "/hpet setlevel <level:Number> <target:Player?>",
@@ -437,8 +532,10 @@ public final class PetCommand {
         }
     }
 
-    /*
-     * /hpet level [target:Player] - shows current pet level, pet.level
+    /**
+     * Displays the current level of the target player's active pet.
+     *
+     * If no target is specified, shows the sender's pet level. Sends appropriate messages to both sender and target.
      */
     @FCommand(
         pattern = "/hpet level <target:Player?>",

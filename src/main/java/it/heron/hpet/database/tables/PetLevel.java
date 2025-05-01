@@ -28,6 +28,11 @@ public class PetLevel {
     @DatabaseField(canBeNull = false)
     private int level;
 
+    /**
+     * Persists the current PetLevel instance to the database, creating a new record or updating an existing one.
+     *
+     * If an error occurs during the operation, the exception stack trace is printed.
+     */
     public void save() {
         try {
             DatabaseModule module = (DatabaseModule) PetPlugin.getInstance().getModulesHandler().moduleByName("database");
@@ -38,6 +43,13 @@ public class PetLevel {
         }
     }
 
+    /**
+     * Retrieves the first PetLevel record matching the specified owner and pet type from the database.
+     *
+     * @param owner the UUID of the pet owner
+     * @param petType the type of the pet
+     * @return the matching PetLevel instance, or null if none is found or an error occurs
+     */
     public static PetLevel load(UUID owner, String petType) {
         try {
             DatabaseModule module = (DatabaseModule) PetPlugin.getInstance().getModulesHandler().moduleByName("database");

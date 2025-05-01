@@ -6,12 +6,35 @@ import org.bukkit.util.Vector;
 
 public interface INametag {
 
-    void setName(Component name);
-    Component getName();
+    /****
+ * Sets the nametag's display name to the specified component.
+ *
+ * @param name the new name to assign to the nametag
+ */
+void setName(Component name);
+    /**
+ * Retrieves the current name of the nametag as a Component.
+ *
+ * @return the nametag's name
+ */
+Component getName();
 
-    void teleport(Location location);
+    /**
+ * Moves the nametag to the specified location.
+ *
+ * @param location the target location to teleport the nametag to
+ */
+void teleport(Location location);
 
-    boolean isShown();
-    void show();
+    /**
+ * Returns whether the nametag is currently visible.
+ *
+ * @return true if the nametag is shown, false otherwise
+ */
+boolean isShown();
+    /****
+ * Makes the nametag visible.
+ */
+void show();
     void hide();
 }

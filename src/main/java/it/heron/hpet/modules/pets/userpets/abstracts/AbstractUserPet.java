@@ -41,7 +41,13 @@ public abstract class AbstractUserPet implements UserPet {
     @Getter
     protected INametag nametag;
 
-    private boolean currentVisibilityState = true; // current visibility state, shouldn't be used externally
+    private boolean currentVisibilityState = true; /**
+     * Constructs an AbstractUserPet with the specified pet type, owner, and level.
+     *
+     * @param petType the type of the pet; must not be null
+     * @param owner the entity representing the pet's owner; must not be null
+     * @param level the initial level of the pet
+     */
 
     public AbstractUserPet(@NonNull PetType petType, @NonNull Entity owner, int level) {
         this.petType = petType;
@@ -50,6 +56,11 @@ public abstract class AbstractUserPet implements UserPet {
         this.nametag = NametagGenerator.getFormattedNametag(getPetType().getName());
     }
 
+    /**
+     * Teleports the pet to the specified location if it is currently visible and not already at that location.
+     *
+     * @param location the target location to teleport the pet to
+     */
     @Override
     public void teleport(Location location) {
         if(!currentVisibilityState) return;
@@ -77,6 +88,12 @@ public abstract class AbstractUserPet implements UserPet {
         this.id = UNSPAWNED_ID;
     }
 
+    /**
+     * Updates the pet's state for the current tick, handling visibility, position, and abilities.
+     *
+     * Retrieves the owner entity and updates the pet's vanished status based on the owner's invisibility.
+     * Applies the appropriate visibility state, teleports the pet to its next location, and executes the pet type's ability if available.
+     */
     @Override
     public void tick() {
         Entity ownerEntity = Bukkit.getEntity(this.owner);
@@ -91,6 +108,11 @@ public abstract class AbstractUserPet implements UserPet {
         }
     }
 
+    /**
+     * Updates the pet's nametag to display a new formatted name.
+     *
+     * @param name the new name to display above the pet
+     */
     @Override
     public void rename(String name) {
         NametagGenerator.changeNametagFormatted(nametag, name);

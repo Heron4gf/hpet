@@ -8,10 +8,24 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 public class HeadPetType extends StackPetType {
+    /**
+     * Constructs a HeadPetType with the specified YAML configuration and key.
+     *
+     * @param configuration the YAML configuration for this pet type
+     * @param key the unique identifier for this pet type
+     */
     public HeadPetType(YamlConfiguration configuration, String key) {
         super(configuration, key);
     }
 
+    /**
+     * Creates an ItemStack representing a pet head skin based on the provided skin name.
+     *
+     * Depending on the format and content of the skinName, this method returns a custom head, a HeadDatabase head, or a player head.
+     *
+     * @param skinName the identifier for the desired head skin
+     * @return an ItemStack representing the specified head skin
+     */
     @Override
     protected ItemStack makeSkin(String skinName) {
         if(skinName.length() > 64) {

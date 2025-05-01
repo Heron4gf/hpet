@@ -17,16 +17,31 @@ public class DisplayNametag extends AbstractNametag {
         textDisplay.setText(name);
     }
 
+    /**
+     * Retrieves the current text displayed by the nametag.
+     *
+     * @return the current nametag text as a {@link Component}
+     */
     @Override
     public Component getName() {
         return textDisplay.getText();
     }
 
+    /**
+     * Moves the nametag display to the specified location.
+     *
+     * @param location the new location for the nametag display
+     */
     @Override
     public void teleport(Location location) {
         textDisplay.teleport(location, false);
     }
 
+    /**
+     * Checks if the nametag display is currently visible.
+     *
+     * @return {@code true} if the underlying text display exists and is spawned; {@code false} otherwise
+     */
     @Override
     public boolean isShown() {
         return textDisplay != null && textDisplay.isSpawned();

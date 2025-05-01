@@ -14,10 +14,20 @@ import java.util.UUID;
 
 public class CustomHead extends HeadFromString {
 
+    /**
+     * Constructs a CustomHead with the specified Base64-encoded skin texture string.
+     *
+     * @param value Base64-encoded string representing the Minecraft skin texture
+     */
     public CustomHead(String value) {
         super(value); // value is the Base64 skin texture string
     }
 
+    /**
+     * Generates a player head item with a custom skin texture based on the provided Base64-encoded string.
+     *
+     * @return an {@link ItemStack} representing a player head with the custom skin applied; if the Base64 string is invalid, returns a default player head
+     */
     @Override
     public ItemStack generate() {
         // Create a player head ItemStack
@@ -48,12 +58,13 @@ public class CustomHead extends HeadFromString {
     }
 
     /**
-     * Converts a Base64 encoded skin texture string into a URL.
-     * Expected JSON format: {"textures":{"SKIN":{"url":"<skin_url>"}}}
+     * Extracts the skin texture URL from a Base64-encoded Minecraft skin JSON string.
      *
-     * @param base64 the Base64 encoded texture
-     * @return the URL pointing to the skin texture
-     * @throws MalformedURLException if the URL is malformed or the data is in an unexpected format
+     * The input must decode to a JSON string in the format: {"textures":{"SKIN":{"url":"<skin_url>"}}}.
+     *
+     * @param base64 Base64-encoded skin texture JSON string
+     * @return URL pointing to the extracted skin texture
+     * @throws MalformedURLException if the input does not match the expected format or the URL is invalid
      */
     private URL getUrlFromBase64(String base64) throws MalformedURLException {
         String decoded = new String(Base64.getDecoder().decode(base64));

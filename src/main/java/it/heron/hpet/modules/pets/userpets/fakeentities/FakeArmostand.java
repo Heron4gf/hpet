@@ -44,21 +44,43 @@ public class FakeArmostand extends AbstractFakeEntity implements CanHaveItemOnHe
         updateMetadata();
     }
 
+    /**
+     * Handles actions when the armor stand entity is despawned.
+     *
+     * This implementation performs no actions on despawn.
+     */
     @Override
     protected void onDespawn() {
 
     }
 
+    /**
+     * Sets the item held by the armor stand.
+     *
+     * <p>Currently, this method has no effect.</p>
+     *
+     * @param itemStack the item to set in the armor stand's hand
+     */
     @Override
     public void setHeldItem(ItemStack itemStack) {
 
     }
 
+    /**
+     * Sets the item displayed on the armor stand's head.
+     *
+     * <p>Currently, this method has no effect.</p>
+     *
+     * @param itemStack the item to set on the head (ignored)
+     */
     @Override
     public void setHeadItem(ItemStack itemStack) {
 
     }
 
+    /**
+     * Updates the armor stand's metadata and sends the corresponding packet to reflect changes in name, size, or glow status.
+     */
     private void updateMetadata() {
         WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata(
                 this.id, PetPlugin.getInstance().getArmorStandMetadataHandler().metadata(name, small, glow)
