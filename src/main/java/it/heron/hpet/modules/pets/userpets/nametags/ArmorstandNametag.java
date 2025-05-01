@@ -2,6 +2,7 @@ package it.heron.hpet.modules.pets.userpets.nametags;
 
 import it.heron.hpet.modules.pets.userpets.fakeentities.FakeArmostand;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Location;
 
 public class ArmorstandNametag extends AbstractNametag {
     private FakeArmostand fakeArmorstand = null;
@@ -22,7 +23,12 @@ public class ArmorstandNametag extends AbstractNametag {
     }
 
     @Override
+    public void teleport(Location location) {
+        fakeArmorstand.teleport(location.clone().add(0,-1,0), false);
+    }
+
+    @Override
     public boolean isShown() {
-        return fakeArmorstand != null && fakeArmostand.isSpawned();
+        return fakeArmorstand != null && fakeArmorstand.isSpawned();
     }
 }

@@ -1,15 +1,20 @@
 package it.heron.hpet.modules.pets;
 
+import it.heron.hpet.database.tables.PetLevel;
 import it.heron.hpet.main.PetPlugin;
-import it.heron.hpet.modules.abstracts.AbstractModule;
 import it.heron.hpet.modules.abstracts.DefaultInstanceModule;
+import org.bukkit.plugin.java.JavaPlugin;
+import it.heron.hpet.modules.pets.pettypes.CustomModelPetType;
+import it.heron.hpet.modules.pets.pettypes.HeadPetType;
 import it.heron.hpet.modules.pets.pettypes.PetType;
+import it.heron.hpet.modules.pets.pettypes.StackPetType;
+import it.heron.hpet.modules.pets.userpets.HandUserPet;
+import it.heron.hpet.modules.pets.userpets.StackUserPet;
 import it.heron.hpet.modules.pets.userpets.abstracts.UserPet;
 import it.heron.hpet.modules.pets.userpets.workloads.WorkloadRunnable;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -21,6 +26,10 @@ public class PetsHandler extends DefaultInstanceModule {
     private int taskId = -1;
 
     private Set<UserPet> spawnedPets = new HashSet<>();
+
+    public PetsHandler(JavaPlugin plugin) {
+        super(plugin);
+    }
 
     @Getter
     private WorkloadRunnable workloadRunnable = new WorkloadRunnable();
@@ -51,8 +60,15 @@ public class PetsHandler extends DefaultInstanceModule {
     }
 
     public UserPet selectPet(Entity entity, PetType petType) {
+        PetLevel petLevel = PetLevel.load(entity.getUniqueId(), petType.getName());
         UserPet userPet = null;
+        if(petType instanceof CustomModelPetType) {
+            userPet = new StackUserPet((StackPetType)petType, entity, petLevel.getLevel());
+        } else if(petType instanceof HeadPetType) {
+            userPet = new HandUserPet((StackPetType) petType, entity, petLevel.getLevel());
+        }
 
+        userPet.spawn();
         registerPet(userPet);
         return userPet;
     }

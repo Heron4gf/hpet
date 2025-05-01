@@ -7,6 +7,7 @@ import it.heron.hpet.modules.pets.userpets.animations.abstracts.IAnimation;
 import it.heron.hpet.modules.pets.userpets.nametags.INametag;
 import it.heron.hpet.modules.pets.userpets.nametags.NametagGenerator;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -21,10 +22,14 @@ public abstract class AbstractUserPet implements UserPet {
 
     @Getter
     protected Location location;
+
     @Getter
     protected UUID owner;
+
     @Getter @Setter
     protected int level;
+    @Getter
+    protected PetType petType;
     @Getter
     protected boolean visible = true; // doesn't affect vanish, this value will be true if pet is vanished
     @Getter
@@ -38,7 +43,8 @@ public abstract class AbstractUserPet implements UserPet {
 
     private boolean currentVisibilityState = true; // current visibility state, shouldn't be used externally
 
-    public AbstractUserPet(PetType petType, Entity owner, int level) {
+    public AbstractUserPet(@NonNull PetType petType, @NonNull Entity owner, int level) {
+        this.petType = petType;
         this.owner = owner.getUniqueId();
         this.level = level;
         this.nametag = NametagGenerator.getFormattedNametag(getPetType().getName());
@@ -46,6 +52,7 @@ public abstract class AbstractUserPet implements UserPet {
 
     @Override
     public void teleport(Location location) {
+        if(!currentVisibilityState) return;
         if(this.location.equals(location)) return;
     }
 
@@ -73,13 +80,15 @@ public abstract class AbstractUserPet implements UserPet {
     @Override
     public void tick() {
         Entity ownerEntity = Bukkit.getEntity(this.owner);
-        teleport(getNextLocation());
-
         InvisibilityHandler handler = (InvisibilityHandler) PetPlugin.getInstance().getModulesHandler().moduleByName("Vanish");
         this.vanished = handler.isInvisible(ownerEntity);
 
         applyVisibilityState(!this.vanished && this.visible);
         teleport(getNextLocation());
+
+        if(petType.getAbility() != null) {
+            petType.getAbility().execute(this);
+        }
     }
 
     @Override

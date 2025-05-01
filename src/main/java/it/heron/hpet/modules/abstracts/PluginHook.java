@@ -2,8 +2,13 @@ package it.heron.hpet.modules.abstracts;
 
 import it.heron.hpet.modules.exceptions.RefusedLoadException;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public abstract class PluginHook extends DefaultInstanceModule {
+
+    public PluginHook(JavaPlugin plugin) {
+        super(plugin);
+    }
 
     @Override
     public void load() {

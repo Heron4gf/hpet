@@ -1,6 +1,7 @@
 package it.heron.hpet.modules.pets.userpets.workloads;
 
 import it.heron.hpet.main.PetPlugin;
+import it.heron.hpet.modules.pets.PetsHandler;
 import it.heron.hpet.modules.pets.userpets.abstracts.UserPet;
 
 public class UserPetsWorkload implements ScheduledWorkload {
@@ -18,6 +19,7 @@ public class UserPetsWorkload implements ScheduledWorkload {
 
     @Override
     public boolean shouldBeRescheduled() {
-        return PetPlugin.getInstance().getPetsHandler().isPetRegistered(this.userPet); // This task is complete after one execution
+        PetsHandler handler = (PetsHandler) PetPlugin.getInstance().getModulesHandler().moduleByName("petshandler");
+        return handler.isPetRegistered(this.userPet); // This task is complete after one execution
     }
 }

@@ -15,6 +15,10 @@ public class PetTypesHandler extends DefaultInstanceModule {
     private File PETS_FILE;
     private HashMap<String, PetType> loadedPetTypes = new HashMap<>();
 
+    public PetTypesHandler(JavaPlugin plugin) {
+        super(plugin);
+    }
+
     private void loadPetTypes(YamlConfiguration yamlConfiguration) {
 
     }

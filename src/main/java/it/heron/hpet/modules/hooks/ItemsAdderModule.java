@@ -4,10 +4,15 @@ import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;
 import dev.lone.itemsadder.api.Events.ItemsAdderPackCompressedEvent;
 import it.heron.hpet.main.PetPlugin;
 import it.heron.hpet.modules.abstracts.PluginHook;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 public class ItemsAdderModule extends PluginHook implements Listener {
+
+    public ItemsAdderModule(JavaPlugin plugin) {
+        super(plugin);
+    }
 
     @Override
     public String name() {

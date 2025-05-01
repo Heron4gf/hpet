@@ -1,6 +1,7 @@
 package it.heron.hpet.modules.hooks;
 
 import it.heron.hpet.modules.abstracts.PluginHook;
+import org.bukkit.plugin.java.JavaPlugin;
 import it.heron.hpet.placeholders.PlaceholdersExtension;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.OfflinePlayer;
@@ -8,6 +9,10 @@ import org.bukkit.OfflinePlayer;
 public class PapiModule extends PluginHook {
 
     private PlaceholdersExtension extension;
+
+    public PapiModule(JavaPlugin plugin) {
+        super(plugin);
+    }
 
     @Override
     public String name() {

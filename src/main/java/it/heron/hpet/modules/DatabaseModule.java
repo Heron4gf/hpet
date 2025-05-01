@@ -1,13 +1,9 @@
 package it.heron.hpet.modules;
 
-import it.heron.hpet.database.Database;
-import it.heron.hpet.database.redisdatabase.RedisDatabase;
-import it.heron.hpet.database.sqldatabases.MariaDB;
-import it.heron.hpet.database.sqldatabases.MySQL;
-import it.heron.hpet.database.sqldatabases.SQLite;
-import it.heron.hpet.main.PetPlugin;
+import it.heron.hpet.database.*;
 import it.heron.hpet.modules.abstracts.DefaultInstanceModule;
 import lombok.Getter;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -15,7 +11,11 @@ import java.util.Hashtable;
 public class DatabaseModule extends DefaultInstanceModule {
 
     @Getter
-    private Database database;
+    private AbstractDatabase database;
+
+    public DatabaseModule(JavaPlugin plugin) {
+        super(plugin);
+    }
 
     @Override
     public String name() {
@@ -33,13 +33,12 @@ public class DatabaseModule extends DefaultInstanceModule {
     }
 
 
-    private Dictionary<String, Database> databaseDictionary() {
-        Dictionary<String, Database> databaseDictionary = new Hashtable<>();
-        PetPlugin petPlugin = (PetPlugin)plugin;
-        databaseDictionary.put("mysql", new MySQL(petPlugin));
-        databaseDictionary.put("mariadb", new MariaDB(petPlugin));
-        databaseDictionary.put("redis", new RedisDatabase(petPlugin));
-        databaseDictionary.put("sqlite", new SQLite(petPlugin));
+    private Dictionary<String, AbstractDatabase> databaseDictionary() {
+        Dictionary<String, AbstractDatabase> databaseDictionary = new Hashtable<>();
+        databaseDictionary.put("mysql", new MySQLDatabase(plugin));
+        databaseDictionary.put("mariadb", new MariaDBDatabase(plugin));
+        databaseDictionary.put("postgre", new PostgreSQLDatabase(plugin));
+        databaseDictionary.put("sqlite", new SQLiteDatabase(plugin));
         return databaseDictionary;
     }
 
@@ -50,6 +49,6 @@ public class DatabaseModule extends DefaultInstanceModule {
     }
 
     private void unloadDatabase() {
-        this.database.close();
+        this.database.unload();
     }
 }

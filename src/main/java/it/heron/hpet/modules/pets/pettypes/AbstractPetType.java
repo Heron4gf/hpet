@@ -1,29 +1,45 @@
 package it.heron.hpet.modules.pets.pettypes;
 
+import it.heron.hpet.database.AbstractDatabase;
+import it.heron.hpet.database.tables.BoughtPets;
 import it.heron.hpet.main.PetPlugin;
+import it.heron.hpet.modules.abilities.AbilitiesHandler;
+import it.heron.hpet.modules.abilities.abstracts.Ability;
 import it.heron.hpet.modules.messages.ComponentsHelper;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract @Data class AbstractPetType implements PetType {
+public abstract class AbstractPetType implements PetType {
 
+    @NonNull
     private YamlConfiguration configuration;
 
-    private String name;
+    @Getter
+    private @NonNull String name;
+    @Getter
+    private @Nullable Ability ability = null;
 
-    private Component displayName;
-    private List<Component> description;
+    @Getter @Setter
+    private @Nullable Component displayName;
+    @Getter @Setter
+    private @Nullable List<Component> description;
 
-    private Vector relativeLocation = new Vector(0, 0, 0);
-    private Vector nametagRelativeLocation = new Vector(0, 0, 0);
-    private Double price = null;
-    private String animationName = "glide";
+    @Getter @Setter
+    private @NonNull Vector relativeLocation = new Vector(0, 0, 0);
+    @Getter @Setter
+    private @NonNull Vector nametagRelativeLocation = new Vector(0, 0, 0);
+    @Getter @Setter
+    private @Nullable Double price = null;
+    @Getter @Setter
+    private @NonNull String animationName = "glide";
 
     private float yaw = 200f;
     private double distance = 0d;
@@ -54,7 +70,7 @@ public abstract @Data class AbstractPetType implements PetType {
 
     @Override
     public boolean bought(Player player) {
-        return PetPlugin.getInstance().getDatabase().hasBought(player, this);
+        return BoughtPets.hasBought(player.getUniqueId(), this.name);
     }
 
     protected void loadVector(String subpath, Vector def) {
