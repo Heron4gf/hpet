@@ -15,10 +15,20 @@ public class PetTypesHandler extends DefaultInstanceModule {
     private File PETS_FILE;
     private HashMap<String, PetType> loadedPetTypes = new HashMap<>();
 
+    /**
+     * Constructs a new PetTypesHandler with the specified plugin instance.
+     *
+     * @param plugin the JavaPlugin instance associated with this handler
+     */
     public PetTypesHandler(JavaPlugin plugin) {
         super(plugin);
     }
 
+    /****
+     * Loads pet types from the provided YAML configuration.
+     *
+     * @param yamlConfiguration the YAML configuration containing pet type definitions
+     */
     private void loadPetTypes(YamlConfiguration yamlConfiguration) {
 
     }

@@ -10,10 +10,20 @@ public class PapiModule extends PluginHook {
 
     private PlaceholdersExtension extension;
 
+    /**
+     * Constructs a new PapiModule with the specified plugin instance.
+     *
+     * @param plugin the JavaPlugin instance to associate with this module
+     */
     public PapiModule(JavaPlugin plugin) {
         super(plugin);
     }
 
+    /**
+     * Returns the name of the plugin hook, identifying it as "PlaceholderAPI".
+     *
+     * @return the string "PlaceholderAPI"
+     */
     @Override
     public String name() {
         return "PlaceholderAPI";

@@ -68,11 +68,23 @@ public abstract class AbstractPetType implements PetType {
         return player.hasPermission("pet.use."+this.name) || bought(player);
     }
 
+    /**
+     * Checks if the specified player has purchased this pet.
+     *
+     * @param player the player to check
+     * @return true if the player has bought the pet; false otherwise
+     */
     @Override
     public boolean bought(Player player) {
         return BoughtPets.hasBought(player.getUniqueId(), this.name);
     }
 
+    /**
+     * Loads vector coordinates from the configuration at the specified subpath, updating the provided vector with the loaded values or defaults if not present.
+     *
+     * @param subpath the configuration subpath relative to the pet's base path
+     * @param def the vector to update with loaded or default coordinate values
+     */
     protected void loadVector(String subpath, Vector def) {
         String path = absolutePath(subpath);
         double x = configuration.getDouble(path, def.getX());

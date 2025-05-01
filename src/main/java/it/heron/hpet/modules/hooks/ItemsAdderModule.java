@@ -10,10 +10,20 @@ import org.bukkit.event.Listener;
 
 public class ItemsAdderModule extends PluginHook implements Listener {
 
+    /**
+     * Constructs an ItemsAdderModule with the specified plugin instance.
+     *
+     * @param plugin the JavaPlugin instance to associate with this module
+     */
     public ItemsAdderModule(JavaPlugin plugin) {
         super(plugin);
     }
 
+    /**
+     * Returns the name identifier for this plugin hook.
+     *
+     * @return the string "ItemsAdder"
+     */
     @Override
     public String name() {
         return "ItemsAdder";

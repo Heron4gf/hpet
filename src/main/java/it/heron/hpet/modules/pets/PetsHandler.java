@@ -27,6 +27,11 @@ public class PetsHandler extends DefaultInstanceModule {
 
     private Set<UserPet> spawnedPets = new HashSet<>();
 
+    /**
+     * Constructs a new PetsHandler instance with the specified plugin context.
+     *
+     * @param plugin the JavaPlugin instance providing the plugin environment
+     */
     public PetsHandler(JavaPlugin plugin) {
         super(plugin);
     }
@@ -49,6 +54,12 @@ public class PetsHandler extends DefaultInstanceModule {
         endTask();
     }
 
+    /**
+     * Retrieves all currently spawned pets owned by the specified user.
+     *
+     * @param owner the UUID of the pet owner
+     * @return a set of UserPet instances belonging to the given owner
+     */
     public Set<UserPet> userPets(UUID owner) {
         Set<UserPet> userPets = new HashSet<>();
         for(UserPet userPet : spawnedPets) {
@@ -59,6 +70,16 @@ public class PetsHandler extends DefaultInstanceModule {
         return userPets;
     }
 
+    /**
+     * Creates, spawns, and registers a user pet for the given entity and pet type.
+     *
+     * Loads the pet's level from persistent storage, instantiates the appropriate UserPet subclass based on the pet type,
+     * spawns the pet in the game world, registers it as active, and returns the created UserPet instance.
+     *
+     * @param entity the entity to associate with the pet
+     * @param petType the type of pet to create
+     * @return the spawned and registered UserPet instance
+     */
     public UserPet selectPet(Entity entity, PetType petType) {
         PetLevel petLevel = PetLevel.load(entity.getUniqueId(), petType.getName());
         UserPet userPet = null;

@@ -9,10 +9,20 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class OnTridentThrow extends DelayModule {
 
+    /**
+     * Constructs an OnTridentThrow event listener with the specified plugin instance.
+     *
+     * @param plugin the JavaPlugin instance associated with this module
+     */
     public OnTridentThrow(JavaPlugin plugin) {
         super(plugin);
     }
 
+    /**
+     * Returns the name identifier for this delay module.
+     *
+     * @return the string "tridentThrow"
+     */
     @Override
     public String name() {
         return "tridentThrow";

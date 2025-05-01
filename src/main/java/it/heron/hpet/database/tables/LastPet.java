@@ -24,6 +24,9 @@ public class LastPet {
     @DatabaseField(canBeNull = true)
     private String petName;
 
+    /**
+     * Persists this LastPet instance to the database, creating a new record or updating an existing one.
+     */
     public void save() {
         try {
             DatabaseModule module = (DatabaseModule) PetPlugin.getInstance().getModulesHandler().moduleByName("database");
@@ -34,6 +37,12 @@ public class LastPet {
         }
     }
 
+    /**
+     * Retrieves the LastPet record associated with the specified owner UUID from the database.
+     *
+     * @param owner the UUID of the pet owner whose record is to be loaded
+     * @return the LastPet object if found; otherwise, null if not found or if an error occurs
+     */
     public static LastPet load(UUID owner) {
         try {
             DatabaseModule module = (DatabaseModule) PetPlugin.getInstance().getModulesHandler().moduleByName("database");

@@ -15,6 +15,12 @@ public abstract class PetEvent extends PlayerEvent {
     @Getter
     private UserPet pet;
 
+    /**
+     * Constructs a new PetEvent for the specified player and associated user pet.
+     *
+     * @param who the player involved in the event
+     * @param pet the user pet related to this event
+     */
     public PetEvent(@NotNull Player who, UserPet pet) {
         super(who);
         this.pet = pet;

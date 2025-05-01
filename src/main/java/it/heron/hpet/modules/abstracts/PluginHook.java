@@ -6,10 +6,20 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public abstract class PluginHook extends DefaultInstanceModule {
 
+    /**
+     * Constructs a PluginHook with the specified JavaPlugin instance.
+     *
+     * @param plugin the JavaPlugin associated with this hook
+     */
     public PluginHook(JavaPlugin plugin) {
         super(plugin);
     }
 
+    /**
+     * Loads the plugin hook if it is not already loaded and the hook can be established.
+     *
+     * @throws RefusedLoadException if the hook cannot be established
+     */
     @Override
     public void load() {
         if(loaded) return;

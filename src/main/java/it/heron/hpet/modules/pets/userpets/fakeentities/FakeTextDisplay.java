@@ -46,6 +46,11 @@ public class FakeTextDisplay extends AbstractFakeEntity implements CanHaveItemOn
         updateText();
     }
 
+    /**
+     * Sends an entity metadata update to clients to refresh the displayed text.
+     *
+     * Updates the entity's metadata with the current text component, ensuring that clients see the latest text for this entity.
+     */
     private void updateText() {
         List<EntityData> entityData = Arrays.asList(
                 new EntityData(23, EntityDataTypes.ADV_COMPONENT, text)
@@ -54,6 +59,11 @@ public class FakeTextDisplay extends AbstractFakeEntity implements CanHaveItemOn
         sendPacket(packet);
     }
 
+    /****
+     * Does nothing when attempting to set a head item on this entity.
+     *
+     * This entity type does not support having an item on its head.
+     */
     @Override
     public void setHeadItem(ItemStack itemStack) {
 

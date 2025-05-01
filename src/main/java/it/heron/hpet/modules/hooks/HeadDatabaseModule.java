@@ -10,10 +10,20 @@ public class HeadDatabaseModule extends PluginHook {
     @Getter
     private HeadDatabaseAPI headAPI;
 
+    /**
+     * Constructs a HeadDatabaseModule with the specified plugin instance.
+     *
+     * @param plugin the JavaPlugin instance associated with this module
+     */
     public HeadDatabaseModule(JavaPlugin plugin) {
         super(plugin);
     }
 
+    /**
+     * Returns the name identifier for this plugin hook.
+     *
+     * @return the string "HeadDatabase"
+     */
     @Override
     public String name() {
         return "HeadDatabase";

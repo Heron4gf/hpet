@@ -23,36 +23,41 @@ import java.util.*;
 
 public class PetAPI {
 
+    /**
+     * Returns a collection of all currently spawned user pets in the system.
+     *
+     * @return a collection of active {@link UserPet} instances
+     */
     public Collection<UserPet> spawnedPets() {
         PetsHandler petsHandler = (PetsHandler) PetPlugin.getInstance().getModulesHandler().moduleByName("PetsHandler");
         return petsHandler.spawnedPets();
     }
 
     /**
-     * Checks if a given entity has at least one pet.
+     * Determines whether the specified entity owns at least one pet.
      *
-     * @param owner The entity to check.
-     * @return {@code true} if the entity has a pet, {@code false} otherwise.
+     * @param owner the entity whose pet ownership is being checked
+     * @return {@code true} if the entity owns at least one pet; {@code false} otherwise
      */
     public boolean hasUserPet(@NonNull Entity owner) {
         return userPet(owner) != null;
     }
 
     /**
-     * Retrieves all pets owned by the given entity.
+     * Returns all pets owned by the specified entity.
      *
-     * @param owner The entity whose pets are being retrieved.
-     * @return A set of {@link UserPet} instances owned by the entity.
+     * @param owner the entity whose pets are to be retrieved
+     * @return a set of UserPet instances owned by the entity
      */
     public Set<UserPet> userPets(@NonNull Entity owner) {
         return userPets(owner.getUniqueId());
     }
 
     /**
-     * Retrieves all pets owned by the given UUID.
+     * Returns all pets associated with the specified owner's UUID.
      *
-     * @param owner The UUID of the pet owner.
-     * @return A set of {@link UserPet} instances owned by the UUID.
+     * @param owner the UUID of the pet owner
+     * @return a set of UserPet instances owned by the given UUID
      */
     public Set<UserPet> userPets(@NonNull UUID owner) {
         PetsHandler petsHandler = (PetsHandler) PetPlugin.getInstance().getModulesHandler().moduleByName("PetsHandler");
@@ -60,10 +65,10 @@ public class PetAPI {
     }
 
     /**
-     * Retrieves the first pet owned by a given entity.
+     * Returns the first pet owned by the specified entity, or {@code null} if the entity has no pets.
      *
-     * @param owner The entity whose primary pet is being retrieved.
-     * @return A {@link UserPet} instance or {@code null} if the entity has no pets.
+     * @param owner the entity whose first pet is to be retrieved
+     * @return the first {@link UserPet} owned by the entity, or {@code null} if none exist
      */
     public UserPet userPet(@NonNull Entity owner) {
         try {
@@ -93,22 +98,22 @@ public class PetAPI {
     }
 
     /**
-     * Selects and spawns a pet for the specified entity using the given pet type name.
+     * Selects and spawns a pet for the specified entity using the provided pet type name.
      *
-     * @param owner The entity who will own the pet.
-     * @param petType The name of the pet type to select.
-     * @return The newly selected {@link UserPet}, or {@code null} if selection failed.
+     * @param owner the entity for whom the pet will be spawned
+     * @param petType the name of the pet type to spawn
+     * @return the spawned {@link UserPet}, or {@code null} if the pet type does not exist or selection fails
      */
     public UserPet selectPet(@NonNull Entity owner, @NonNull String petType) {
         return selectPet(owner, petType(petType));
     }
 
     /**
-     * Selects and spawns a pet for the specified entity using a {@link PetType}.
+     * Selects and spawns a pet of the specified type for the given entity.
      *
-     * @param owner The entity who will own the pet.
-     * @param petType The pet type to assign.
-     * @return The newly selected {@link UserPet}, or {@code null} if selection failed.
+     * @param owner the entity that will own the pet
+     * @param petType the type of pet to spawn
+     * @return the created UserPet instance, or null if the pet could not be selected or spawned
      */
     public UserPet selectPet(@NonNull Entity owner, @NonNull PetType petType) {
         PetsHandler petsHandler = (PetsHandler) PetPlugin.getInstance().getModulesHandler().moduleByName("PetsHandler");
@@ -116,15 +121,20 @@ public class PetAPI {
     }
 
     /**
-     * Removes a pet from the game and its owner's list.
+     * Removes the specified pet from the game and disassociates it from its owner.
      *
-     * @param userPet The {@link UserPet} to be removed.
+     * @param userPet the pet instance to remove
      */
     public void removePet(@NonNull UserPet userPet) {
         PetsHandler petsHandler = (PetsHandler) PetPlugin.getInstance().getModulesHandler().moduleByName("PetsHandler");
         petsHandler.removePet(userPet);
     }
 
+    /**
+     * Loads and spawns the last pet type used by the specified player from the database.
+     *
+     * @param owner the player whose last used pet should be spawned
+     */
     public void spawnDatabasePet(Player owner) {
         LastPet lastPet = LastPet.load(owner.getUniqueId());
         selectPet(owner, lastPet.getPetType());

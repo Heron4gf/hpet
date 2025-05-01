@@ -26,7 +26,9 @@ public class BoughtPets {
     private String petType;
 
     /**
-     * Save or update the current instance to the database.
+     * Persists the current BoughtPets instance to the database, inserting or updating as needed.
+     *
+     * If a record with the same primary key exists, it is updated; otherwise, a new record is created.
      */
     public void save() {
         try {
@@ -39,11 +41,11 @@ public class BoughtPets {
     }
 
     /**
-     * Load a BoughtPet entry from the database by owner UUID and pet type.
+     * Retrieves a BoughtPets record matching the specified owner UUID and pet type from the database.
      *
-     * @param owner The owner’s UUID.
-     * @param petType The type of pet.
-     * @return The matching BoughtPets entry or null if not found.
+     * @param owner the UUID of the pet owner
+     * @param petType the type of pet to search for
+     * @return the corresponding BoughtPets instance if found, or null if no match exists
      */
     public static BoughtPets load(UUID owner, String petType) {
         try {
@@ -64,11 +66,11 @@ public class BoughtPets {
     }
 
     /**
-     * Check if a pet has already been bought by the specified owner.
+     * Determines whether the specified owner has bought a pet of the given type.
      *
-     * @param owner The owner’s UUID.
-     * @param petType The type of pet.
-     * @return True if the pet has been bought, otherwise false.
+     * @param owner the UUID of the pet owner
+     * @param petType the type of pet to check
+     * @return true if a matching purchase record exists; false otherwise
      */
     public static boolean hasBought(UUID owner, String petType) {
         return load(owner, petType) != null;

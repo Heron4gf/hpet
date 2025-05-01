@@ -12,8 +12,18 @@ public abstract class AbstractDatabase implements Database {
     @Getter
     protected ConnectionSource connectionSource;
 
-    protected abstract String getDatabaseUrl();
+    /**
+ * Returns the JDBC database URL to be used for establishing the connection.
+ *
+ * @return the database connection URL string
+ */
+protected abstract String getDatabaseUrl();
 
+    /**
+     * Initializes the database connection and ensures required tables exist.
+     *
+     * Establishes a JDBC connection using the URL provided by {@code getDatabaseUrl()}, and creates the {@code LastPet} and {@code PetLevel} tables if they do not already exist.
+     */
     @Override
     public void load() {
         try {
@@ -26,6 +36,11 @@ public abstract class AbstractDatabase implements Database {
         }
     }
 
+    /**
+     * Closes the database connection source if it is open.
+     *
+     * Ensures that any resources associated with the database connection are released.
+     */
     @Override
     public void unload() {
         try {
