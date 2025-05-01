@@ -1,57 +1,122 @@
 messages:
+  # Keep GUI section from original
   gui:
-    name: "&a&lPETS"
+    name: "<green><bold>PETS</bold></green>"
     select:
-      can: "&a&lCLICK TO SELECT"
-      cannot: "&c&lPET LOCKED!"
-  level: "&eLevel: "
-  levelup:
-    - "&a&m------------------------------------"
-    - ""
-    - "&e&lYOUR PET HAS LEVELLED UP!"
-    - "&7New Level: [level]"
-    - "[leveltype]"
-    - ""
-    - "&a&m------------------------------------"
-  leveltype:
-    JUMP: "JUMP"
-    WALK: "WALK"
-    KILL: "KILLS"
-    MINE: "BREAK BLOCKS"
-    DEATHS: "DEATHS"
-    PLAYER_KILLS: "PLAYER KILLED"
-    CAKE_EATEN: "CAKE SLICES EATEN"
-  group:
-    open: "&a&lOpen this group!"
-  pet:
-    color:
-      invalid: "&cInvalid color!"
-      change: "&aPet color changed!"
-    rename:
-      help: "&eTo rename your pet digit /pet rename <new name>"
-    price: "&7Price: &e&l€"
-    buy:
-      noprice: "&eThis Pet has no price!"
-      notenough: "&cYou need more money to buy this Pet!"
-      permissioncommand: "lp user %player% permission set pet.use.%petname%"
-      bought: "&aYou have bought a new Pet! Use /pet to select it!"
-    respawn: "&aPet respawned!"
-    remove: "&cPet removed!"
-    spawned: "&aPet spawned!"
-    glow:
-      add: "&aYour pet is now glowing!"
-      remove: "&cYour pet is no longer glowing!"
-    trail:
-      add: "&aSpawned a pet trail!"
-      remove: "&cPet trail removed!"
-    particle:
-      add: "&aYou added a particle on your pet!"
-      remove: "&cYour pet now doesn't have particles!"
-      invalid: "&cThis particle is not a valid type!"
+      can: "<green><bold>CLICK TO SELECT</bold></green>"
+      cannot: "<red><bold>PET LOCKED!</bold></red>"
+
+  # Error messages used by helper methods
   error:
-    alreadybought: "&cYou have already bought this pet!"
-    invalid: "&cInvalid argument!"
-    nosel: "&cPet not selected"
-    noperm:
-      command: "&cYou do not have permission for this command!"
-      use: "&cYou cannot use this pet!"
+    # Used in getTargetPlayer helper
+    specify_target: "<red>You must specify a target player from console.</red>"
+    # Used in getUserPet helper
+    no_active_pet: "<red><player> does not have an active pet.</red>" # {player} is the target player's name
+
+  # Command-specific messages
+  command:
+    hpet:
+      main:
+        # Message for players running the base command
+        player: "<green>Opening pet GUI... (Not implemented yet)</green>"
+        # Message for console running the base command
+        console: "<yellow>Usage: /hpet <subcommand> [args]\nAvailable subcommands: select, remove, update, buy, addlevel, removelevel, setlevel, level</yellow>"
+
+      select:
+        error:
+          not_found: "<red>Pet type '<petType>' not found.</red>" # {petType} from command argument
+          # {petType} from command arg, {player} is target name (Requires MessagesHandler modification for players)
+          failed: "<red>Failed to select the '<petType>' pet for <player>. An error occurred.</red>"
+        success:
+          # {pet} is sender's newly selected pet name (from buildDictionary)
+          self: "<green>You have selected the '<pet>' pet.</green>"
+          # {petType} from command arg, {player} is target name (Requires MessagesHandler modification for players)
+          other: "<green>You have selected the '<petType>' pet for <player>.</green>"
+          # {sender} is command sender's name (Requires MessagesHandler modification)
+          # {pet} is target's newly selected pet name (from buildDictionary)
+          received: "<green><sender> has selected the '<pet>' pet for you.</green>"
+
+      remove:
+        success:
+          self: "<green>Your pet has been removed.</green>"
+          # {player} is target name (Requires MessagesHandler modification for players)
+          other: "<green>The pet for <player> has been removed.</green>"
+          # {sender} is command sender's name (Requires MessagesHandler modification)
+          received: "<green><sender> has removed your pet.</green>"
+
+      update:
+        error:
+          # {player} is target name (Requires MessagesHandler modification for players)
+          failed: "<red>Failed to update (respawn) the pet for <player>.</red>"
+        success:
+          self: "<green>Your pet has been updated (respawned).</green>"
+          # {player} is target name (Requires MessagesHandler modification for players)
+          other: "<green>The pet for <player> has been updated (respawned).</green>"
+          # {sender} is command sender's name (Requires MessagesHandler modification)
+          received: "<green><sender> has updated (respawned) your pet.</green>"
+
+      buy:
+        error:
+          # {petType} from command arg
+          not_found: "<red>Pet type '<petType>' not found.</red>"
+          # {petType} from command arg, {player} is target name (Requires MessagesHandler modification for players) - Generic failure
+          failed: "<red>Failed to buy the '<petType>' pet for <player>. (Reason: See console/logs)</red>"
+          # Add these messages when implementing the buy logic TODOs
+          no_price: "<red>This pet does not have a price and cannot be bought this way.</red>"
+          not_enough_money: "<red>You do not have enough money to buy the '<petType>' pet.</red>" # {petType} from command arg
+          already_owned: "<red><player> already owns the '<petType>' pet.</red>" # {player} is target name, {petType} from command arg
+        # Message used for the TODO placeholder in the buy command
+        # {petType} from command arg, {player} is target name (Requires MessagesHandler modification for players)
+        wip: "<yellow>Buy command logic not fully implemented. Attempting to buy '<petType>' for <player>...</yellow>"
+        success:
+          # {petType} from command arg
+          self: "<green>You have successfully bought the '<petType>' pet!</green>"
+          # {petType} from command arg, {player} is target name (Requires MessagesHandler modification for players)
+          other: "<green>You have successfully bought the '<petType>' pet for <player>.</green>"
+          # {sender} is command sender's name (Requires MessagesHandler modification)
+          # {petType} from command arg (Requires MessagesHandler modification)
+          received: "<green><sender> has bought the '<petType>' pet for you!</green>"
+
+      level: # Group for level commands
+        add:
+          error:
+            invalid_amount: "<red>Amount must be a positive number.</red>"
+          success:
+            # {amount} from command arg, {level} is sender's new level (Requires MessagesHandler modification for players)
+            self: "<green>Your pet's level increased by <amount>. New level: <level>.</green>"
+            # {player} is target name, {amount} from command arg, {level} is target's new level (Requires MessagesHandler modification for players)
+            other: "<green><player>'s pet's level increased by <amount>. New level: <level>.</green>"
+            # {sender} (Requires MessagesHandler modification), {amount} (Requires MessagesHandler modification), {level} is target's new level (Requires MessagesHandler modification - buildDictionary might be outdated)
+            received: "<green><sender> has added <amount> levels to your pet. New level: <level>.</green>"
+
+        remove:
+          error:
+            invalid_amount: "<red>Amount must be a positive number.</red>"
+          success:
+            # {amount} from command arg, {level} is sender's new level (Requires MessagesHandler modification for players)
+            self: "<green>Your pet's level decreased by <amount>. New level: <level>.</green>"
+            # {player} is target name, {amount} from command arg, {level} is target's new level (Requires MessagesHandler modification for players)
+            other: "<green><player>'s pet's level decreased by <amount>. New level: <level>.</green>"
+            # {sender} (Requires MessagesHandler modification), {amount} (Requires MessagesHandler modification), {level} is target's new level (Requires MessagesHandler modification - buildDictionary might be outdated)
+            received: "<green><sender> has removed <amount> levels from your pet. New level: <level>.</green>"
+
+        set:
+          error:
+            negative_level: "<red>Level cannot be negative.</red>"
+          success:
+            # {level} is sender's new level (Requires MessagesHandler modification for players)
+            self: "<green>Your pet's level has been set to <level>.</green>"
+            # {player} is target name, {level} is target's new level (Requires MessagesHandler modification for players)
+            other: "<green><player>'s pet's level has been set to <level>.</green>"
+            # {sender} (Requires MessagesHandler modification), {level} is target's new level (Requires MessagesHandler modification - buildDictionary might be outdated)
+            received: "<green><sender> has set your pet's level to <level>.</green>"
+
+        show:
+          # {level} is sender's current pet level (from buildDictionary)
+          self: "<green>Your current pet's level is <level>.</green>"
+          # {player} is target name (Requires MessagesHandler modification for players)
+          # {level} is target's current pet level (from buildDictionary)
+          other: "<green><player>'s current pet's level is <level>.</green>"
+          # {sender} is command sender's name (Requires MessagesHandler modification)
+          # {level} is target's current pet level (from buildDictionary)
+          received: "<green><sender> checked your pet's level. It is <level>.</green>"

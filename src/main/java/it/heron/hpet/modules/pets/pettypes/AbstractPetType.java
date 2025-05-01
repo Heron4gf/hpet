@@ -1,6 +1,7 @@
 package it.heron.hpet.modules.pets.pettypes;
 
 import it.heron.hpet.database.AbstractDatabase;
+import it.heron.hpet.database.tables.BoughtPets;
 import it.heron.hpet.main.PetPlugin;
 import it.heron.hpet.modules.abilities.AbilitiesHandler;
 import it.heron.hpet.modules.abilities.abstracts.Ability;
@@ -55,13 +56,6 @@ public abstract class AbstractPetType implements PetType {
         this.animationName = configuration.getString(absolutePath("animation"), animationName);
         this.yaw = (float) configuration.getDouble(absolutePath("yaw"), yaw);
         this.distance = configuration.getDouble(absolutePath("distance"), distance);
-
-        if(configuration.contains(absolutePath("abilities"))) {
-            Ability ability = AbilitiesHandler.createPythonAbility(
-                    configuration.getStringList(absolutePath("abilities.files")),
-                    (float)configuration.getDouble(absolutePath("abilities.runevery"), 1));
-            this.ability = ability;
-        }
     }
 
     @Override
@@ -76,8 +70,7 @@ public abstract class AbstractPetType implements PetType {
 
     @Override
     public boolean bought(Player player) {
-        AbstractDatabase database = (AbstractDatabase) PetPlugin.getInstance().getModulesHandler().moduleByName("Database");
-        return database.hasBought(player, this);
+        return BoughtPets.hasBought(player.getUniqueId(), this.name);
     }
 
     protected void loadVector(String subpath, Vector def) {

@@ -10,12 +10,14 @@
  */
 package it.heron.hpet.api;
 
+import it.heron.hpet.database.tables.LastPet;
 import it.heron.hpet.modules.pets.PetsHandler;
 import it.heron.hpet.modules.pets.pettypes.PetType;
 import it.heron.hpet.modules.pets.userpets.abstracts.UserPet;
 import lombok.NonNull;
 import org.bukkit.entity.Entity;
 import it.heron.hpet.main.PetPlugin;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 
@@ -121,6 +123,11 @@ public class PetAPI {
     public void removePet(@NonNull UserPet userPet) {
         PetsHandler petsHandler = (PetsHandler) PetPlugin.getInstance().getModulesHandler().moduleByName("PetsHandler");
         petsHandler.removePet(userPet);
+    }
+
+    public void spawnDatabasePet(Player owner) {
+        LastPet lastPet = LastPet.load(owner.getUniqueId());
+        selectPet(owner, lastPet.getPetType());
     }
 
 }

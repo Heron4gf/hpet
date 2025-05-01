@@ -1,7 +1,5 @@
 package it.heron.hpet.modules.pets.userpets.abstracts;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
 import it.heron.hpet.main.PetPlugin;
 import it.heron.hpet.modules.invisibilityintegration.InvisibilityHandler;
 import it.heron.hpet.modules.pets.pettypes.PetType;

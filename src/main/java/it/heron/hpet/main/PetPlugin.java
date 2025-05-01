@@ -9,14 +9,15 @@
 
 package it.heron.hpet.main;
 
+import io.github.jwdeveloper.spigot.commands.CommandsFramework;
+import io.github.jwdeveloper.spigot.commands.api.Commands;
 import it.heron.hpet.api.events.HPETReloadPluginEvent;
 
-import it.heron.hpet.modules.messages.MessagesHandler;
+import it.heron.hpet.main.commands.PetCommand;
 import it.heron.hpet.modules.ModulesHandler;
 import it.heron.hpet.modules.pets.PetTypesHandler;
 import it.heron.hpet.modules.pets.userpets.abstracts.UserPet;
 import it.heron.hpet.modules.pets.userpets.fakeentities.armorstandmetadatahandlers.ArmorStandMetadataHandler;
-import it.heron.hpet.modules.pets.PetsHandler;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -28,7 +29,7 @@ import it.heron.hpet.api.PetAPI;
 import java.io.File;
 import java.util.*;
 
-public final class PetPlugin extends JavaPlugin {
+public class PetPlugin extends JavaPlugin {
 
     @Getter
     private static PetPlugin instance;
@@ -43,7 +44,7 @@ public final class PetPlugin extends JavaPlugin {
     private List<String> disabledWorlds = new ArrayList<>();
 
     @Getter
-    private final PetTypesHandler petTypesHandler = new PetTypesHandler();
+    private final PetTypesHandler petTypesHandler = new PetTypesHandler(this);
 
     private YamlConfiguration config;
 
@@ -101,10 +102,26 @@ public final class PetPlugin extends JavaPlugin {
         reloadConfig();
 
         for(Player p : Bukkit.getOnlinePlayers()) {
-            Utils.loadDatabasePet(p);
+            PetPlugin.getApi().spawnDatabasePet(p);
         }
 
+        // Load modules first
         this.modulesHandler.loadModules();
+        
+        // Log module loading issues but continue
+        if (modulesHandler.moduleByName("Messages") == null) {
+            getLogger().severe("MessagesHandler module failed to load - messages will not work properly");
+        }
+
+        // Initialize commands
+        try {
+            PetCommand petCommand = new PetCommand();
+            Commands commands = CommandsFramework.enable(this);
+            commands.create(petCommand).register();
+        } catch (Exception e) {
+            getLogger().severe("Failed to register commands: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
 

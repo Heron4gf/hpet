@@ -5,6 +5,8 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import it.heron.hpet.database.AbstractDatabase;
+import it.heron.hpet.main.PetPlugin;
+import it.heron.hpet.modules.DatabaseModule;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -24,7 +26,8 @@ public class LastPet {
 
     public void save() {
         try {
-            Dao<LastPet, UUID> dao = DaoManager.createDao(AbstractDatabase.getInstance().getConnectionSource(), LastPet.class);
+            DatabaseModule module = (DatabaseModule) PetPlugin.getInstance().getModulesHandler().moduleByName("database");
+            Dao<LastPet, UUID> dao = DaoManager.createDao(module.getDatabase().getConnectionSource(), LastPet.class);
             dao.createOrUpdate(this);
         } catch (Exception e) {
             e.printStackTrace();
@@ -33,7 +36,8 @@ public class LastPet {
 
     public static LastPet load(UUID owner) {
         try {
-            Dao<LastPet, UUID> dao = DaoManager.createDao(AbstractDatabase.getInstance().getConnectionSource(), LastPet.class);
+            DatabaseModule module = (DatabaseModule) PetPlugin.getInstance().getModulesHandler().moduleByName("database");
+            Dao<LastPet, UUID> dao = DaoManager.createDao(module.getDatabase().getConnectionSource(), LastPet.class);
             return dao.queryForId(owner);
         } catch (Exception e) {
             e.printStackTrace();

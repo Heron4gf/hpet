@@ -5,8 +5,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Trident;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class OnTridentThrow extends DelayModule {
+
+    public OnTridentThrow(JavaPlugin plugin) {
+        super(plugin);
+    }
 
     @Override
     public String name() {

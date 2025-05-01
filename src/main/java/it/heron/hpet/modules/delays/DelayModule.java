@@ -7,11 +7,16 @@ import it.heron.hpet.modules.pets.userpets.abstracts.UserPet;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public abstract class DelayModule extends ListenerModule {
 
     @Getter
     private long delay;
+
+    public DelayModule(JavaPlugin plugin) {
+        super(plugin);
+    }
 
     @Override
     protected void onLoad() {

@@ -3,6 +3,7 @@ package it.heron.hpet.modules;
 import it.heron.hpet.database.*;
 import it.heron.hpet.modules.abstracts.DefaultInstanceModule;
 import lombok.Getter;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -11,6 +12,10 @@ public class DatabaseModule extends DefaultInstanceModule {
 
     @Getter
     private AbstractDatabase database;
+
+    public DatabaseModule(JavaPlugin plugin) {
+        super(plugin);
+    }
 
     @Override
     public String name() {
@@ -33,7 +38,7 @@ public class DatabaseModule extends DefaultInstanceModule {
         databaseDictionary.put("mysql", new MySQLDatabase(plugin));
         databaseDictionary.put("mariadb", new MariaDBDatabase(plugin));
         databaseDictionary.put("postgre", new PostgreSQLDatabase(plugin));
-        databaseDictionary.put("sqlite", new SQLiteDatabase());
+        databaseDictionary.put("sqlite", new SQLiteDatabase(plugin));
         return databaseDictionary;
     }
 

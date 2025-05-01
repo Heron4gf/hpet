@@ -5,6 +5,8 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import it.heron.hpet.database.AbstractDatabase;
+import it.heron.hpet.main.PetPlugin;
+import it.heron.hpet.modules.DatabaseModule;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -28,7 +30,8 @@ public class PetLevel {
 
     public void save() {
         try {
-            Dao<PetLevel, Integer> dao = DaoManager.createDao(AbstractDatabase.getInstance().getConnectionSource(), PetLevel.class);
+            DatabaseModule module = (DatabaseModule) PetPlugin.getInstance().getModulesHandler().moduleByName("database");
+            Dao<PetLevel, Integer> dao = DaoManager.createDao(module.getDatabase().getConnectionSource(), PetLevel.class);
             dao.createOrUpdate(this);
         } catch (Exception e) {
             e.printStackTrace();
@@ -37,7 +40,8 @@ public class PetLevel {
 
     public static PetLevel load(UUID owner, String petType) {
         try {
-            Dao<PetLevel, Integer> dao = DaoManager.createDao(AbstractDatabase.getInstance().getConnectionSource(), PetLevel.class);
+            DatabaseModule module = (DatabaseModule) PetPlugin.getInstance().getModulesHandler().moduleByName("database");
+            Dao<PetLevel, Integer> dao = DaoManager.createDao(module.getDatabase().getConnectionSource(), PetLevel.class);
             List<PetLevel> result = dao.queryBuilder()
                     .where()
                     .eq("owner", owner)
